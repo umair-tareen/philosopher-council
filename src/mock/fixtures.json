@@ -1,0 +1,41 @@
+{
+  "items": [
+    {
+      "id": "fixt-ralph-001",
+      "source": "reddit",
+      "subSource": "r/LocalLLaMA",
+      "title": "Has anyone tried Karpathy's Ralph loop on a 7B model?",
+      "url": "https://www.reddit.com/r/LocalLLaMA/comments/example1",
+      "author": "u/example",
+      "publishedAt": "2026-05-19T12:00:00Z",
+      "fetchedAt": "2026-05-20T01:00:00Z",
+      "summary": "I tried running a Ralph-loop critique on a 7B local model — model evaluates its own output, identifies weakest claims, then revises. Got noticeable gains on long-form reasoning but quality degraded after iteration 3. Curious whether the LLM Council pattern stabilises it.",
+      "rawScore": 124,
+      "tags": ["ralph-loop", "karpathy", "llm-council", "self-improving"]
+    },
+    {
+      "id": "fixt-arxiv-002",
+      "source": "arxiv",
+      "subSource": "cs.AI",
+      "title": "Caveman LLM: Minimal Prompts Recover Most of the Gain",
+      "url": "https://arxiv.org/abs/example2",
+      "author": "Doe et al.",
+      "publishedAt": "2026-05-18T09:00:00Z",
+      "fetchedAt": "2026-05-20T01:00:00Z",
+      "summary": "We show that a deliberately minimal prompt template (\"caveman\" style) recovers most of the performance gain attributed to elaborate scaffolding on 4 of 6 reasoning benchmarks. The result suggests prompt complexity is often a confound.",
+      "tags": ["caveman-llm", "karpathy"]
+    },
+    {
+      "id": "fixt-hn-003",
+      "source": "hn",
+      "title": "Vibe coding considered harmful?",
+      "url": "https://news.ycombinator.com/item?id=example3",
+      "author": "thoughtful",
+      "publishedAt": "2026-05-20T07:00:00Z",
+      "fetchedAt": "2026-05-20T08:00:00Z",
+      "summary": "A short essay arguing that vibe coding accelerates wrong-shape software by suppressing the friction that used to be load-bearing. Counter-arguments invited.",
+      "rawScore": 87,
+      "tags": ["vibe-coding"]
+    }
+  ]
+}

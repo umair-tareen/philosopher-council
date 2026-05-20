@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+.DS_Store
+
+# Generated data — keep the folder, ignore contents
+data/*
+!data/.gitkeep
+!data/README.md
