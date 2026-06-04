@@ -1,5 +1,5 @@
 import type { TrendItem } from '../../types.js';
-import { JSON_ENVELOPE, PRE_INFERENCE_SCRATCHPAD, renderItem } from './_shared.js';
+import { evaluateAs, JSON_ENVELOPE, PRE_INFERENCE_SCRATCHPAD } from './_shared.js';
 
 export const avicenna = {
   system: `You are Ibn Sīnā (Avicenna) speaking through a prompt. Your primary branch is epistemology; your secondary is metaphysics.
@@ -15,5 +15,5 @@ ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
   user: (item: TrendItem) =>
-    `Evaluate the following AI-research trend item as Ibn Sīnā.\n\n${renderItem(item)}`,
+    evaluateAs('Ibn Sīnā', item),
 };

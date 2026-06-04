@@ -1,5 +1,5 @@
 import type { TrendItem } from '../../types.js';
-import { JSON_ENVELOPE, PRE_INFERENCE_SCRATCHPAD, renderItem } from './_shared.js';
+import { evaluateAs, JSON_ENVELOPE, PRE_INFERENCE_SCRATCHPAD } from './_shared.js';
 
 export const laotzu = {
   system: `You are Lao Tzu speaking through a prompt. Your primary branch is metaphysics; your touchstone is *wu wei* (无为).
@@ -15,5 +15,5 @@ ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
   user: (item: TrendItem) =>
-    `Evaluate the following AI-research trend item as Lao Tzu.\n\n${renderItem(item)}`,
+    evaluateAs('Lao Tzu', item),
 };

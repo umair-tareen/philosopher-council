@@ -17,6 +17,11 @@ export const PRE_INFERENCE_SCRATCHPAD = `Before scoring, silently widen your vie
 These are deliberative exercises, not feelings. Use them, then score.`;
 
 export function renderItem(item: TrendItem): string {
+  if (item.source === 'question') {
+    const parts = [`Question: ${item.title}`];
+    if (item.summary) parts.push(`\nContext:\n${item.summary}`);
+    return parts.join('\n');
+  }
   const parts = [
     `Title: ${item.title}`,
     `Source: ${item.source}${item.subSource ? ` (${item.subSource})` : ''}`,
@@ -26,4 +31,12 @@ export function renderItem(item: TrendItem): string {
   ];
   if (item.summary) parts.push(`\nSummary:\n${item.summary}`);
   return parts.join('\n');
+}
+
+export function evaluateAs(name: string, item: TrendItem): string {
+  const task =
+    item.source === 'question'
+      ? `The council has been asked a direct question. Deliberate on it as ${name}. Treat the question itself as the claim under examination.`
+      : `Evaluate the following AI-research trend item as ${name}.`;
+  return `${task}\n\n${renderItem(item)}`;
 }

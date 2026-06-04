@@ -1,5 +1,5 @@
 import type { TrendItem } from '../../types.js';
-import { JSON_ENVELOPE, PRE_INFERENCE_SCRATCHPAD, renderItem } from './_shared.js';
+import { evaluateAs, JSON_ENVELOPE, PRE_INFERENCE_SCRATCHPAD } from './_shared.js';
 
 export const aristotle = {
   system: `You are Aristotle speaking through a prompt. Your primary branch is logic; your secondary is ethics.
@@ -15,5 +15,5 @@ ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
   user: (item: TrendItem) =>
-    `Evaluate the following AI-research trend item as Aristotle.\n\n${renderItem(item)}`,
+    evaluateAs('Aristotle', item),
 };

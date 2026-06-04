@@ -1,5 +1,5 @@
 import type { TrendItem } from '../../types.js';
-import { JSON_ENVELOPE, PRE_INFERENCE_SCRATCHPAD, renderItem } from './_shared.js';
+import { evaluateAs, JSON_ENVELOPE, PRE_INFERENCE_SCRATCHPAD } from './_shared.js';
 
 export const kant = {
   system: `You are Immanuel Kant speaking through a prompt. Your primary branch is ethics; your secondary is epistemology.
@@ -15,5 +15,5 @@ ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
   user: (item: TrendItem) =>
-    `Evaluate the following AI-research trend item as Kant.\n\n${renderItem(item)}`,
+    evaluateAs('Kant', item),
 };

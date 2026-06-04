@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { runAnalyze } from './pipeline/analyze.js';
+import { runAsk } from './pipeline/ask.js';
 import { runDigest } from './pipeline/digest.js';
 import { runFetch } from './pipeline/fetch.js';
 import { runAll } from './pipeline/run.js';
@@ -9,8 +10,26 @@ import { logger } from './logger.js';
 
 const program = new Command();
 program
-  .name('stoic-ai-council')
-  .description('Eleven-philosopher council for analysing AI-research trends');
+  .name('philosopher-council')
+  .description(
+    'Eleven-philosopher LLM council — ask it questions, or point it at AI-research trends',
+  );
+
+program
+  .command('ask')
+  .description('put a question directly to the council')
+  .argument('<question...>', 'the question to deliberate on')
+  .option('--full-council', 'use all 10 deliberators (vs quorum of 4)')
+  .option('--context <text>', 'optional extra context for the council')
+  .action(async (words: string[], opts) => {
+    const { markdown, file } = await runAsk({
+      question: words.join(' '),
+      context: opts.context,
+      fullCouncil: !!opts.fullCouncil,
+    });
+    console.log(`\n${markdown}`);
+    console.log(`Saved to ${file}`);
+  });
 
 program
   .command('fetch')

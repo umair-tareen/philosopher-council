@@ -1,4 +1,4 @@
-export type Source = 'reddit' | 'hn' | 'arxiv';
+export type Source = 'reddit' | 'hn' | 'arxiv' | 'question';
 
 export type Virtue = 'wisdom' | 'courage' | 'justice' | 'temperance';
 

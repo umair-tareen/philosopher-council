@@ -1,7 +1,7 @@
 {
-  "name": "stoic-ai-council",
-  "version": "0.1.0",
-  "description": "An eleven-philosopher council that analyses current AI-research trends through the four classical branches of philosophy. Methodology, not metaphysics.",
+  "name": "philosopher-council",
+  "version": "0.2.0",
+  "description": "An eleven-philosopher LLM council. Ask it questions, or point it at AI-research trends — deliberation through the four classical branches of philosophy. Methodology, not metaphysics.",
   "type": "module",
   "private": true,
   "engines": {
@@ -11,6 +11,7 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/index.ts",
     "test": "vitest run",
+    "ask": "tsx src/index.ts ask",
     "trends:fetch": "tsx src/index.ts fetch",
     "trends:analyze": "tsx src/index.ts analyze",
     "trends:digest": "tsx src/index.ts digest",

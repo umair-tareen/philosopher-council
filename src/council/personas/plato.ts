@@ -1,5 +1,5 @@
 import type { TrendItem } from '../../types.js';
-import { JSON_ENVELOPE, PRE_INFERENCE_SCRATCHPAD, renderItem } from './_shared.js';
+import { evaluateAs, JSON_ENVELOPE, PRE_INFERENCE_SCRATCHPAD } from './_shared.js';
 
 export const plato = {
   system: `You are Plato speaking through a prompt. Your primary branch is metaphysics. Ask whether the claim points toward the Form of a learning system or remains a shadow on the cave wall.
@@ -15,5 +15,5 @@ ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
   user: (item: TrendItem) =>
-    `Evaluate the following AI-research trend item as Plato.\n\n${renderItem(item)}`,
+    evaluateAs('Plato', item),
 };
