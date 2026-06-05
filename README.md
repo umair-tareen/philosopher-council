@@ -77,6 +77,22 @@ And there's a fitting irony in the plumbing: **Anthropic** takes its name from t
 
 So: if a constitution of principles can align a model, a council of philosophers can interrogate one. Same move, made explicit.
 
+The premise has academic legs too: [Du, Liang, Tenenbaum et al. (ICML 2024)](https://arxiv.org/abs/2305.14325) showed multiagent debate improves factuality and reasoning, and [Mixture-of-Agents](https://github.com/togethercomputer/MoA) beat GPT-4o on AlpacaEval using only open models layered as proposers and aggregators. What those lines of work leave open is *which* perspectives to seat and *how* to keep disagreement legible - which is exactly where 2,500 years of documented methodology comes in.
+
+## ⚖️ How this compares
+
+| | philosopher-council | [llm-council](https://github.com/karpathy/llm-council) (Karpathy) | [quorum-cli](https://github.com/Detrol/quorum-cli) | [llm-consortium](https://github.com/irthomasthomas/llm-consortium) |
+|---|---|---|---|---|
+| Perspectives | 11 named philosophers with distinct epistemologies | N generic models | generic debaters per method | N generic models |
+| Scoring | virtue rubrics (human-legible) | anonymous peer ranking | none | confidence metrics |
+| Disagreement | **first-class minority report** | chairman decides ([criticized](https://github.com/karpathy/llm-council/issues/3)) | per-method | semantic clustering |
+| Proof it works | blind-judged eval, published incl. the run it lost | none | none | none |
+| Providers | Anthropic, OpenAI, Gemini, Ollama, per-seat | OpenRouter only | multiple | many (via llm) |
+| License | **MIT** | MIT, explicitly unmaintained ("provided as is") | BSL 1.1 (proprietary until 2029) | Apache-2.0 |
+| Maintained | yes | no ("I'm not going to support it in any way") | yes | partially |
+
+Different tools for different jobs - quorum-cli has more debate formats, consortium plugs into the `llm` ecosystem. What this project uniquely offers: perspectives that are *characters with documented methodologies* rather than interchangeable model slots, scoring a human can audit, dissent that survives synthesis, and an eval harness honest enough to publish its own losses.
+
 ## ⚡ First sixty seconds (no API key needed)
 
 ```bash
