@@ -59,7 +59,7 @@ export function renderAnswer(question: string, v: CouncilVerdict): string {
   lines.push('');
 
   for (const o of v.opinions) {
-    lines.push(`## ${o.displayName} _(${o.branch})_ — ${o.verdictScore.toFixed(2)}`);
+    lines.push(`## ${o.displayName} _(${o.branch})_ - ${o.verdictScore.toFixed(2)}`);
     lines.push('');
     lines.push(`**${o.oneLiner}**`);
     lines.push('');
@@ -77,7 +77,7 @@ export function renderAnswer(question: string, v: CouncilVerdict): string {
     lines.push('');
   }
 
-  lines.push(`## Ibn ʿArabī — synthesis (${v.synthesis.unifiedScore.toFixed(2)})`);
+  lines.push(`## Ibn ʿArabī - synthesis (${v.synthesis.unifiedScore.toFixed(2)})`);
   lines.push('');
   lines.push(`**Unifying reading.** ${v.synthesis.unifyingReading}`);
   lines.push('');

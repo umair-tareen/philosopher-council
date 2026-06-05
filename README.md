@@ -1,6 +1,6 @@
 # 🏛️ philosopher-council
 
-![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Claude](https://img.shields.io/badge/Claude%20API-%23191919.svg?style=for-the-badge&logo=anthropic&logoColor=white) ![Vitest](https://img.shields.io/badge/vitest-%236E9F18.svg?style=for-the-badge&logo=vitest&logoColor=white) ![Zod](https://img.shields.io/badge/zod-%233068b7.svg?style=for-the-badge&logo=zod&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Claude](https://img.shields.io/badge/Claude%20API-%23191919.svg?style=for-the-badge&logo=anthropic&logoColor=white) ![Vitest](https://img.shields.io/badge/vitest-%236E9F18.svg?style=for-the-badge&logo=vitest&logoColor=white) ![Zod](https://img.shields.io/badge/zod-%233068b7.svg?style=for-the-badge&logo=zod&logoColor=white) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
 
 <p align="center">
   <img src="assets/death-of-socrates.jpg" alt="The Death of Socrates - Jacques-Louis David, 1787" width="850">
@@ -23,24 +23,37 @@ pnpm ask --full-council "Should agentic AI systems spend money autonomously?"
 pnpm ask --context "We run a 5-agent trading desk" "Where should a human stay in the loop?"
 ```
 
-Each deliberator answers in character - virtue scores, reasoning, concerns - then the synthesizer speaks last:
+Each deliberator answers in character - virtue scores, reasoning, concerns - then the synthesizer speaks last. This is **real, unedited output** from the council's first live full-council run, where it was asked to judge its own premise:
 
 ```
-# The council deliberates
+> Question: Is a council of eleven philosophers better than a single
+  model answering alone?
 
-> Question: Is scaling all you need?
+## Kant (ethics) - 0.69
+**Plurality checks the autocrat in each reasoner, yet only if each
+voice retains its critical independence.**
 
-## Aristotle (logic) - 0.61
-**Argument valid as stated; missing a load-bearing premise.**
-| Wisdom     | Courage    | Justice    | Temperance |
-| ███████░░░ | ██████░░░░ | ██████░░░░ | ███████░░░ |
+## Lao Tzu (metaphysics) - 0.35
+**Eleven voices speaking where one silence would suffice - the Tao
+laughs at our multiplication of parts.**
+"When water finds its path, it does not convene a symposium of streams."
 
-## Ibn ʿArabī - synthesis (0.62)
-**Unifying reading.** The deliberators appear to disagree on novelty
-versus restraint, but each is pointing at the same underlying judgment…
+## Avicenna (epistemology) - 0.66
+"Strip away the theatrical apparatus of 'eleven voices.' What remains?
+...these are masks upon one face."
+
+## Ibn ʿArabī - synthesis (0.61)
+The scores cluster narrowly because all recognize the same ambiguity:
+'better' floats undefined, and structural diversity (eleven prompts)
+may not produce epistemic diversity (eleven independent reasoning
+paths) when all voices share one substrate.
+
+Final score: 0.58 · Recommendation: track
 ```
 
-Transcripts are saved to `data/asks/<date>-<question>.md`.
+The council declined to amplify itself. The 0.35-0.69 score spread is the interesting result: prompt-differentiated personas produce genuinely opposed verdicts even on a shared substrate.
+
+📜 **[Read the full transcript](examples/01-the-council-judges-itself.md)** - all ten opinions, the synthesis, and the self-critique pass, unedited. Transcripts from your own runs are saved to `data/asks/<date>-<question>.md`.
 
 ## 🤔 Why philosophy, and why now
 
