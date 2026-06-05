@@ -160,6 +160,7 @@
     <span class="mono" id="modeinfo"></span>
   </div>
   <div class="status" id="status"></div>
+  <div id="briefing" style="display:none; color: var(--muted); font-size: 0.85rem; margin: -0.4rem 0 1rem; line-height: 1.6;"></div>
 
   <div class="grid" id="grid"></div>
 
@@ -325,6 +326,8 @@ function convene() {
   $('spread').style.display = 'none';
   $('final').style.display = 'none';
   $('modeinfo').textContent = '';
+  $('briefing').style.display = 'none';
+  $('briefing').innerHTML = '';
   setStatus('The council convenes…');
 
   const url = '/api/ask/stream?q=' + encodeURIComponent(q)
@@ -335,6 +338,18 @@ function convene() {
   source.addEventListener('mode', (e) => {
     const m = JSON.parse(e.data);
     if (m.advisorReason) $('modeinfo').textContent = `advisor chose ${m.mode}: ${m.advisorReason}`;
+  });
+  source.addEventListener('precedents', (e) => {
+    const { precedents } = JSON.parse(e.data);
+    const items = precedents.map(p =>
+      `📚 Precedent (${esc(p.date)}): “${esc(p.question)}” concluded ${esc(p.finalScore.toFixed(2))} · ${esc(p.finalRecommendation)}`
+    ).join('<br>');
+    $('briefing').innerHTML += items + '<br>';
+    $('briefing').style.display = 'block';
+  });
+  source.addEventListener('clerk', () => {
+    $('briefing').innerHTML += '🔎 The clerk briefed the bench with web research.<br>';
+    $('briefing').style.display = 'block';
   });
   source.addEventListener('seats', (e) => {
     const { seats } = JSON.parse(e.data);

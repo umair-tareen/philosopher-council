@@ -26,6 +26,7 @@ program
     'debate format: deliberation | socratic | oxford | delphi | auto (Method Advisor picks)',
     'deliberation',
   )
+  .option('--no-clerk', 'skip the pre-deliberation web research brief')
   .action(async (words: string[], opts) => {
     const question = words.join(' ');
     let debateMode = opts.mode as string;
@@ -40,14 +41,22 @@ program
       console.error(`Unknown mode "${debateMode}". Valid: ${Object.keys(DEBATE_MODES).join(', ')}, auto`);
       process.exit(1);
     }
-    const { markdown, file } = await runAsk({
+    const { markdown, file, precedents, clerk } = await runAsk({
       question,
       context: opts.context,
       fullCouncil: !!opts.fullCouncil,
       debateMode: debateMode as import('./council/modes.js').DebateModeId,
+      noClerk: opts.clerk === false,
+      onPrecedents: (p) => console.log(`Precedents consulted: ${p.length}`),
+      onClerk: () => console.log('Clerk briefed the bench from the web.'),
     });
     console.log(`\n${markdown}`);
     console.log(`Saved to ${file}`);
+    if (precedents.length || clerk) {
+      console.log(
+        `(${precedents.length} precedent(s)${clerk ? ', clerk brief included' : ''})`,
+      );
+    }
   });
 
 program

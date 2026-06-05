@@ -5,6 +5,8 @@ const schema = z.object({
   ANTHROPIC_API_KEY: z.string().optional(),
   ANTHROPIC_MODEL: z.string().default('claude-sonnet-4-5'),
   OPENAI_API_KEY: z.string().optional(),
+  // Optional: lets the clerk brief the bench with web research before deliberation.
+  TAVILY_API_KEY: z.string().optional(),
   // Any OpenAI-compatible endpoint: OpenRouter, LM Studio, Groq, llamafile, vLLM...
   OPENAI_BASE_URL: z.string().default('https://api.openai.com/v1'),
   GEMINI_API_KEY: z.string().optional(),
@@ -63,6 +65,7 @@ export const config = {
   anthropicApiKey: parsed.ANTHROPIC_API_KEY,
   anthropicModel: parsed.ANTHROPIC_MODEL,
   openaiApiKey: parsed.OPENAI_API_KEY,
+  tavilyApiKey: parsed.TAVILY_API_KEY,
   openaiBaseUrl: parsed.OPENAI_BASE_URL.replace(/\/$/, ''),
   geminiApiKey: parsed.GEMINI_API_KEY,
   ollamaBaseUrl: parsed.OLLAMA_BASE_URL,

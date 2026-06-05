@@ -61,6 +61,17 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
       fullCouncil,
       debateMode,
       signal: abort.signal,
+      onPrecedents: (precedents) =>
+        sse(res, 'precedents', {
+          precedents: precedents.map((p) => ({
+            question: p.question,
+            date: p.date,
+            finalScore: p.finalScore,
+            finalRecommendation: p.finalRecommendation,
+            file: p.file,
+          })),
+        }),
+      onClerk: () => sse(res, 'clerk', { briefed: true }),
       hooks: {
         onSeats: (seats) =>
           sse(res, 'seats', {

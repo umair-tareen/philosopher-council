@@ -55,6 +55,12 @@ The council declined to amplify itself. The 0.35-0.69 score spread is the intere
 
 📜 **[Read the full transcript](examples/01-the-council-judges-itself.md)** - all ten opinions, the synthesis, and the self-critique pass, unedited. Transcripts from your own runs are saved to `data/asks/<date>-<question>.md`.
 
+## 📚 Precedent and the clerk
+
+The council develops **case law**: every deliberation is saved as a structured record, and when a similar question arrives (token-overlap retrieval - no vector store needed at this scale), the relevant precedents are put before the bench. The philosophers are instructed to follow or overturn prior conclusions *on the merits, and say which*. Transcripts list the precedents consulted, with links.
+
+For questions about events newer than the models' training data, the **clerk** can brief the bench first: set `TAVILY_API_KEY` and every ask starts with a web-research brief (marked as context to verify, not truth). Skip per-question with `--no-clerk`. Without the key, the stage is silently absent.
+
 ## 🏟️ The council chamber (web UI)
 
 ```bash
