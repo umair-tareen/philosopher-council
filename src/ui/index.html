@@ -171,8 +171,9 @@
   <div class="synth" id="minority">
     <h2>Minority report <span class="score" id="disagreement"></span></h2>
     <div class="spread" id="spread" style="display:none">
-      <div class="spreadtrack" id="spreadtrack"></div>
+      <div class="spreadtrack" id="spreadtrack" role="img"></div>
       <div class="spreadlabels"><span>0 · reject</span><span>score spread (gold = synthesis)</span><span>1 · embrace</span></div>
+      <p id="spreadtext" style="color: var(--muted); font-size: 0.8rem; margin-top: 0.4rem"></p>
     </div>
     <p id="minoritytext"></p>
   </div>
@@ -275,20 +276,32 @@ function fillCard(o) {
 function renderSpread(synthScore) {
   const track = $('spreadtrack');
   track.innerHTML = '';
-  for (const o of opinions) {
+  const sorted = [...opinions].sort((a, b) => b.verdictScore - a.verdictScore);
+  const parts = [];
+  for (const o of sorted) {
+    const label = `${o.displayName}: ${o.verdictScore.toFixed(2)}`;
     const dot = document.createElement('div');
     dot.className = 'spreaddot';
     dot.style.left = (o.verdictScore * 100) + '%';
-    dot.title = `${o.displayName}: ${o.verdictScore.toFixed(2)}`;
+    dot.title = label;
+    dot.setAttribute('role', 'img');
+    dot.setAttribute('aria-label', label);
     track.appendChild(dot);
+    parts.push(label);
   }
   if (typeof synthScore === 'number') {
+    const label = `Synthesis: ${synthScore.toFixed(2)}`;
     const dot = document.createElement('div');
     dot.className = 'spreaddot synthdot';
     dot.style.left = (synthScore * 100) + '%';
-    dot.title = `Synthesis: ${synthScore.toFixed(2)}`;
+    dot.title = label;
+    dot.setAttribute('role', 'img');
+    dot.setAttribute('aria-label', label);
     track.appendChild(dot);
+    parts.push(label);
   }
+  track.setAttribute('aria-label', 'Verdict score spread. ' + parts.join('; '));
+  $('spreadtext').textContent = parts.join(' · ');
   $('spread').style.display = 'block';
 }
 

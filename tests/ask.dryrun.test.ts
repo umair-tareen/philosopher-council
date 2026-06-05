@@ -35,6 +35,15 @@ describe('ask dry-run', () => {
     expect(verdict.opinions.length).toBe(10);
   });
 
+  it('aborts the deliberation when the signal fires', async () => {
+    const { runAsk } = await import('../src/pipeline/ask.js');
+    const controller = new AbortController();
+    controller.abort();
+    await expect(
+      runAsk({ question: 'Will this be cancelled?', signal: controller.signal }),
+    ).rejects.toThrow(/aborted/);
+  });
+
   it('frames questions as questions in the persona prompt', async () => {
     const { evaluateAs } = await import('../src/council/personas/_shared.js');
     const prompt = evaluateAs('Socrates', {

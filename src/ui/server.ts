@@ -12,6 +12,7 @@ import { logger } from '../logger.js';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 
 function sse(res: ServerResponse, event: string, data: unknown): void {
+  if (res.writableEnded || res.destroyed) return;
   res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 }
 
@@ -44,12 +45,22 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
     connection: 'keep-alive',
   });
 
+  // Stop burning provider calls the moment the browser tab goes away.
+  const abort = new AbortController();
+  res.on('close', () => {
+    if (!res.writableEnded) {
+      logger.info({ question: question.slice(0, 60) }, 'sse client disconnected; aborting deliberation');
+      abort.abort();
+    }
+  });
+
   try {
     sse(res, 'mode', { mode: debateMode, advisorReason });
     const { verdict, file } = await runAsk({
       question,
       fullCouncil,
       debateMode,
+      signal: abort.signal,
       hooks: {
         onSeats: (seats) =>
           sse(res, 'seats', {
@@ -73,6 +84,7 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
       ralph: verdict.ralph,
       minority: verdict.minority,
       mode: verdict.mode,
+      debateMode: verdict.debateMode,
       model: verdict.model,
       file,
     });

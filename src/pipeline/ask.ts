@@ -16,6 +16,8 @@ export interface AskOptions {
   debateMode?: DebateModeId;
   /** Optional live-progress hooks (used by the council chamber UI). */
   hooks?: CouncilHooks;
+  /** Aborts the deliberation (e.g. when the requesting client disconnects). */
+  signal?: AbortSignal;
 }
 
 export interface AskResult {
@@ -44,6 +46,7 @@ export async function runAsk(opts: AskOptions): Promise<AskResult> {
     mode,
     opts.hooks ?? {},
     opts.debateMode ?? 'deliberation',
+    opts.signal,
   );
   const markdown = renderAnswer(opts.question, verdict);
 

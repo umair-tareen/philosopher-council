@@ -19,6 +19,7 @@ export async function openAiCompatComplete(
 ): Promise<ProviderResult> {
   const res = await fetch(`${baseUrl}/chat/completions`, {
     method: 'POST',
+    signal: req.signal,
     headers: {
       'content-type': 'application/json',
       authorization: `Bearer ${apiKey}`,

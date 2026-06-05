@@ -28,6 +28,7 @@ export async function ralphLoop(
   opinions: PhilosopherOpinion[],
   synthesis: IbnArabiSynthesis,
   initialScore: number,
+  signal?: AbortSignal,
 ): Promise<RalphCritique[]> {
   const out: RalphCritique[] = [];
   let prevScore = initialScore;
@@ -40,6 +41,7 @@ export async function ralphLoop(
         user: buildUser(item, opinions, prevVerdict, prevScore),
         maxTokens: 700,
         model: config.councilModels['ralph'],
+        signal,
       });
       const raw = extractJson<{
         weaknesses?: string[];

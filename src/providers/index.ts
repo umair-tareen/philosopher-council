@@ -15,6 +15,7 @@ export interface ProviderRequest {
   user: string;
   maxTokens: number;
   model: string;
+  signal?: AbortSignal;
 }
 
 export interface ProviderResult {

@@ -61,6 +61,7 @@ async function callPhilosopher(
   item: TrendItem,
   onToken?: (token: string) => void,
   modeInstruction?: string,
+  signal?: AbortSignal,
 ): Promise<PhilosopherOpinion> {
   const persona = PERSONAS[id];
   const meta = PHILOSOPHERS[id];
@@ -73,6 +74,7 @@ async function callPhilosopher(
     maxTokens: 700,
     model: config.councilModels[id],
     onToken,
+    signal,
   });
   const raw = extractJson<RawOpinion>(text);
   const virtueScores = clampVirtues(raw.virtueScores);
@@ -99,12 +101,14 @@ async function callPhilosopher(
 async function callSynthesizer(
   item: TrendItem,
   opinions: PhilosopherOpinion[],
+  signal?: AbortSignal,
 ): Promise<IbnArabiSynthesis> {
   const { text } = await complete({
     system: ibnarabi.system,
     user: ibnarabi.user(item, opinions),
     maxTokens: 800,
     model: config.councilModels['ibnarabi'],
+    signal,
   });
   const raw = extractJson<IbnArabiSynthesis>(text);
   return {
@@ -142,6 +146,7 @@ async function callSpokesperson(
   synthesis: IbnArabiSynthesis,
   minority: MinorityReport,
   onToken?: (token: string) => void,
+  signal?: AbortSignal,
 ): Promise<string> {
   const opinionsText = opinions
     .map(
@@ -170,6 +175,7 @@ async function callSpokesperson(
     maxTokens: 600,
     model: config.councilModels['spokesperson'],
     onToken,
+    signal,
   });
   return text.trim();
 }
@@ -228,6 +234,7 @@ export async function runCouncil(
   mode: CouncilMode,
   hooks: CouncilHooks = {},
   debateModeId: DebateModeId = 'deliberation',
+  signal?: AbortSignal,
 ): Promise<CouncilVerdict> {
   const debateMode = DEBATE_MODES[debateModeId] ?? DEBATE_MODES.deliberation;
   const seats: QuorumSeat[] = debateMode.seats
@@ -259,6 +266,7 @@ export async function runCouncil(
   let nextSeat = 0;
   async function deliberate(): Promise<void> {
     for (;;) {
+      if (signal?.aborted) return;
       const i = nextSeat++;
       if (i >= seats.length) return;
       const seat = seats[i] as QuorumSeat;
@@ -272,6 +280,7 @@ export async function runCouncil(
           item,
           onToken,
           debateMode.instruction?.(i),
+          signal,
         );
         results[i] = opinion;
         hooks.onOpinion?.(opinion);
@@ -284,7 +293,8 @@ export async function runCouncil(
   await Promise.all(Array.from({ length: workers }, () => deliberate()));
   const opinions = results.filter((o): o is PhilosopherOpinion => o !== null);
 
-  const synthesis = await callSynthesizer(item, opinions);
+  if (signal?.aborted) throw new Error('aborted: client disconnected');
+  const synthesis = await callSynthesizer(item, opinions, signal);
   hooks.onSynthesis?.(synthesis);
 
   const aggregateScore =
@@ -294,7 +304,7 @@ export async function runCouncil(
 
   const consensus = buildConsensus(opinions, synthesis);
 
-  const ralph = await ralphLoop(item, opinions, synthesis, aggregateScore);
+  const ralph = await ralphLoop(item, opinions, synthesis, aggregateScore, signal);
   const finalScore = ralph.length
     ? (ralph[ralph.length - 1]?.refinedScore ?? aggregateScore)
     : aggregateScore;
@@ -305,7 +315,14 @@ export async function runCouncil(
   let answer: string | undefined;
   if (item.source === 'question') {
     try {
-      answer = await callSpokesperson(item, opinions, synthesis, minority, hooks.onAnswerToken);
+      answer = await callSpokesperson(
+        item,
+        opinions,
+        synthesis,
+        minority,
+        hooks.onAnswerToken,
+        signal,
+      );
       hooks.onAnswer?.(answer);
     } catch (err) {
       logger.warn({ err: String(err) }, 'spokesperson call failed; omitting answer');

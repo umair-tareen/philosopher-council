@@ -11,6 +11,8 @@ export interface CouncilCall {
   model?: string;
   /** Receive text deltas as they stream. The full text is still returned. */
   onToken?: (token: string) => void;
+  /** Abort in-flight provider calls (e.g. when an SSE client disconnects). */
+  signal?: AbortSignal;
   cacheKey?: string;
 }
 
@@ -20,6 +22,7 @@ export interface CouncilCallResult {
 }
 
 export async function complete(call: CouncilCall): Promise<CouncilCallResult> {
+  if (call.signal?.aborted) throw new Error('aborted: client disconnected');
   if (config.dryRun) {
     const text = mockComplete(call);
     if (call.onToken) {
@@ -46,13 +49,14 @@ export async function complete(call: CouncilCall): Promise<CouncilCallResult> {
           system: call.system,
           user: call.user,
           maxTokens: call.maxTokens ?? 1024,
+          signal: call.signal,
         },
         onToken,
       );
     } catch (err) {
       lastErr = err;
-      // Never retry after tokens reached the consumer - it would double-emit.
-      if (emitted) break;
+      // Never retry after an abort or after tokens reached the consumer.
+      if (call.signal?.aborted || emitted) break;
       const delay = 500 * 2 ** attempt;
       logger.warn(
         { attempt, provider: spec.provider, model: spec.model, err: String(err) },
