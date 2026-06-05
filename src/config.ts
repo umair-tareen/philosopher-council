@@ -20,6 +20,8 @@ const schema = z.object({
   EVAL_JUDGES: z
     .string()
     .default('anthropic:claude-sonnet-4-5,anthropic:claude-haiku-4-5-20251001'),
+  // How many philosopher seats deliberate concurrently (1 = sequential).
+  COUNCIL_CONCURRENCY: z.coerce.number().int().min(1).max(11).default(4),
   CRON_EXPR: z.string().default('0 */6 * * *'),
   SOURCES_REDDIT: z
     .string()
@@ -68,6 +70,7 @@ export const config = {
   councilModels: parsePairs(parsed.COUNCIL_MODELS),
   sourceWeights: parseSourceWeights(parsed.SOURCE_WEIGHTS),
   evalJudges: parsed.EVAL_JUDGES.split(',').map((s) => s.trim()).filter(Boolean),
+  councilConcurrency: parsed.COUNCIL_CONCURRENCY,
   cronExpr: parsed.CRON_EXPR,
   redditSubs: parsed.SOURCES_REDDIT.split(',').map((s) => s.trim()).filter(Boolean),
   maxItemsPerRun: parsed.MAX_ITEMS_PER_RUN,

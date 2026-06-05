@@ -253,26 +253,36 @@ export async function runCouncil(
   );
   hooks.onSeats?.(seats);
 
-  const opinions: PhilosopherOpinion[] = [];
-  for (let i = 0; i < seats.length; i++) {
-    const seat = seats[i] as QuorumSeat;
-    try {
-      const onToken = hooks.onToken
-        ? (t: string) => hooks.onToken?.(seat.id, t)
-        : undefined;
-      const opinion = await callPhilosopher(
-        seat.id,
-        seat.branch,
-        item,
-        onToken,
-        debateMode.instruction?.(i),
-      );
-      opinions.push(opinion);
-      hooks.onOpinion?.(opinion);
-    } catch (err) {
-      logger.warn({ seat, err: String(err) }, 'philosopher call failed; skipping');
+  // Seats deliberate concurrently (independent opinions by design - they never
+  // see each other's output). Results keep seat order; events fire on completion.
+  const results: Array<PhilosopherOpinion | null> = new Array(seats.length).fill(null);
+  let nextSeat = 0;
+  async function deliberate(): Promise<void> {
+    for (;;) {
+      const i = nextSeat++;
+      if (i >= seats.length) return;
+      const seat = seats[i] as QuorumSeat;
+      try {
+        const onToken = hooks.onToken
+          ? (t: string) => hooks.onToken?.(seat.id, t)
+          : undefined;
+        const opinion = await callPhilosopher(
+          seat.id,
+          seat.branch,
+          item,
+          onToken,
+          debateMode.instruction?.(i),
+        );
+        results[i] = opinion;
+        hooks.onOpinion?.(opinion);
+      } catch (err) {
+        logger.warn({ seat, err: String(err) }, 'philosopher call failed; skipping');
+      }
     }
   }
+  const workers = Math.min(config.councilConcurrency, seats.length);
+  await Promise.all(Array.from({ length: workers }, () => deliberate()));
+  const opinions = results.filter((o): o is PhilosopherOpinion => o !== null);
 
   const synthesis = await callSynthesizer(item, opinions);
   hooks.onSynthesis?.(synthesis);

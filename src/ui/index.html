@@ -8,7 +8,7 @@
   :root {
     --bg: #0d0f14; --panel: #151921; --panel2: #1b202b; --border: #2a3142;
     --text: #e8e6e1; --muted: #8b93a7; --gold: #c9a227; --gold2: #e6c35c;
-    --green: #3fb27f; --red: #d05c5c; --blue: #5c8ad0;
+    --green: #3fb27f; --red: #d05c5c; --blue: #5c8ad0; --amber: #e0a84f;
   }
   * { box-sizing: border-box; margin: 0; }
   body {
@@ -32,26 +32,28 @@
   .askbar input[type=text] {
     flex: 1; background: var(--panel); border: 1px solid var(--border);
     color: var(--text); padding: 0.85rem 1rem; border-radius: 10px;
-    font-family: inherit; font-size: 1rem;
+    font-family: inherit; font-size: 1rem; min-width: 0;
   }
   .askbar input[type=text]:focus { outline: 1px solid var(--gold); }
   .askbar button {
     background: linear-gradient(180deg, var(--gold2), var(--gold)); color: #1a1404;
     border: none; padding: 0 1.5rem; border-radius: 10px; font-size: 1rem;
-    font-family: inherit; cursor: pointer; font-weight: bold;
+    font-family: inherit; cursor: pointer; font-weight: bold; white-space: nowrap;
   }
   .askbar button:disabled { opacity: 0.45; cursor: wait; }
-  .options { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.4rem; display: flex; gap: 1.2rem; align-items: center; }
+  .options { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.4rem; display: flex; gap: 1.2rem; align-items: center; flex-wrap: wrap; }
   .options label { cursor: pointer; }
+  .options select { background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 0.2rem 0.4rem; font-family: inherit; }
 
   .status { color: var(--gold2); font-style: italic; min-height: 1.4rem; margin-bottom: 1rem; }
+  .status .count { color: var(--muted); font-style: normal; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 0.9rem; }
   .card {
     background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
     padding: 1rem 1.1rem; transition: border-color 0.4s, opacity 0.4s;
   }
-  .card.pending { opacity: 0.55; }
+  .card.pending { opacity: 0.6; }
   .card.pending .thinking { color: var(--muted); font-style: italic; animation: pulse 1.6s infinite; }
   @keyframes pulse { 50% { opacity: 0.35; } }
   .card.done { border-color: #3a4254; }
@@ -71,6 +73,13 @@
   .bar { height: 5px; background: var(--panel2); border-radius: 3px; overflow: hidden; margin-top: 3px; }
   .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold2)); width: 0; transition: width 0.8s ease; }
 
+  .livestream {
+    display: none; color: #5b6478; font-size: 0.72rem; line-height: 1.45;
+    max-height: 7.5em; overflow: hidden; margin-top: 0.4rem; white-space: pre-wrap;
+    border-top: 1px dashed var(--border); padding-top: 0.4rem;
+  }
+  .livelabel { display: none; color: var(--muted); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.5rem; }
+
   .synth {
     margin-top: 1.2rem; background: var(--panel2); border: 1px solid var(--gold);
     border-radius: 12px; padding: 1.2rem 1.3rem; display: none;
@@ -79,13 +88,31 @@
   .synth p { line-height: 1.6; margin-bottom: 0.7rem; }
   .synth p b { color: var(--gold2); }
 
+  #minority { border-color: var(--amber); }
+  #minority h2 { color: var(--amber); }
+  .spread { margin: 0.9rem 0 0.4rem; }
+  .spreadtrack { position: relative; height: 26px; background: var(--panel); border: 1px solid var(--border); border-radius: 13px; }
+  .spreaddot {
+    position: absolute; top: 50%; width: 12px; height: 12px; border-radius: 50%;
+    transform: translate(-50%, -50%); background: var(--blue); border: 2px solid var(--bg);
+  }
+  .spreaddot.synthdot { background: var(--gold2); width: 16px; height: 16px; z-index: 2; }
+  .spreadlabels { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.7rem; margin-top: 0.25rem; }
+
   .final {
-    margin-top: 1rem; display: none; text-align: center; padding: 1rem;
+    margin-top: 1rem; display: none; text-align: center; padding: 1.2rem;
     border-radius: 12px; border: 1px solid var(--border); background: var(--panel);
     font-size: 1.1rem;
   }
   .final .rec { text-transform: uppercase; letter-spacing: 0.2em; font-weight: bold; }
   .rec.amplify { color: var(--green); } .rec.track { color: var(--gold2); } .rec.ignore { color: var(--red); }
+  .final .actions { margin-top: 0.8rem; }
+  .final .actions button {
+    background: var(--panel2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.45rem 0.9rem; cursor: pointer; font-family: inherit;
+    font-size: 0.85rem; margin: 0 0.3rem;
+  }
+  .final .actions button:hover { border-color: var(--gold); }
 
   .library { margin-top: 2.4rem; }
   .library h2 { color: var(--muted); font-weight: normal; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.7rem; }
@@ -97,6 +124,14 @@
     max-height: 480px; overflow: auto;
   }
   .err { color: var(--red); }
+
+  @media (max-width: 640px) {
+    header h1 { font-size: 1.4rem; }
+    .askbar { flex-direction: column; }
+    .askbar button { padding: 0.8rem; }
+    .options { gap: 0.7rem; font-size: 0.85rem; }
+    .grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -108,14 +143,13 @@
 
 <div class="wrap">
   <div class="askbar">
-    <input id="q" type="text" placeholder="Put a question to the council…"
-           value="">
+    <input id="q" type="text" placeholder="Put a question to the council…" value="">
     <button id="go">Convene</button>
   </div>
   <div class="options">
     <label><input type="checkbox" id="full"> Full council (all ten deliberators)</label>
     <label>Format:
-      <select id="mode" style="background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 0.2rem 0.4rem; font-family: inherit;">
+      <select id="mode">
         <option value="deliberation">Deliberation</option>
         <option value="socratic">Socratic interrogation</option>
         <option value="oxford">Oxford debate</option>
@@ -134,16 +168,20 @@
     <p id="answertext" style="font-size: 1.05rem"></p>
   </div>
 
+  <div class="synth" id="minority">
+    <h2>Minority report <span class="score" id="disagreement"></span></h2>
+    <div class="spread" id="spread" style="display:none">
+      <div class="spreadtrack" id="spreadtrack"></div>
+      <div class="spreadlabels"><span>0 · reject</span><span>score spread (gold = synthesis)</span><span>1 · embrace</span></div>
+    </div>
+    <p id="minoritytext"></p>
+  </div>
+
   <div class="synth" id="synth">
     <h2>Ibn ʿArabī - Synthesis <span class="score" id="synthscore"></span></h2>
     <p><b>Unifying reading.</b> <span id="s1"></span></p>
     <p><b>Hidden continuity.</b> <span id="s2"></span></p>
     <p><b>Caution.</b> <span id="s3"></span></p>
-  </div>
-
-  <div class="synth" id="minority" style="border-color: #d08c2e">
-    <h2 style="color: #e0a84f">Minority report <span class="score" id="disagreement"></span></h2>
-    <p id="minoritytext"></p>
   </div>
 
   <div class="final" id="final"></div>
@@ -158,29 +196,57 @@
 <script>
 const $ = (id) => document.getElementById(id);
 let source = null;
+let opinions = [];
+let seatCount = 0;
+let lastFile = null;
+
+// All model/server strings render through this before touching innerHTML.
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+  );
+}
+
+const EXAMPLES = [
+  'Should we fine-tune a model or invest in better prompting and retrieval?',
+  'Is this AI trend hype or substance? Paste the claim…',
+  'Should agentic AI systems be allowed to spend money autonomously?',
+  'Will small local models displace frontier APIs for most production use?',
+  'Is it ethical to use AI companions to reduce loneliness?',
+  'Should our team ship this feature behind a human-in-the-loop?',
+];
+let exIdx = 0;
+const rotatePlaceholder = setInterval(() => {
+  if (document.activeElement === $('q') || $('q').value) return;
+  exIdx = (exIdx + 1) % EXAMPLES.length;
+  $('q').placeholder = EXAMPLES[exIdx];
+}, 3500);
+$('q').placeholder = EXAMPLES[0];
 
 function virtueBars(v) {
   const axes = ['wisdom','courage','justice','temperance'];
   return '<div class="virtues">' + axes.map(a =>
-    `<div><div class="virtue">${a}</div><div class="bar"><i data-w="${Math.round((v?.[a] ?? 0)*100)}"></i></div></div>`
+    `<div><div class="virtue">${a}</div><div class="bar"><i data-w="${Math.round((Number(v?.[a]) || 0)*100)}"></i></div></div>`
   ).join('') + '</div>';
 }
 
 function seatCard(seat) {
-  return `<div class="card pending" id="card-${seat.id}">
-    <h3>${seat.displayName}<span class="badge">${seat.branch}</span></h3>
-    <div class="meta">${seat.tradition}</div>
+  return `<div class="card pending" id="card-${esc(seat.id)}">
+    <h3>${esc(seat.displayName)}<span class="badge">${esc(seat.branch)}</span></h3>
+    <div class="meta">${esc(seat.tradition)}</div>
     <div class="thinking">deliberating…</div>
-    <div class="livestream mono" id="live-${seat.id}" style="display:none; color: var(--muted); font-size: 0.72rem; line-height: 1.45; max-height: 7.5em; overflow: hidden; margin-top: 0.4rem; white-space: pre-wrap;"></div>
+    <div class="livelabel" id="livelabel-${esc(seat.id)}">✍ thinking aloud (raw stream)</div>
+    <div class="livestream mono" id="live-${esc(seat.id)}"></div>
   </div>`;
 }
 
 function appendToken(philosopher, t) {
   const live = $('live-' + philosopher);
+  const label = $('livelabel-' + philosopher);
   if (!live) return;
   live.style.display = 'block';
-  live.textContent += t;
-  // keep the tail visible while streaming
+  if (label) label.style.display = 'block';
+  live.textContent += t;           // textContent: raw model output stays inert
   live.scrollTop = live.scrollHeight;
 }
 
@@ -190,11 +256,11 @@ function fillCard(o) {
   card.classList.remove('pending');
   card.classList.add('done');
   card.innerHTML = `
-    <span class="score">${o.verdictScore.toFixed(2)}</span>
-    <h3>${o.displayName}<span class="badge">${o.branch}</span></h3>
-    <div class="meta">${o.model ? o.model : ''}</div>
-    <div class="oneliner">“${o.oneLiner}”</div>
-    <div class="reasoning">${o.reasoning}${o.concerns?.length ? '<br><br>Concerns: ' + o.concerns.join(' · ') : ''}</div>
+    <span class="score">${esc(o.verdictScore.toFixed(2))}</span>
+    <h3>${esc(o.displayName)}<span class="badge">${esc(o.branch)}</span></h3>
+    <div class="meta">${esc(o.model || '')}</div>
+    <div class="oneliner">“${esc(o.oneLiner)}”</div>
+    <div class="reasoning">${esc(o.reasoning)}${o.concerns?.length ? '<br><br>Concerns: ' + esc(o.concerns.join(' · ')) : ''}</div>
     ${virtueBars(o.virtueScores)}
     <span class="toggle">show reasoning</span>`;
   card.querySelector('.toggle').onclick = () => {
@@ -206,19 +272,47 @@ function fillCard(o) {
   });
 }
 
+function renderSpread(synthScore) {
+  const track = $('spreadtrack');
+  track.innerHTML = '';
+  for (const o of opinions) {
+    const dot = document.createElement('div');
+    dot.className = 'spreaddot';
+    dot.style.left = (o.verdictScore * 100) + '%';
+    dot.title = `${o.displayName}: ${o.verdictScore.toFixed(2)}`;
+    track.appendChild(dot);
+  }
+  if (typeof synthScore === 'number') {
+    const dot = document.createElement('div');
+    dot.className = 'spreaddot synthdot';
+    dot.style.left = (synthScore * 100) + '%';
+    dot.title = `Synthesis: ${synthScore.toFixed(2)}`;
+    track.appendChild(dot);
+  }
+  $('spread').style.display = 'block';
+}
+
+function setStatus(text, n, total) {
+  $('status').classList.remove('err');
+  $('status').innerHTML = esc(text) +
+    (total ? ` <span class="count">${n}/${total} opinions in</span>` : '');
+}
+
 function convene() {
   const q = $('q').value.trim();
   if (!q) return;
   if (source) source.close();
+  opinions = []; seatCount = 0; lastFile = null;
   $('go').disabled = true;
   $('grid').innerHTML = '';
   $('synth').style.display = 'none';
   $('answer').style.display = 'none';
   $('answertext').textContent = '';
   $('minority').style.display = 'none';
+  $('spread').style.display = 'none';
   $('final').style.display = 'none';
-  $('status').textContent = 'The council convenes…';
-  $('status').classList.remove('err');
+  $('modeinfo').textContent = '';
+  setStatus('The council convenes…');
 
   const url = '/api/ask/stream?q=' + encodeURIComponent(q)
     + ($('full').checked ? '&full=1' : '')
@@ -227,23 +321,23 @@ function convene() {
 
   source.addEventListener('mode', (e) => {
     const m = JSON.parse(e.data);
-    $('modeinfo').textContent = m.advisorReason
-      ? `advisor chose ${m.mode}: ${m.advisorReason}`
-      : '';
+    if (m.advisorReason) $('modeinfo').textContent = `advisor chose ${m.mode}: ${m.advisorReason}`;
   });
   source.addEventListener('seats', (e) => {
     const { seats } = JSON.parse(e.data);
+    seatCount = seats.length;
     $('grid').innerHTML = seats.map(seatCard).join('');
-    $('status').textContent = `${seats.length} deliberators seated. Opinions arrive as each concludes.`;
+    setStatus('Deliberating in parallel - opinions land as each concludes.', 0, seatCount);
   });
   source.addEventListener('token', (e) => {
     const { philosopher, t } = JSON.parse(e.data);
     appendToken(philosopher, t);
   });
-  source.addEventListener('opinion', (e) => fillCard(JSON.parse(e.data)));
-  source.addEventListener('answertoken', (e) => {
-    $('answertext').textContent += JSON.parse(e.data).t;
-    $('answer').style.display = 'block';
+  source.addEventListener('opinion', (e) => {
+    const o = JSON.parse(e.data);
+    opinions.push(o);
+    fillCard(o);
+    setStatus('Deliberating in parallel - opinions land as each concludes.', opinions.length, seatCount);
   });
   source.addEventListener('synthesis', (e) => {
     const s = JSON.parse(e.data);
@@ -252,37 +346,47 @@ function convene() {
     $('s3').textContent = s.mysticalCaution;
     $('synthscore').textContent = s.unifiedScore.toFixed(2);
     $('synth').style.display = 'block';
-    $('status').textContent = 'Synthesis delivered. Self-critique in progress…';
+    setStatus('Synthesis delivered. Composing the answer…');
+  });
+  source.addEventListener('answertoken', (e) => {
+    $('answertext').textContent += JSON.parse(e.data).t;
+    $('answer').style.display = 'block';
   });
   source.addEventListener('answer', (e) => {
-    // replace the streamed tokens with the final trimmed answer
     $('answertext').textContent = JSON.parse(e.data).answer;
     $('answer').style.display = 'block';
   });
   source.addEventListener('verdict', (e) => {
     const v = JSON.parse(e.data);
+    lastFile = v.file ? String(v.file).split(/[\\/]/).pop() : null;
     if (v.minority) {
       $('disagreement').textContent = v.minority.disagreement.toFixed(2);
       let html = '';
       if (v.minority.contestedVirtues?.length) {
-        html += `The council split hardest on <b>${v.minority.contestedVirtues.join(', ')}</b>. `;
+        html += `The council split hardest on <b>${esc(v.minority.contestedVirtues.join(', '))}</b>. `;
       }
       if (v.minority.dissenter) {
         const d = v.minority.dissenter;
-        html += `<b>${d.displayName}</b> dissented (${d.verdictScore.toFixed(2)}, ${d.delta > 0 ? '+' : ''}${d.delta.toFixed(2)} vs synthesis): <i>“${d.oneLiner}”</i>`;
+        html += `<b>${esc(d.displayName)}</b> dissented (${esc(d.verdictScore.toFixed(2))}, ${d.delta > 0 ? '+' : ''}${esc(d.delta.toFixed(2))} vs synthesis): <i>“${esc(d.oneLiner)}”</i>`;
       }
-      if (html) {
-        $('minoritytext').innerHTML = html;
-        $('minority').style.display = 'block';
-      }
+      if (!html) html = 'The council was broadly aligned on this one.';
+      $('minoritytext').innerHTML = html;
+      const synthScore = parseFloat($('synthscore').textContent);
+      renderSpread(Number.isFinite(synthScore) ? synthScore : undefined);
+      $('minority').style.display = 'block';
     }
     $('final').innerHTML =
-      `Final score <b>${v.finalScore.toFixed(2)}</b> · ` +
-      `<span class="rec ${v.finalRecommendation}">${v.finalRecommendation}</span>` +
+      `Final score <b>${esc(v.finalScore.toFixed(2))}</b> · ` +
+      `<span class="rec ${esc(v.finalRecommendation)}">${esc(v.finalRecommendation)}</span>` +
       `<div class="meta mono" style="color:var(--muted);font-size:0.78rem;margin-top:0.4rem">` +
-      `${v.mode} · ${v.model} · ${v.ralph.length} self-critique pass(es) · saved ${v.file}</div>`;
+      `${esc(v.mode)}${v.debateMode && v.debateMode !== 'deliberation' ? ' · ' + esc(v.debateMode) : ''} · ${esc(v.model)} · ${esc(String(v.ralph?.length ?? 0))} self-critique pass(es)</div>` +
+      `<div class="actions">` +
+      `<button onclick="copyTranscript()">Copy markdown</button>` +
+      `<button onclick="downloadTranscript()">Download transcript</button>` +
+      `</div>`;
     $('final').style.display = 'block';
-    $('status').textContent = '';
+    setStatus('');
+    $('answer').scrollIntoView({ behavior: 'smooth', block: 'start' });
     loadLibrary();
   });
   source.addEventListener('error', (e) => {
@@ -295,15 +399,40 @@ function convene() {
   source.onerror = () => { source.close(); $('go').disabled = false; };
 }
 
+async function fetchTranscript(file) {
+  const res = await fetch('/api/transcripts/' + encodeURIComponent(file));
+  if (!res.ok) throw new Error('transcript not found');
+  return res.text();
+}
+
+async function copyTranscript(file) {
+  const f = file || lastFile;
+  if (!f) return;
+  await navigator.clipboard.writeText(await fetchTranscript(f));
+  setStatus('Transcript copied to clipboard.');
+  setTimeout(() => setStatus(''), 2000);
+}
+
+async function downloadTranscript(file) {
+  const f = file || lastFile;
+  if (!f) return;
+  const blob = new Blob([await fetchTranscript(f)], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = f;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 async function loadLibrary() {
   const res = await fetch('/api/transcripts');
   const items = await res.json();
   $('list').innerHTML = items.length
-    ? items.map(t => `<a href="#" data-f="${t.file}">${t.name}</a>`).join('')
+    ? items.map(t => `<a href="#" data-f="${esc(t.file)}">${esc(t.name)}</a>`).join('')
     : '<span style="color:var(--muted)">No transcripts yet. Convene the council above.</span>';
   $('list').querySelectorAll('a').forEach(a => a.onclick = async (ev) => {
     ev.preventDefault();
-    const md = await (await fetch('/api/transcripts/' + a.dataset.f)).text();
+    const md = await fetchTranscript(a.dataset.f);
     $('transcript').textContent = md;
     $('transcript').style.display = 'block';
     $('transcript').scrollIntoView({ behavior: 'smooth' });
