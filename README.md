@@ -55,6 +55,14 @@ The council declined to amplify itself. The 0.35-0.69 score spread is the intere
 
 📜 **[Read the full transcript](examples/01-the-council-judges-itself.md)** - all ten opinions, the synthesis, and the self-critique pass, unedited. Transcripts from your own runs are saved to `data/asks/<date>-<question>.md`.
 
+## 🏟️ The council chamber (web UI)
+
+```bash
+pnpm ui          # -> http://localhost:4173
+```
+
+A zero-dependency local web UI: put a question to the council and watch the deliberation stream in live - each philosopher's card fills in as their opinion concludes (virtue bars, one-liner, expandable reasoning, which `provider:model` produced it), followed by the synthesis panel and final verdict. Past transcripts are browsable from the same page. Works in `DRY_RUN=1` for an instant offline demo.
+
 ## 🤔 Why philosophy, and why now
 
 Philosophy is already running inside production AI - it's just uncredited:
@@ -72,13 +80,25 @@ So: if a constitution of principles can align a model, a council of philosophers
 ## ⚡ First sixty seconds (no API key needed)
 
 ```bash
+git clone https://github.com/umair-tareen/philosopher-council.git
+cd philosopher-council
 pnpm install
 pnpm build                          # type-check
 pnpm test                           # vitest, all dry-run mocks
 
 $env:DRY_RUN = "1"                  # (PowerShell) or DRY_RUN=1 on bash
 pnpm ask "What is a benchmark, really?"   # mock model, instant
+pnpm ui                             # council chamber on :4173, offline demo
 pnpm trends:run --offline           # full pipeline on fixture data
+```
+
+### Docker
+
+```bash
+docker build -t philosopher-council .
+docker run -p 4173:4173 --env-file .env -v council-data:/app/data philosopher-council
+# or one-off CLI runs:
+docker run --env-file .env philosopher-council pnpm ask "your question"
 ```
 
 ## 🔑 Live mode (Claude API)

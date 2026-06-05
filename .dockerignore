@@ -1,0 +1,10 @@
+node_modules
+data
+.test-data
+.env
+.env.local
+.git
+examples
+assets
+*.md
+!canon/*.md
