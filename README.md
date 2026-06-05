@@ -151,21 +151,23 @@ Now Lao Tzu deliberates on a local 7B (fitting, for the philosopher of doing les
 
 ## 📊 Does it actually work? (eval)
 
-`pnpm eval` blind-judges three strategies on the same questions: a **single direct answer** (1 call), a **generic Advocate/Critic/Judge debate** (3 calls), and the **philosopher council** (7 calls). Answers are anonymized and shuffled; the judge scores insight, rigor, blind-spot coverage, and actionability.
+`pnpm eval` blind-judges three strategies on the same questions: a **single direct answer** (1 call), a **generic Advocate/Critic/Judge debate** (3 calls), and the **philosopher council** (7 calls). Answers are anonymized and shuffled; judges score insight, rigor, blind-spot coverage, and actionability.
 
-The first live run (N=5) was an honest loss - and the most useful result this project has produced:
+**Main result** - N=50 fixed public question set ([evals/questions.json](evals/questions.json)), two blind judges, ranks derived from averaged scores:
 
-| Strategy | v1 score | v1 wins | v2 score | v2 wins |
-|----------|---------|---------|---------|---------|
-| single   | 0.763   | 5/5     | 0.758   | 1/5     |
-| debate   | 0.667   | 0/5     | 0.588   | 0/5     |
-| council  | 0.370   | 0/5     | **0.717** | **4/5** |
+| Strategy | Mean score | Wins (rank 1) |
+|----------|-----------|---------------|
+| **council** | **0.728** | **31/50 (62%)** |
+| single   | 0.717   | 18/50 |
+| debate   | 0.573   | 1/50  |
 
-**What happened between v1 and v2.** The judge's rationales in v1 were unanimous: the council "spends more effort critiquing its own methodology than addressing the question." The architecture evaluated questions but never answered them - the synthesis described the deliberation instead of delivering a verdict on the matter. The fix was a **spokesperson stage**: one final call that converts the deliberation into a direct first-order answer. In v2 the council wins 4/5 head-to-head, with the judge crediting it for "identifying hidden assumptions in the question itself" and "surfacing specific blindspots" - exactly what eleven lenses are for.
+The council beats a single direct answer head-to-head 31-18, and generic debate is not close - which is the project's thesis in one row: *named perspectives with documented methodologies outperform generic debate roles.*
 
-Full unedited reports: [v1](evals/2026-06-05-v1-no-spokesperson.md) · [v2](evals/2026-06-05-v2-with-spokesperson.md)
+**How we got here (the part most benchmarks hide).** The first live run (N=5) was a loss: the council scored 0.370 vs 0.763 for a single answer, because the architecture evaluated questions without ever answering them - the judges unanimously said it "spends more effort critiquing its own methodology than addressing the question." The fix was the **spokesperson stage** (deliberation in, direct answer out), which flipped the result. All three unedited reports are committed:
 
-**Caveats, honestly:** single LLM judge (shares biases with the systems under test), small N, council burns 7x the calls of a single answer for its win rate. Directional signal, not a benchmark. Run your own: `pnpm eval "your question"`.
+[v1 - the loss](evals/2026-06-05-v1-no-spokesperson.md) · [v2 - after the fix, N=5](evals/2026-06-05-v2-with-spokesperson.md) · [v3 - main result, N=50](evals/2026-06-05-v3-n50-multijudge.md)
+
+**Caveats, honestly:** both judges are same-family (Claude) models and share biases with two of the three strategies under test; the council burns 7x the calls of a single answer for a +0.011 mean and a 62% win rate; the mean margin is narrow even where the win rate is not. Reproduce it: `pnpm eval --file evals/questions.json`.
 
 ## 🏛️ The eleven philosophers
 
