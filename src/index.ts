@@ -77,6 +77,15 @@ program
     console.log(`\nReport saved to ${report.file}`);
   });
 
+program
+  .command('ui')
+  .description('serve the council chamber web UI')
+  .option('-p, --port <port>', 'port to listen on', parseInt)
+  .action(async (opts) => {
+    const { serveUi } = await import('./ui/server.js');
+    await serveUi(opts.port || 4173);
+  });
+
 program.command('serve').action(async () => {
   await serve();
 });

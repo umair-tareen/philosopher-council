@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { config } from '../config.js';
-import { runCouncil } from '../council/council.js';
+import { runCouncil, type CouncilHooks } from '../council/council.js';
 import { logger } from '../logger.js';
 import { slugify } from '../store/fs.js';
 import type { CouncilMode, CouncilVerdict, TrendItem } from '../types.js';
@@ -11,6 +11,8 @@ export interface AskOptions {
   question: string;
   context?: string;
   fullCouncil?: boolean;
+  /** Optional live-progress hooks (used by the council chamber UI). */
+  hooks?: CouncilHooks;
 }
 
 export interface AskResult {
@@ -34,7 +36,7 @@ export async function runAsk(opts: AskOptions): Promise<AskResult> {
   };
 
   const mode: CouncilMode = opts.fullCouncil ? 'full' : 'quorum';
-  const verdict = await runCouncil(item, mode);
+  const verdict = await runCouncil(item, mode, opts.hooks ?? {});
   const markdown = renderAnswer(opts.question, verdict);
 
   const dir = path.join(config.dataDir, 'asks');

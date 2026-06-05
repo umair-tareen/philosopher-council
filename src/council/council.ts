@@ -107,9 +107,16 @@ async function callSynthesizer(
   };
 }
 
+export interface CouncilHooks {
+  onSeats?: (seats: Array<{ id: PhilosopherId; branch: Branch }>) => void;
+  onOpinion?: (opinion: PhilosopherOpinion) => void;
+  onSynthesis?: (synthesis: IbnArabiSynthesis) => void;
+}
+
 export async function runCouncil(
   item: TrendItem,
   mode: CouncilMode,
+  hooks: CouncilHooks = {},
 ): Promise<CouncilVerdict> {
   const seats: QuorumSeat[] =
     mode === 'full'
@@ -123,17 +130,21 @@ export async function runCouncil(
     { item: item.id, mode, seats: seats.map((s) => `${s.id}:${s.branch}`) },
     'council convene',
   );
+  hooks.onSeats?.(seats);
 
   const opinions: PhilosopherOpinion[] = [];
   for (const seat of seats) {
     try {
-      opinions.push(await callPhilosopher(seat.id, seat.branch, item));
+      const opinion = await callPhilosopher(seat.id, seat.branch, item);
+      opinions.push(opinion);
+      hooks.onOpinion?.(opinion);
     } catch (err) {
       logger.warn({ seat, err: String(err) }, 'philosopher call failed; skipping');
     }
   }
 
   const synthesis = await callSynthesizer(item, opinions);
+  hooks.onSynthesis?.(synthesis);
 
   const aggregateScore =
     opinions.length === 0
