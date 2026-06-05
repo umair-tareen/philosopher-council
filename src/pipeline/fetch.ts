@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fetchAll } from '../fetchers/index.js';
+import { loadTitleCorpus, noveltyFor, saveTitleCorpus } from '../filter/novelty.js';
 import { rankByScore } from '../filter/score.js';
 import { config } from '../config.js';
 import { logger } from '../logger.js';
@@ -16,6 +17,11 @@ interface FetchOptions {
 export async function runFetch(opts: FetchOptions = {}): Promise<TrendItem[]> {
   const items = opts.offline ? await loadFixtureItems() : await fetchAll();
   const tagged = items.filter((i) => i.tags.length > 0);
+
+  // Novelty: compare each title against the recent corpus before ranking.
+  const corpus = await loadTitleCorpus();
+  for (const item of tagged) item.novelty = noveltyFor(item.title, corpus);
+
   const ranked = rankByScore(tagged);
 
   const seen = await loadSeen();
@@ -27,6 +33,7 @@ export async function runFetch(opts: FetchOptions = {}): Promise<TrendItem[]> {
     seen.add(item.id);
   }
   await saveSeen(seen);
+  await saveTitleCorpus(corpus, limited);
 
   logger.info(
     { fetched: items.length, tagged: tagged.length, fresh: fresh.length, saved: limited.length },

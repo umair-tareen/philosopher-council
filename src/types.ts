@@ -38,6 +38,8 @@ export interface TrendItem {
   summary?: string;
   rawScore?: number;
   tags: string[];
+  /** 1 = nothing like it seen recently, 0 = near-duplicate of a past title. */
+  novelty?: number;
 }
 
 export interface PhilosopherOpinion {

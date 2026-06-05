@@ -12,6 +12,8 @@ const schema = z.object({
   DEFAULT_MODEL: z.string().default(''),
   // Per-seat overrides, e.g. "laotzu=ollama:llama3.1,kant=openai:gpt-4o,ralph=anthropic:claude-haiku-4-5-20251001"
   COUNCIL_MODELS: z.string().default(''),
+  // Per-source ranking weights, e.g. "arxiv=1.2,reddit=0.9,hn=1.0"
+  SOURCE_WEIGHTS: z.string().default('arxiv=1.2,hn=1.0,reddit=1.0'),
   CRON_EXPR: z.string().default('0 */6 * * *'),
   SOURCES_REDDIT: z
     .string()
@@ -26,7 +28,7 @@ const schema = z.object({
 
 const parsed = schema.parse(process.env);
 
-function parseCouncilModels(raw: string): Record<string, string> {
+function parsePairs(raw: string): Record<string, string> {
   const out: Record<string, string> = {};
   for (const pair of raw.split(',')) {
     const trimmed = pair.trim();
@@ -34,8 +36,17 @@ function parseCouncilModels(raw: string): Record<string, string> {
     const eq = trimmed.indexOf('=');
     if (eq === -1) continue;
     const id = trimmed.slice(0, eq).trim();
-    const spec = trimmed.slice(eq + 1).trim();
-    if (id && spec) out[id] = spec;
+    const value = trimmed.slice(eq + 1).trim();
+    if (id && value) out[id] = value;
+  }
+  return out;
+}
+
+function parseSourceWeights(raw: string): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [source, value] of Object.entries(parsePairs(raw))) {
+    const n = Number(value);
+    if (Number.isFinite(n) && n >= 0) out[source] = n;
   }
   return out;
 }
@@ -47,7 +58,8 @@ export const config = {
   geminiApiKey: parsed.GEMINI_API_KEY,
   ollamaBaseUrl: parsed.OLLAMA_BASE_URL,
   defaultModel: parsed.DEFAULT_MODEL || `anthropic:${parsed.ANTHROPIC_MODEL}`,
-  councilModels: parseCouncilModels(parsed.COUNCIL_MODELS),
+  councilModels: parsePairs(parsed.COUNCIL_MODELS),
+  sourceWeights: parseSourceWeights(parsed.SOURCE_WEIGHTS),
   cronExpr: parsed.CRON_EXPR,
   redditSubs: parsed.SOURCES_REDDIT.split(',').map((s) => s.trim()).filter(Boolean),
   maxItemsPerRun: parsed.MAX_ITEMS_PER_RUN,

@@ -1,3 +1,4 @@
+import { config } from '../config.js';
 import type { TrendItem } from '../types.js';
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -11,7 +12,19 @@ export function heuristicScore(item: TrendItem, now = Date.now()): number {
   return 0.5 * recency + 0.3 * tagBoost + 0.2 * rawNorm;
 }
 
+/**
+ * Final ranking score: heuristic base, scaled by per-source weight
+ * (SOURCE_WEIGHTS env) and novelty (0.75x for a near-duplicate title,
+ * 1.25x for something never seen).
+ */
+export function rankingScore(item: TrendItem, now = Date.now()): number {
+  const base = heuristicScore(item, now);
+  const weight = config.sourceWeights[item.source] ?? 1;
+  const noveltyFactor = 0.75 + 0.5 * (item.novelty ?? 0.5);
+  return base * weight * noveltyFactor;
+}
+
 export function rankByScore(items: TrendItem[]): TrendItem[] {
   const now = Date.now();
-  return [...items].sort((a, b) => heuristicScore(b, now) - heuristicScore(a, now));
+  return [...items].sort((a, b) => rankingScore(b, now) - rankingScore(a, now));
 }

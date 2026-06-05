@@ -124,6 +124,10 @@ export function mockComplete(call: CouncilCall): string {
     });
   }
 
+  if (/"why now" paragraph/i.test(call.system)) {
+    return 'Today\'s items converge on the cost of reasoning: minimal prompting, self-critique loops, and council-style aggregation are all attempts to buy reliability without buying scale. That this cluster surfaced in the same week suggests the field is rotating from capability questions to verification questions. The practical stakes: whoever standardises cheap verification first sets the defaults everyone else inherits.';
+  }
+
   if (/You are the Advocate/i.test(call.system)) {
     return 'The strongest case for the proposition: it concentrates accountability, compounds iteration speed, and the empirical record so far shows more gain than harm when bounded by clear limits.';
   }
