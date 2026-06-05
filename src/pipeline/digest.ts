@@ -157,6 +157,9 @@ function renderEntry(item: TrendItem, v: CouncilVerdict): string {
     `  - Council (${v.mode}):`,
     opinions,
     `  - Synthesis (Ibn ʿArabī, ${v.synthesis.unifiedScore.toFixed(2)}): ${v.synthesis.unifyingReading}`,
+    v.minority?.dissenter
+      ? `  - Dissent (disagreement ${v.minority.disagreement.toFixed(2)}): ${v.minority.dissenter.displayName} - ${v.minority.dissenter.oneLiner}`
+      : `  - Dissent: none recorded`,
     `  - Mystical caution: ${v.synthesis.mysticalCaution}`,
     `  - Ralph loop:`,
     ralphSummary,

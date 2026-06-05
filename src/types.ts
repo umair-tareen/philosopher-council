@@ -63,6 +63,23 @@ export interface IbnArabiSynthesis {
   unifiedScore: number;
 }
 
+export interface MinorityReport {
+  /** 0..1 - normalized dispersion of verdict scores across the deliberators. */
+  disagreement: number;
+  /** Virtue axes where the council split hardest. */
+  contestedVirtues: Virtue[];
+  /** The opinion furthest from the synthesizer's unified reading. */
+  dissenter?: {
+    philosopher: PhilosopherId;
+    displayName: string;
+    verdictScore: number;
+    /** Signed distance from the synthesis unifiedScore. */
+    delta: number;
+    oneLiner: string;
+    reasoning: string;
+  };
+}
+
 export interface RalphCritique {
   iteration: number;
   weaknesses: string[];
@@ -80,6 +97,8 @@ export interface CouncilVerdict {
   ralph: RalphCritique[];
   /** Direct first-order answer (spokesperson stage; present for question items). */
   answer?: string;
+  /** Where the council split: disagreement metrics and the strongest dissent. */
+  minority: MinorityReport;
   finalScore: number;
   finalRecommendation: Recommendation;
   model: string;

@@ -132,6 +132,11 @@
     <p><b>Caution.</b> <span id="s3"></span></p>
   </div>
 
+  <div class="synth" id="minority" style="border-color: #d08c2e">
+    <h2 style="color: #e0a84f">Minority report <span class="score" id="disagreement"></span></h2>
+    <p id="minoritytext"></p>
+  </div>
+
   <div class="final" id="final"></div>
 
   <div class="library">
@@ -190,6 +195,7 @@ function convene() {
   $('grid').innerHTML = '';
   $('synth').style.display = 'none';
   $('answer').style.display = 'none';
+  $('minority').style.display = 'none';
   $('final').style.display = 'none';
   $('status').textContent = 'The council convenes…';
   $('status').classList.remove('err');
@@ -218,6 +224,21 @@ function convene() {
   });
   source.addEventListener('verdict', (e) => {
     const v = JSON.parse(e.data);
+    if (v.minority) {
+      $('disagreement').textContent = v.minority.disagreement.toFixed(2);
+      let html = '';
+      if (v.minority.contestedVirtues?.length) {
+        html += `The council split hardest on <b>${v.minority.contestedVirtues.join(', ')}</b>. `;
+      }
+      if (v.minority.dissenter) {
+        const d = v.minority.dissenter;
+        html += `<b>${d.displayName}</b> dissented (${d.verdictScore.toFixed(2)}, ${d.delta > 0 ? '+' : ''}${d.delta.toFixed(2)} vs synthesis): <i>“${d.oneLiner}”</i>`;
+      }
+      if (html) {
+        $('minoritytext').innerHTML = html;
+        $('minority').style.display = 'block';
+      }
+    }
     $('final').innerHTML =
       `Final score <b>${v.finalScore.toFixed(2)}</b> · ` +
       `<span class="rec ${v.finalRecommendation}">${v.finalRecommendation}</span>` +

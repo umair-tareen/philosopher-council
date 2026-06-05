@@ -2,6 +2,7 @@ import type {
   CouncilMode,
   CouncilVerdict,
   IbnArabiSynthesis,
+  MinorityReport,
   PhilosopherId,
   PhilosopherOpinion,
   Recommendation,
@@ -119,6 +120,7 @@ const SPOKESPERSON_SYSTEM = `You are the council's spokesperson. The deliberatio
 Rules:
 - Open with your position in the first sentence. No throat-clearing, no describing the deliberation.
 - 200-300 words: the position, the strongest reasons for it (drawn from the deliberators), the strongest dissent and why it does not carry the day (or how it qualifies the answer), and what evidence would change the verdict.
+- You will be told who dissented hardest. You MUST engage that dissent on its merits - never bury or dismiss it.
 - Speak about the subject of the question, never about "the council", "the philosophers", or the deliberation process.
 - Plain text. No JSON, no headers.`;
 
@@ -127,6 +129,7 @@ async function callSpokesperson(
   item: TrendItem,
   opinions: PhilosopherOpinion[],
   synthesis: IbnArabiSynthesis,
+  minority: MinorityReport,
 ): Promise<string> {
   const opinionsText = opinions
     .map(
@@ -134,6 +137,9 @@ async function callSpokesperson(
         `- ${o.displayName} (${o.verdictScore.toFixed(2)}): ${o.oneLiner} | ${o.reasoning}`,
     )
     .join('\n');
+  const dissentText = minority.dissenter
+    ? `Strongest dissent (you must engage it): ${minority.dissenter.displayName} scored ${minority.dissenter.verdictScore.toFixed(2)} (${minority.dissenter.delta > 0 ? 'above' : 'below'} the synthesis): "${minority.dissenter.oneLiner}" - ${minority.dissenter.reasoning}`
+    : '';
   const { text } = await complete({
     system: SPOKESPERSON_SYSTEM,
     user: [
@@ -145,6 +151,7 @@ async function callSpokesperson(
       '',
       `Synthesis: ${synthesis.unifyingReading}`,
       `Noted blind spot: ${synthesis.mysticalCaution}`,
+      dissentText,
     ]
       .filter(Boolean)
       .join('\n'),
@@ -152,6 +159,55 @@ async function callSpokesperson(
     model: config.councilModels['spokesperson'],
   });
   return text.trim();
+}
+
+const VIRTUES: Virtue[] = ['wisdom', 'courage', 'justice', 'temperance'];
+
+/**
+ * Disagreement is the signal synthesis tends to destroy - keep it first-class.
+ * Returns dispersion metrics and the opinion furthest from the unified reading.
+ */
+export function buildMinorityReport(
+  opinions: PhilosopherOpinion[],
+  synthesis: IbnArabiSynthesis,
+): MinorityReport {
+  if (opinions.length < 2) {
+    return { disagreement: 0, contestedVirtues: [] };
+  }
+  const scores = opinions.map((o) => o.verdictScore);
+  const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+  const stddev = Math.sqrt(
+    scores.reduce((s, v) => s + (v - mean) ** 2, 0) / scores.length,
+  );
+  // Verdict scores live in a practical band of ~0.5; 4x stddev maps a
+  // strongly split council (e.g. 0.35 vs 0.69) to ~0.5+ disagreement.
+  const disagreement = Math.min(1, stddev * 4);
+
+  const contestedVirtues = VIRTUES.filter((v) => {
+    const vals = opinions.map((o) => o.virtueScores[v]);
+    const m = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const sd = Math.sqrt(vals.reduce((s, x) => s + (x - m) ** 2, 0) / vals.length);
+    return sd >= 0.08;
+  });
+
+  let dissenter: MinorityReport['dissenter'];
+  let maxDist = 0;
+  for (const o of opinions) {
+    const dist = Math.abs(o.verdictScore - synthesis.unifiedScore);
+    if (dist > maxDist) {
+      maxDist = dist;
+      dissenter = {
+        philosopher: o.philosopher,
+        displayName: o.displayName,
+        verdictScore: o.verdictScore,
+        delta: o.verdictScore - synthesis.unifiedScore,
+        oneLiner: o.oneLiner,
+        reasoning: o.reasoning,
+      };
+    }
+  }
+
+  return { disagreement, contestedVirtues, dissenter };
 }
 
 export async function runCouncil(
@@ -199,11 +255,13 @@ export async function runCouncil(
     ? (ralph[ralph.length - 1]?.refinedScore ?? aggregateScore)
     : aggregateScore;
 
+  const minority = buildMinorityReport(opinions, synthesis);
+
   // Direct questions deserve a direct answer, not just an evaluation.
   let answer: string | undefined;
   if (item.source === 'question') {
     try {
-      answer = await callSpokesperson(item, opinions, synthesis);
+      answer = await callSpokesperson(item, opinions, synthesis, minority);
       hooks.onAnswer?.(answer);
     } catch (err) {
       logger.warn({ err: String(err) }, 'spokesperson call failed; omitting answer');
@@ -219,6 +277,7 @@ export async function runCouncil(
     consensus,
     ralph,
     answer,
+    minority,
     finalScore,
     finalRecommendation: recommend(finalScore),
     model: config.defaultModel,

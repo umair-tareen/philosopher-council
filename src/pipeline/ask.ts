@@ -97,6 +97,27 @@ export function renderAnswer(question: string, v: CouncilVerdict): string {
   lines.push(`**Caution.** ${v.synthesis.mysticalCaution}`);
   lines.push('');
 
+  if (v.minority) {
+    lines.push(`## Minority report`);
+    lines.push('');
+    lines.push(
+      `Disagreement: **${v.minority.disagreement.toFixed(2)}**` +
+        (v.minority.contestedVirtues.length
+          ? ` · contested on: ${v.minority.contestedVirtues.join(', ')}`
+          : ' · the council was broadly aligned'),
+    );
+    if (v.minority.dissenter) {
+      const d = v.minority.dissenter;
+      lines.push('');
+      lines.push(
+        `**${d.displayName}** dissented hardest (${d.verdictScore.toFixed(2)}, ${d.delta > 0 ? '+' : ''}${d.delta.toFixed(2)} vs synthesis): "${d.oneLiner}"`,
+      );
+      lines.push('');
+      lines.push(`> ${d.reasoning}`);
+    }
+    lines.push('');
+  }
+
   if (v.ralph.length) {
     const last = v.ralph[v.ralph.length - 1];
     if (last) {

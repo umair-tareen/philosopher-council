@@ -18,6 +18,10 @@ describe('ask dry-run', () => {
     expect(markdown).toContain("The council's answer");
     expect(verdict.answer && verdict.answer.length).toBeGreaterThan(50);
     expect(markdown).toContain('Ibn ʿArabī - synthesis');
+    expect(markdown).toContain('Minority report');
+    expect(verdict.minority.disagreement).toBeGreaterThanOrEqual(0);
+    expect(verdict.minority.disagreement).toBeLessThanOrEqual(1);
+    expect(verdict.minority.dissenter).toBeTruthy();
     expect(markdown).toContain('Final score:');
     expect(file).toContain('asks');
   });

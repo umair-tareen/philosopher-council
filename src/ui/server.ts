@@ -53,6 +53,7 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
       finalScore: verdict.finalScore,
       finalRecommendation: verdict.finalRecommendation,
       ralph: verdict.ralph,
+      minority: verdict.minority,
       mode: verdict.mode,
       model: verdict.model,
       file,
