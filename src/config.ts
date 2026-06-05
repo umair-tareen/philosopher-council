@@ -14,6 +14,10 @@ const schema = z.object({
   COUNCIL_MODELS: z.string().default(''),
   // Per-source ranking weights, e.g. "arxiv=1.2,reddit=0.9,hn=1.0"
   SOURCE_WEIGHTS: z.string().default('arxiv=1.2,hn=1.0,reddit=1.0'),
+  // Comma-separated judge model specs for pnpm eval (blind judging).
+  EVAL_JUDGES: z
+    .string()
+    .default('anthropic:claude-sonnet-4-5,anthropic:claude-haiku-4-5-20251001'),
   CRON_EXPR: z.string().default('0 */6 * * *'),
   SOURCES_REDDIT: z
     .string()
@@ -60,6 +64,7 @@ export const config = {
   defaultModel: parsed.DEFAULT_MODEL || `anthropic:${parsed.ANTHROPIC_MODEL}`,
   councilModels: parsePairs(parsed.COUNCIL_MODELS),
   sourceWeights: parseSourceWeights(parsed.SOURCE_WEIGHTS),
+  evalJudges: parsed.EVAL_JUDGES.split(',').map((s) => s.trim()).filter(Boolean),
   cronExpr: parsed.CRON_EXPR,
   redditSubs: parsed.SOURCES_REDDIT.split(',').map((s) => s.trim()).filter(Boolean),
   maxItemsPerRun: parsed.MAX_ITEMS_PER_RUN,

@@ -80,13 +80,29 @@ program
   .description('blind-judged comparison: single answer vs generic debate vs philosopher council')
   .argument('[questions...]', 'a question to evaluate (defaults to the built-in set)')
   .option('--full-council', 'council strategy uses all 10 deliberators')
-  .option('-n, --limit <count>', 'limit number of default questions', parseInt)
+  .option('-n, --limit <count>', 'limit number of questions', parseInt)
+  .option('--file <path>', 'JSON file with a {questions: string[]} benchmark set')
+  .option('--concurrency <count>', 'questions evaluated in parallel', parseInt)
   .action(async (words: string[], opts) => {
     const { runEval, DEFAULT_QUESTIONS } = await import('./pipeline/eval.js');
-    const questions = words.length
-      ? [words.join(' ')]
-      : DEFAULT_QUESTIONS.slice(0, opts.limit || DEFAULT_QUESTIONS.length);
-    const report = await runEval({ questions, fullCouncil: !!opts.fullCouncil });
+    let questions: string[];
+    if (words.length) {
+      questions = [words.join(' ')];
+    } else if (opts.file) {
+      const { readFile } = await import('node:fs/promises');
+      const parsed = JSON.parse(await readFile(opts.file, 'utf-8')) as {
+        questions: string[];
+      };
+      questions = parsed.questions;
+    } else {
+      questions = DEFAULT_QUESTIONS;
+    }
+    if (opts.limit) questions = questions.slice(0, opts.limit);
+    const report = await runEval({
+      questions,
+      fullCouncil: !!opts.fullCouncil,
+      concurrency: opts.concurrency,
+    });
     console.log(`\nOverall (mean blind-judge score):`);
     for (const [s, v] of Object.entries(report.overall)) {
       console.log(

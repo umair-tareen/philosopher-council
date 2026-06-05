@@ -48,7 +48,7 @@ export interface EvalReport {
   overall: Record<StrategyId, number>;
   /** strategy -> count of rank-1 finishes */
   wins: Record<StrategyId, number>;
-  judgeModel: string;
+  judges: string[];
   file: string;
 }
 
@@ -152,7 +152,11 @@ You MUST respond with a single JSON object and nothing else:
 async function judgeAnswers(
   question: string,
   answers: StrategyAnswer[],
-): Promise<{ judged: JudgeScores; labelToStrategy: Record<string, StrategyId> }> {
+): Promise<{
+  judged: JudgeScores[];
+  labelToStrategy: Record<string, StrategyId>;
+  judges: string[];
+}> {
   const order = shuffledLabels(question, answers.length);
   const labels = ['A', 'B', 'C', 'D', 'E'];
   const labelToStrategy: Record<string, StrategyId> = {};
@@ -163,13 +167,18 @@ async function judgeAnswers(
     labelToStrategy[label] = a.strategy;
     blocks.push(`### Answer ${label}\n${a.answer}`);
   });
-  const { text } = await complete({
-    system: JUDGE_SYSTEM,
-    user: `Question: ${question}\n\n${blocks.join('\n\n')}`,
-    maxTokens: 800,
-    model: config.councilModels['judge'],
-  });
-  return { judged: extractJson<JudgeScores>(text), labelToStrategy };
+  const judges = config.evalJudges.length ? config.evalJudges : [config.defaultModel];
+  const judged: JudgeScores[] = [];
+  for (const judge of judges) {
+    const { text } = await complete({
+      system: JUDGE_SYSTEM,
+      user: `Question: ${question}\n\n${blocks.join('\n\n')}`,
+      maxTokens: 800,
+      model: judge,
+    });
+    judged.push(extractJson<JudgeScores>(text));
+  }
+  return { judged, labelToStrategy, judges };
 }
 
 // --- harness --------------------------------------------------------------
@@ -177,42 +186,70 @@ async function judgeAnswers(
 export interface EvalOptions {
   questions?: string[];
   fullCouncil?: boolean;
+  /** How many questions to evaluate concurrently (default 3). */
+  concurrency?: number;
+}
+
+async function evalOneQuestion(
+  question: string,
+  fullCouncil: boolean,
+): Promise<EvalResult> {
+  logger.info({ question }, 'eval question start');
+  const answers: StrategyAnswer[] = [
+    await runSingle(question),
+    await runDebate(question),
+    await runCouncilStrategy(question, fullCouncil ? 'full' : 'quorum'),
+  ];
+  const { judged, labelToStrategy } = await judgeAnswers(question, answers);
+
+  // Average each label's axis scores across all judges, then map to strategy.
+  const meanScores = {} as Record<StrategyId, number>;
+  for (const [label, strategy] of Object.entries(labelToStrategy)) {
+    const perJudge: number[] = [];
+    for (const j of judged) {
+      const axes = j.scores?.[label];
+      if (!axes) continue;
+      const vals = RUBRIC_AXES.map((ax) => clamp01(Number(axes[ax] ?? 0.5)));
+      perJudge.push(vals.reduce((s, v) => s + v, 0) / vals.length);
+    }
+    if (perJudge.length) {
+      meanScores[strategy] = perJudge.reduce((a, b) => a + b, 0) / perJudge.length;
+    }
+  }
+
+  // Ranks derive from the averaged scores, not any single judge's stated ranking.
+  const ordered = (Object.entries(meanScores) as Array<[StrategyId, number]>).sort(
+    (a, b) => b[1] - a[1],
+  );
+  const ranks = {} as Record<StrategyId, number>;
+  ordered.forEach(([strategy], i) => {
+    ranks[strategy] = i + 1;
+  });
+
+  const rationale = judged
+    .map((j, i) => `Judge ${i + 1}: ${j.rationale ?? ''}`)
+    .join(' | ');
+
+  return { question, answers, meanScores, ranks, rationale };
 }
 
 export async function runEval(opts: EvalOptions = {}): Promise<EvalReport> {
   const questions = opts.questions?.length ? opts.questions : DEFAULT_QUESTIONS;
-  const results: EvalResult[] = [];
+  const concurrency = Math.max(1, opts.concurrency ?? 3);
+  const results: EvalResult[] = new Array(questions.length);
 
-  for (const question of questions) {
-    logger.info({ question }, 'eval question start');
-    const answers: StrategyAnswer[] = [
-      await runSingle(question),
-      await runDebate(question),
-      await runCouncilStrategy(question, opts.fullCouncil ? 'full' : 'quorum'),
-    ];
-    const { judged, labelToStrategy } = await judgeAnswers(question, answers);
-
-    const meanScores = {} as Record<StrategyId, number>;
-    for (const [label, axes] of Object.entries(judged.scores)) {
-      const strategy = labelToStrategy[label];
-      if (!strategy) continue;
-      const vals = RUBRIC_AXES.map((ax) => clamp01(Number(axes?.[ax] ?? 0.5)));
-      meanScores[strategy] = vals.reduce((s, v) => s + v, 0) / vals.length;
+  let next = 0;
+  async function worker(): Promise<void> {
+    for (;;) {
+      const i = next++;
+      if (i >= questions.length) return;
+      results[i] = await evalOneQuestion(questions[i] as string, !!opts.fullCouncil);
+      logger.info({ done: i + 1, total: questions.length }, 'eval progress');
     }
-    const ranks = {} as Record<StrategyId, number>;
-    judged.ranking.forEach((label, i) => {
-      const strategy = labelToStrategy[label];
-      if (strategy) ranks[strategy] = i + 1;
-    });
-
-    results.push({
-      question,
-      answers,
-      meanScores,
-      ranks,
-      rationale: judged.rationale ?? '',
-    });
   }
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, questions.length) }, () => worker()),
+  );
 
   const strategies: StrategyId[] = ['single', 'debate', 'council'];
   const overall = {} as Record<StrategyId, number>;
@@ -223,28 +260,28 @@ export async function runEval(opts: EvalOptions = {}): Promise<EvalReport> {
     wins[s] = results.filter((r) => r.ranks[s] === 1).length;
   }
 
-  const judgeModel = config.councilModels['judge'] ?? config.defaultModel;
-  const markdown = renderReport(results, overall, wins, judgeModel);
+  const judges = config.evalJudges.length ? config.evalJudges : [config.defaultModel];
+  const markdown = renderReport(results, overall, wins, judges);
   const dir = path.join(config.dataDir, 'evals');
   await mkdir(dir, { recursive: true });
   const file = path.join(dir, `${new Date().toISOString().slice(0, 10)}.md`);
   await writeFile(file, markdown);
   logger.info({ file }, 'eval report written');
 
-  return { results, overall, wins, judgeModel, file };
+  return { results, overall, wins, judges, file };
 }
 
 export function renderReport(
   results: EvalResult[],
   overall: Record<StrategyId, number>,
   wins: Record<StrategyId, number>,
-  judgeModel: string,
+  judges: string[],
 ): string {
   const lines: string[] = [];
   lines.push('# Eval: single answer vs generic debate vs philosopher council');
   lines.push('');
   lines.push(
-    `Blind-judged by \`${judgeModel}\` on insight, rigor, blind-spot coverage, and actionability. Answers were anonymized and shuffled per question. N=${results.length}.`,
+    `Blind-judged by ${judges.map((j) => `\`${j}\``).join(' + ')} on insight, rigor, blind-spot coverage, and actionability. Scores are averaged across judges; ranks derive from the averaged scores. Answers were anonymized and shuffled per question. N=${results.length}.`,
   );
   lines.push('');
   lines.push('| Strategy | Mean score | Wins (rank 1) | Calls per question |');
@@ -267,13 +304,13 @@ export function renderReport(
       );
     }
     lines.push('');
-    lines.push(`> Judge rationale: ${r.rationale}`);
+    lines.push(`> ${r.rationale}`);
     lines.push('');
   }
   lines.push('---');
   lines.push('');
   lines.push(
-    '**Caveats.** Single-judge evaluation by an LLM shares biases with the systems under test; small N; the council answer is a synthesis of more raw tokens than the single answer. Treat this as a directional signal, not a benchmark.',
+    `**Caveats.** LLM judges share biases with the systems under test (all judges here are same-family models); the council answer is distilled from more raw tokens than the single answer; question set is fixed and public (evals/questions.json), so treat cross-version comparisons as the meaningful signal. ${judges.length} judge(s), N=${results.length}.`,
   );
   lines.push('');
   return lines.join('\n');
