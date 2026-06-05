@@ -59,11 +59,20 @@ export async function completeWith(
   switch (spec.provider) {
     case 'anthropic':
       return anthropicComplete(full, onToken);
-    case 'openai':
-      if (!config.openaiApiKey) {
+    case 'openai': {
+      // Key is mandatory only for api.openai.com itself; self-hosted
+      // OpenAI-compatible endpoints (LM Studio, llamafile, vLLM) need none.
+      const isOfficial = config.openaiBaseUrl.includes('api.openai.com');
+      if (isOfficial && !config.openaiApiKey) {
         throw new Error('OPENAI_API_KEY is required for openai: model specs');
       }
-      return openAiCompatComplete('https://api.openai.com/v1', config.openaiApiKey, full, onToken);
+      return openAiCompatComplete(
+        config.openaiBaseUrl,
+        config.openaiApiKey ?? 'none',
+        full,
+        onToken,
+      );
+    }
     case 'gemini':
       if (!config.geminiApiKey) {
         throw new Error('GEMINI_API_KEY is required for gemini: model specs');

@@ -143,9 +143,11 @@ Now Lao Tzu deliberates on a local 7B (fitting, for the philosopher of doing les
 | Spec prefix  | Endpoint                                  | Key required        |
 | ------------ | ----------------------------------------- | ------------------- |
 | `anthropic:` | Anthropic Messages API                    | `ANTHROPIC_API_KEY` |
-| `openai:`    | OpenAI chat completions                   | `OPENAI_API_KEY`    |
-| `gemini:`    | Gemini OpenAI-compat endpoint             | `GEMINI_API_KEY`    |
+| `openai:`    | OpenAI - or any OpenAI-compatible endpoint via `OPENAI_BASE_URL` (OpenRouter, LM Studio, Groq, vLLM, llamafile) | `OPENAI_API_KEY` (none for self-hosted) |
+| `gemini:`    | Gemini OpenAI-compat endpoint (has a free tier) | `GEMINI_API_KEY` |
 | `ollama:`    | local Ollama (`OLLAMA_BASE_URL` override) | none                |
+
+**Running it for free:** `DEFAULT_MODEL=ollama:llama3.1` puts every seat on a local model (no key, no cost), `OPENAI_BASE_URL=https://openrouter.ai/api/v1` opens OpenRouter's free models, and Gemini's free tier covers frontier-quality deliberation within rate limits. `DRY_RUN=1` demos the full UX offline with mock responses.
 
 ## 📊 Does it actually work? (eval)
 
