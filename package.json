@@ -12,6 +12,7 @@
     "dev": "tsx src/index.ts",
     "test": "vitest run",
     "ask": "tsx src/index.ts ask",
+    "eval": "tsx src/index.ts eval",
     "trends:fetch": "tsx src/index.ts fetch",
     "trends:analyze": "tsx src/index.ts analyze",
     "trends:digest": "tsx src/index.ts digest",

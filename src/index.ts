@@ -56,6 +56,27 @@ program
     await runAll({ offline: !!opts.offline, fullCouncil: !!opts.fullCouncil });
   });
 
+program
+  .command('eval')
+  .description('blind-judged comparison: single answer vs generic debate vs philosopher council')
+  .argument('[questions...]', 'a question to evaluate (defaults to the built-in set)')
+  .option('--full-council', 'council strategy uses all 10 deliberators')
+  .option('-n, --limit <count>', 'limit number of default questions', parseInt)
+  .action(async (words: string[], opts) => {
+    const { runEval, DEFAULT_QUESTIONS } = await import('./pipeline/eval.js');
+    const questions = words.length
+      ? [words.join(' ')]
+      : DEFAULT_QUESTIONS.slice(0, opts.limit || DEFAULT_QUESTIONS.length);
+    const report = await runEval({ questions, fullCouncil: !!opts.fullCouncil });
+    console.log(`\nOverall (mean blind-judge score):`);
+    for (const [s, v] of Object.entries(report.overall)) {
+      console.log(
+        `  ${s.padEnd(8)} ${v.toFixed(3)}  (wins: ${report.wins[s as keyof typeof report.wins]}/${report.results.length})`,
+      );
+    }
+    console.log(`\nReport saved to ${report.file}`);
+  });
+
 program.command('serve').action(async () => {
   await serve();
 });

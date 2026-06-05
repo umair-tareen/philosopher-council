@@ -111,6 +111,32 @@ const DEFAULT_PROFILE: Omit<PersonaProfile, 'name' | 'match'> = {
 };
 
 export function mockComplete(call: CouncilCall): string {
+  if (/blind judge of answer quality/i.test(call.system)) {
+    return JSON.stringify({
+      scores: {
+        A: { insight: 0.6, rigor: 0.6, blindspots: 0.5, actionability: 0.6 },
+        B: { insight: 0.55, rigor: 0.6, blindspots: 0.45, actionability: 0.55 },
+        C: { insight: 0.7, rigor: 0.65, blindspots: 0.7, actionability: 0.6 },
+      },
+      ranking: ['C', 'A', 'B'],
+      rationale:
+        'Answer C surfaced considerations the others missed and qualified its claims; A was solid but conventional; B argued one side well but left the strongest objection unexamined.',
+    });
+  }
+
+  if (/You are the Advocate/i.test(call.system)) {
+    return 'The strongest case for the proposition: it concentrates accountability, compounds iteration speed, and the empirical record so far shows more gain than harm when bounded by clear limits.';
+  }
+  if (/You are the Critic/i.test(call.system)) {
+    return 'The advocate assumes bounded limits hold under distribution shift; they rarely do. The empirical record cited is short, survivorship-biased, and the accountability claim inverts under failure.';
+  }
+  if (/You are the Judge in a structured debate/i.test(call.system)) {
+    return 'The critic lands the stronger blow: the advocate’s case rests on limits that are asserted, not demonstrated. The truth is likely conditional - the proposition holds in narrow, monitored domains and fails open-endedly. Key uncertainty: whether monitoring scales.';
+  }
+  if (/careful analyst/i.test(call.system)) {
+    return 'Position: a qualified no. Strongest reasons: the mechanism is unproven at scale and incentives cut against careful deployment. Strongest objection: early empirical results are genuinely promising. What would change my mind: independent replication under adversarial conditions.';
+  }
+
   if (/Ralph-loop critic/i.test(call.system)) {
     return JSON.stringify({
       weaknesses: [
