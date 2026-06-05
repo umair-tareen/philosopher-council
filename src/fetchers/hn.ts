@@ -1,5 +1,5 @@
-import { createHash } from 'node:crypto';
 import { KARPATHY_KEYWORDS, matchKeywords } from '../filter/keywords.js';
+import { hashId } from './index.js';
 import { logger } from '../logger.js';
 import type { TrendItem } from '../types.js';
 
@@ -32,6 +32,10 @@ export async function fetchHN(): Promise<TrendItem[]> {
         continue;
       }
       const body = (await res.json()) as AlgoliaResponse;
+      if (!Array.isArray(body?.hits)) {
+        logger.warn({ q }, 'hn response had no hits array; skipping');
+        continue;
+      }
       for (const hit of body.hits) {
         const title = hit.title ?? hit.story_title ?? '';
         const link = hit.url ?? hit.story_url ?? `https://news.ycombinator.com/item?id=${hit.objectID}`;
@@ -54,8 +58,4 @@ export async function fetchHN(): Promise<TrendItem[]> {
     }
   }
   return all;
-}
-
-function hashId(source: string, url: string): string {
-  return createHash('sha1').update(`${source}:${url}`).digest('hex').slice(0, 16);
 }

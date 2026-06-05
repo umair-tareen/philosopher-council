@@ -8,7 +8,10 @@ export function heuristicScore(item: TrendItem, now = Date.now()): number {
   const ageMs = Math.max(0, now - Date.parse(item.publishedAt));
   const recency = Math.exp(-ageMs / (3 * DAY_MS));
   const tagBoost = Math.min(1, item.tags.length / 3);
-  const rawNorm = item.rawScore ? Math.log10(1 + item.rawScore) / 4 : 0;
+  // Clamp to >= 0: downvoted Reddit items have negative scores, and
+  // log10(1 + negative) is -Infinity/NaN, which corrupts the whole sort.
+  const safeScore = Math.max(0, item.rawScore ?? 0);
+  const rawNorm = Math.log10(1 + safeScore) / 4;
   return 0.5 * recency + 0.3 * tagBoost + 0.2 * rawNorm;
 }
 

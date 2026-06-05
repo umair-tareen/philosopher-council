@@ -41,6 +41,10 @@ program
       console.error(`Unknown mode "${debateMode}". Valid: ${Object.keys(DEBATE_MODES).join(', ')}, auto`);
       process.exit(1);
     }
+    const resolvedMode = debateMode as import('./council/modes.js').DebateModeId;
+    if (opts.fullCouncil && DEBATE_MODES[resolvedMode]?.seats) {
+      console.log(`Note: --mode ${debateMode} seats a fixed bench; --full-council is ignored.`);
+    }
     const { markdown, file, precedents, clerk } = await runAsk({
       question,
       context: opts.context,

@@ -1,7 +1,8 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { config } from '../config.js';
+import { writeFileAtomic } from '../store/atomic.js';
 import type { TrendItem } from '../types.js';
 
 const TITLES_PATH = () => path.join(config.dataDir, '.titles.json');
@@ -56,7 +57,5 @@ export async function loadTitleCorpus(): Promise<string[][]> {
 
 export async function saveTitleCorpus(corpus: string[][], newItems: TrendItem[]): Promise<void> {
   const merged = [...corpus, ...newItems.map((i) => [...tokenize(i.title)])].slice(-MAX_CORPUS);
-  const p = TITLES_PATH();
-  await mkdir(path.dirname(p), { recursive: true });
-  await writeFile(p, JSON.stringify(merged));
+  await writeFileAtomic(TITLES_PATH(), JSON.stringify(merged));
 }

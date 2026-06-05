@@ -147,7 +147,7 @@
     <button id="go">Convene</button>
   </div>
   <div class="options">
-    <label><input type="checkbox" id="full"> Full council (all ten deliberators)</label>
+    <label id="fulllabel"><input type="checkbox" id="full"> Full council (all ten deliberators)</label>
     <label>Format:
       <select id="mode">
         <option value="deliberation">Deliberation</option>
@@ -274,6 +274,32 @@ function fillCard(o) {
   });
 }
 
+function failCard(philosopher, reason) {
+  const card = $('card-' + philosopher);
+  if (!card || card.classList.contains('done')) return;
+  card.classList.remove('pending');
+  card.classList.add('done');
+  card.style.opacity = '0.5';
+  const live = $('live-' + philosopher);
+  const partial = live && live.textContent.trim();
+  const thinking = card.querySelector('.thinking');
+  if (thinking) {
+    thinking.classList.remove('thinking');
+    thinking.style.color = 'var(--red)';
+    thinking.textContent = partial
+      ? '⚠ provider error - opinion incomplete, dropped from the verdict'
+      : '⚠ provider error - this seat did not deliberate';
+  }
+}
+
+// On completion, sweep any seat still 'thinking' (aborted or silently lost).
+function sweepPending(reason) {
+  document.querySelectorAll('.card.pending').forEach((card) => {
+    const id = card.id.replace('card-', '');
+    failCard(id, reason);
+  });
+}
+
 function renderSpread(synthScore) {
   const track = $('spreadtrack');
   track.innerHTML = '';
@@ -367,6 +393,10 @@ function convene() {
     fillCard(o);
     setStatus('Deliberating in parallel - opinions land as each concludes.', opinions.length, seatCount);
   });
+  source.addEventListener('seatfailed', (e) => {
+    const { philosopher } = JSON.parse(e.data);
+    failCard(philosopher);
+  });
   source.addEventListener('synthesis', (e) => {
     const s = JSON.parse(e.data);
     $('s1').textContent = s.unifyingReading;
@@ -421,10 +451,11 @@ function convene() {
     if (e.data) {
       $('status').textContent = 'Error: ' + JSON.parse(e.data).message;
       $('status').classList.add('err');
+      sweepPending();
     }
   });
-  source.addEventListener('done', () => { source.close(); $('go').disabled = false; });
-  source.onerror = () => { source.close(); $('go').disabled = false; };
+  source.addEventListener('done', () => { sweepPending(); source.close(); $('go').disabled = false; });
+  source.onerror = () => { sweepPending(); source.close(); $('go').disabled = false; };
 }
 
 async function fetchTranscript(file) {
@@ -466,6 +497,19 @@ async function loadLibrary() {
     $('transcript').scrollIntoView({ behavior: 'smooth' });
   });
 }
+
+// Fixed-bench formats seat their own philosophers, so full-council does nothing.
+const FIXED_BENCH = ['socratic', 'oxford', 'delphi'];
+function syncFullCouncil() {
+  const fixed = FIXED_BENCH.includes($('mode').value);
+  $('full').disabled = fixed;
+  $('fulllabel').style.opacity = fixed ? '0.45' : '1';
+  $('fulllabel').title = fixed
+    ? 'This format seats a fixed bench; full council does not apply.'
+    : '';
+}
+$('mode').addEventListener('change', syncFullCouncil);
+syncFullCouncil();
 
 $('go').onclick = convene;
 $('q').addEventListener('keydown', (e) => { if (e.key === 'Enter') convene(); });

@@ -1,9 +1,18 @@
+import { createHash } from 'node:crypto';
 import { config } from '../config.js';
 import { logger } from '../logger.js';
 import type { TrendItem } from '../types.js';
 import { fetchArxiv } from './arxiv.js';
 import { fetchHN } from './hn.js';
 import { fetchReddit } from './reddit.js';
+
+/**
+ * Stable id for dedupe + the seen-store. Shared by every fetcher so the
+ * format can never drift between sources and silently break dedup.
+ */
+export function hashId(source: string, url: string): string {
+  return createHash('sha1').update(`${source}:${url}`).digest('hex').slice(0, 16);
+}
 
 export async function fetchAll(): Promise<TrendItem[]> {
   const tasks: Promise<TrendItem[]>[] = [

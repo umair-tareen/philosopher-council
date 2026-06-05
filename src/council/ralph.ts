@@ -6,6 +6,7 @@ import type {
 } from '../types.js';
 import { complete, extractJson } from './client.js';
 import { renderItem } from './personas/_shared.js';
+import { clamp01 } from '../util/num.js';
 import { config } from '../config.js';
 import { logger } from '../logger.js';
 
@@ -89,9 +90,4 @@ function buildUser(
     '',
     'Identify the three weakest claims. Strengthen with canon/* citations or downgrade the score.',
   ].join('\n');
-}
-
-function clamp01(n: number): number {
-  if (!Number.isFinite(n)) return 0.5;
-  return Math.max(0, Math.min(1, n));
 }

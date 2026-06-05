@@ -1,5 +1,5 @@
-import { createHash } from 'node:crypto';
 import { matchKeywords } from '../filter/keywords.js';
+import { hashId } from './index.js';
 import { logger } from '../logger.js';
 import type { TrendItem } from '../types.js';
 
@@ -31,8 +31,13 @@ export async function fetchReddit(subreddit: string): Promise<TrendItem[]> {
     return [];
   }
   const body = (await res.json()) as RedditListing;
+  const children = body?.data?.children;
+  if (!Array.isArray(children)) {
+    logger.warn({ subreddit }, 'reddit response had no children array; skipping');
+    return [];
+  }
   const now = new Date().toISOString();
-  return body.data.children.map((c): TrendItem => {
+  return children.map((c): TrendItem => {
     const text = `${c.data.title}\n${c.data.selftext ?? ''}`;
     const canonical = `https://www.reddit.com${c.data.permalink}`;
     return {
@@ -49,8 +54,4 @@ export async function fetchReddit(subreddit: string): Promise<TrendItem[]> {
       tags: matchKeywords(text),
     };
   });
-}
-
-function hashId(source: string, url: string): string {
-  return createHash('sha1').update(`${source}:${url}`).digest('hex').slice(0, 16);
 }

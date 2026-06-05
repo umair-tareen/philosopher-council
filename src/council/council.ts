@@ -10,6 +10,7 @@ import type {
   Virtue,
 } from '../types.js';
 import { complete, extractJson } from './client.js';
+import { clamp01 } from '../util/num.js';
 import { socrates } from './personas/socrates.js';
 import { plato } from './personas/plato.js';
 import { aristotle } from './personas/aristotle.js';
@@ -123,6 +124,8 @@ export interface CouncilHooks {
   onSeats?: (seats: Array<{ id: PhilosopherId; branch: Branch }>) => void;
   /** Raw text deltas from a deliberator while their opinion streams in. */
   onToken?: (philosopher: PhilosopherId, token: string) => void;
+  /** A seat's call failed - the UI should clear its pending state. */
+  onSeatFailed?: (philosopher: PhilosopherId, error: string) => void;
   onOpinion?: (opinion: PhilosopherOpinion) => void;
   onSynthesis?: (synthesis: IbnArabiSynthesis) => void;
   /** Raw text deltas from the spokesperson while the answer streams in. */
@@ -286,6 +289,7 @@ export async function runCouncil(
         hooks.onOpinion?.(opinion);
       } catch (err) {
         logger.warn({ seat, err: String(err) }, 'philosopher call failed; skipping');
+        if (!signal?.aborted) hooks.onSeatFailed?.(seat.id, String(err));
       }
     }
   }
@@ -294,7 +298,30 @@ export async function runCouncil(
   const opinions = results.filter((o): o is PhilosopherOpinion => o !== null);
 
   if (signal?.aborted) throw new Error('aborted: client disconnected');
-  const synthesis = await callSynthesizer(item, opinions, signal);
+  // Every deliberator failed - there is nothing to synthesize. Fail loudly
+  // rather than feeding an empty council into the synthesizer (and persisting
+  // a hollow verdict that would taint precedent retrieval).
+  if (opinions.length === 0) {
+    throw new Error('all deliberators failed; no opinions to synthesize');
+  }
+
+  // The synthesizer is a model call like any other - a malformed response or
+  // a provider hiccup must not abort the whole run with a raw stack trace.
+  let synthesis: IbnArabiSynthesis;
+  try {
+    synthesis = await callSynthesizer(item, opinions, signal);
+  } catch (err) {
+    if (signal?.aborted) throw err;
+    logger.warn({ err: String(err) }, 'synthesizer failed; using a neutral synthesis');
+    const mean = opinions.reduce((s, o) => s + o.verdictScore, 0) / opinions.length;
+    synthesis = {
+      unifyingReading:
+        'The synthesizer was unavailable; this reading is the mean of the deliberators.',
+      hiddenContinuity: '',
+      mysticalCaution: 'Synthesis stage failed - treat the unified score as a simple average.',
+      unifiedScore: mean,
+    };
+  }
   hooks.onSynthesis?.(synthesis);
 
   const aggregateScore =
@@ -345,11 +372,6 @@ export async function runCouncil(
     model: config.defaultModel,
     generatedAt: new Date().toISOString(),
   };
-}
-
-function clamp01(n: number): number {
-  if (!Number.isFinite(n)) return 0.5;
-  return Math.max(0, Math.min(1, n));
 }
 
 function clampVirtues(v: Partial<Record<Virtue, number>>): Record<Virtue, number> {

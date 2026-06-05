@@ -41,6 +41,15 @@ describe('ranking with weights and novelty', () => {
     const { config } = await import('../src/config.js');
     expect(config.sourceWeights['arxiv']).toBeGreaterThan(0);
   });
+
+  it('stays finite for downvoted (negative rawScore) items', async () => {
+    const { rankingScore } = await import('../src/filter/score.js');
+    const now = Date.parse('2026-06-02T00:00:00Z');
+    for (const rawScore of [-1, -5, 0, undefined]) {
+      const s = rankingScore(item({ id: 'd', rawScore, tags: ['ralph-loop'] }), now);
+      expect(Number.isFinite(s)).toBe(true);
+    }
+  });
 });
 
 describe('clusterByTags', () => {

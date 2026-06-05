@@ -9,8 +9,20 @@ export async function serve(): Promise<void> {
     process.exit(1);
   }
   logger.info({ cron: config.cronExpr }, 'scheduler starting');
+  // Single-flight: if a run (slow LLM council) outlasts the cron interval,
+  // skip the tick rather than overlapping read-modify-write of the seen-store.
+  let running = false;
   mod.default.schedule(config.cronExpr, () => {
-    runAll().catch((err) => logger.error({ err: String(err) }, 'scheduled run failed'));
+    if (running) {
+      logger.warn('previous scheduled run still in progress; skipping this tick');
+      return;
+    }
+    running = true;
+    runAll()
+      .catch((err) => logger.error({ err: String(err) }, 'scheduled run failed'))
+      .finally(() => {
+        running = false;
+      });
   });
   await new Promise<void>(() => {
     /* keep alive */

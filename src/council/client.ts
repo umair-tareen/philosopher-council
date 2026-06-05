@@ -68,14 +68,57 @@ export async function complete(call: CouncilCall): Promise<CouncilCallResult> {
   throw lastErr ?? new Error('provider call failed');
 }
 
+/** Thrown when model output contains no parseable JSON object. */
+export class JsonExtractionError extends Error {
+  constructor(snippet: string) {
+    super(`No parseable JSON object in model output: ${snippet.slice(0, 160)}`);
+    this.name = 'JsonExtractionError';
+  }
+}
+
+/**
+ * Pull a JSON object out of model output. Prefer a ```json fence; otherwise
+ * scan from the first '{' to its matching brace (depth-tracked, string-aware)
+ * so trailing prose or a second object can't poison the parse.
+ */
 export function extractJson<T>(text: string): T {
   const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const candidate = fence ? fence[1] : text;
-  const trimmed = (candidate ?? '').trim();
-  const start = trimmed.indexOf('{');
-  const end = trimmed.lastIndexOf('}');
-  if (start === -1 || end === -1) {
-    throw new Error('No JSON object found in model output');
+  const candidate = (fence ? fence[1] : text) ?? '';
+  const start = candidate.indexOf('{');
+  if (start === -1) throw new JsonExtractionError(candidate);
+
+  let depth = 0;
+  let inStr = false;
+  let escaped = false;
+  for (let i = start; i < candidate.length; i++) {
+    const ch = candidate[i];
+    if (inStr) {
+      if (escaped) escaped = false;
+      else if (ch === '\\') escaped = true;
+      else if (ch === '"') inStr = false;
+      continue;
+    }
+    if (ch === '"') inStr = true;
+    else if (ch === '{') depth++;
+    else if (ch === '}') {
+      depth--;
+      if (depth === 0) {
+        try {
+          return JSON.parse(candidate.slice(start, i + 1)) as T;
+        } catch {
+          throw new JsonExtractionError(candidate.slice(start, i + 1));
+        }
+      }
+    }
   }
-  return JSON.parse(trimmed.slice(start, end + 1)) as T;
+  // Unbalanced - fall back to the greedy span as a last resort.
+  const end = candidate.lastIndexOf('}');
+  if (end > start) {
+    try {
+      return JSON.parse(candidate.slice(start, end + 1)) as T;
+    } catch {
+      /* fallthrough */
+    }
+  }
+  throw new JsonExtractionError(candidate);
 }

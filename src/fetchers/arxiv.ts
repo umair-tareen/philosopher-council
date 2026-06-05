@@ -1,6 +1,6 @@
-import { createHash } from 'node:crypto';
 import { XMLParser } from 'fast-xml-parser';
 import { matchKeywords } from '../filter/keywords.js';
+import { hashId } from './index.js';
 import { logger } from '../logger.js';
 import type { TrendItem } from '../types.js';
 
@@ -53,8 +53,4 @@ export async function fetchArxiv(category: string): Promise<TrendItem[]> {
     logger.warn({ category, err: String(err) }, 'arxiv fetch error');
     return [];
   }
-}
-
-function hashId(source: string, url: string): string {
-  return createHash('sha1').update(`${source}:${url}`).digest('hex').slice(0, 16);
 }

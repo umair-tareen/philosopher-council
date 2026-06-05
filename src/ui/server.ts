@@ -16,11 +16,18 @@ function sse(res: ServerResponse, event: string, data: unknown): void {
   res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 }
 
+const MAX_QUESTION_LEN = 4000;
+
 async function handleStream(res: ServerResponse, url: URL): Promise<void> {
   const question = url.searchParams.get('q')?.trim();
   if (!question) {
     res.writeHead(400, { 'content-type': 'application/json' });
     res.end(JSON.stringify({ error: 'missing q parameter' }));
+    return;
+  }
+  if (question.length > MAX_QUESTION_LEN) {
+    res.writeHead(413, { 'content-type': 'application/json' });
+    res.end(JSON.stringify({ error: `question exceeds ${MAX_QUESTION_LEN} chars` }));
     return;
   }
   const fullCouncil = url.searchParams.get('full') === '1';
@@ -83,6 +90,7 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
             })),
           }),
         onToken: (philosopher, t) => sse(res, 'token', { philosopher, t }),
+        onSeatFailed: (philosopher) => sse(res, 'seatfailed', { philosopher }),
         onOpinion: (opinion) => sse(res, 'opinion', opinion),
         onSynthesis: (synthesis) => sse(res, 'synthesis', synthesis),
         onAnswerToken: (t) => sse(res, 'answertoken', { t }),
@@ -158,8 +166,15 @@ export async function serveUi(port: number): Promise<import('node:http').Server>
     }
   });
 
-  await new Promise<void>((resolve) => server.listen(port, resolve));
-  logger.info({ port }, 'council chamber ui listening');
-  console.log(`\n  🏛️  Council chamber: http://localhost:${port}\n`);
+  // Bind to loopback by default - the chamber drives billable provider calls
+  // with no auth. Set UI_HOST=0.0.0.0 to deliberately expose it on the LAN.
+  const host = process.env.UI_HOST || '127.0.0.1';
+  await new Promise<void>((resolve) => server.listen(port, host, resolve));
+  logger.info({ port, host }, 'council chamber ui listening');
+  const shown = host === '127.0.0.1' ? 'localhost' : host;
+  console.log(`\n  🏛️  Council chamber: http://${shown}:${port}\n`);
+  if (host !== '127.0.0.1') {
+    console.log('  ⚠️  Exposed on a non-loopback interface with no auth - anyone who can reach it spends your API budget.\n');
+  }
   return server;
 }

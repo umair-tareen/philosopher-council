@@ -41,7 +41,15 @@ export interface AskResult {
   clerk: string | null;
 }
 
+const MAX_QUESTION_LEN = 4000;
+
 export async function runAsk(opts: AskOptions): Promise<AskResult> {
+  const question = opts.question?.trim();
+  if (!question) throw new Error('question is empty');
+  if (question.length > MAX_QUESTION_LEN) {
+    throw new Error(`question exceeds ${MAX_QUESTION_LEN} characters`);
+  }
+  opts = { ...opts, question };
   const now = new Date().toISOString();
   const id = createHash('sha1').update(opts.question).digest('hex').slice(0, 10);
   const item: TrendItem = {
@@ -88,7 +96,11 @@ export async function runAsk(opts: AskOptions): Promise<AskResult> {
   await mkdir(dir, { recursive: true });
   const file = path.join(dir, `${now.slice(0, 10)}-${slugify(opts.question) || id}.md`);
   await writeFile(file, markdown);
-  await savePrecedent(item, verdict, file);
+  // Only sound verdicts become case law - a degraded run (no opinions, or a
+  // failed synthesis) must not be retrievable as precedent for later questions.
+  if (verdict.opinions.length > 0) {
+    await savePrecedent(item, verdict, file);
+  }
   logger.info(
     { file, mode, seats: verdict.opinions.length, precedents: precedents.length, clerk: !!clerk },
     'ask answered',

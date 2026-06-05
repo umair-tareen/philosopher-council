@@ -4,10 +4,13 @@ import path from 'node:path';
 import { config } from '../config.js';
 import { complete, extractJson } from '../council/client.js';
 import { runCouncil } from '../council/council.js';
+import { clamp01 } from '../util/num.js';
 import { logger } from '../logger.js';
 import type { CouncilMode, TrendItem } from '../types.js';
 
 export type StrategyId = 'single' | 'debate' | 'council';
+
+const STRATEGIES = ['single', 'debate', 'council'] as const satisfies readonly StrategyId[];
 
 export const DEFAULT_QUESTIONS = [
   'Is chain-of-thought prompting genuine reasoning or sophisticated imitation?',
@@ -203,7 +206,9 @@ async function evalOneQuestion(
   const { judged, labelToStrategy } = await judgeAnswers(question, answers);
 
   // Average each label's axis scores across all judges, then map to strategy.
-  const meanScores = {} as Record<StrategyId, number>;
+  // Every strategy starts at 0 so one a judge omits is ranked last, never
+  // silently dropped from the competition (and thus never charged a loss).
+  const meanScores = { single: 0, debate: 0, council: 0 } as Record<StrategyId, number>;
   for (const [label, strategy] of Object.entries(labelToStrategy)) {
     const perJudge: number[] = [];
     for (const j of judged) {
@@ -217,13 +222,14 @@ async function evalOneQuestion(
     }
   }
 
-  // Ranks derive from the averaged scores, not any single judge's stated ranking.
+  // Competition ranking: tied scores share a rank (1, 1, 3), not arbitrary order.
   const ordered = (Object.entries(meanScores) as Array<[StrategyId, number]>).sort(
     (a, b) => b[1] - a[1],
   );
   const ranks = {} as Record<StrategyId, number>;
-  ordered.forEach(([strategy], i) => {
-    ranks[strategy] = i + 1;
+  ordered.forEach(([strategy, score], i) => {
+    const prev = ordered[i - 1];
+    ranks[strategy] = prev && prev[1] === score ? ranks[prev[0]]! : i + 1;
   });
 
   const rationale = judged
@@ -251,12 +257,12 @@ export async function runEval(opts: EvalOptions = {}): Promise<EvalReport> {
     Array.from({ length: Math.min(concurrency, questions.length) }, () => worker()),
   );
 
-  const strategies: StrategyId[] = ['single', 'debate', 'council'];
   const overall = {} as Record<StrategyId, number>;
   const wins = {} as Record<StrategyId, number>;
-  for (const s of strategies) {
+  for (const s of STRATEGIES) {
     const scores = results.map((r) => r.meanScores[s]).filter((n) => Number.isFinite(n));
     overall[s] = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+    // Rank-1 ties all count as wins, so the wins column sums consistently.
     wins[s] = results.filter((r) => r.ranks[s] === 1).length;
   }
 
@@ -314,9 +320,4 @@ export function renderReport(
   );
   lines.push('');
   return lines.join('\n');
-}
-
-function clamp01(n: number): number {
-  if (!Number.isFinite(n)) return 0.5;
-  return Math.max(0, Math.min(1, n));
 }
