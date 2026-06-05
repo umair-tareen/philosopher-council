@@ -1,7 +1,7 @@
 {
   "name": "philosopher-council",
   "version": "0.2.0",
-  "description": "An eleven-philosopher LLM council. Ask it questions, or point it at AI-research trends — deliberation through the four classical branches of philosophy. Methodology, not metaphysics.",
+  "description": "An AI deliberation instrument with visible protocol: eleven philosophers as concurrent seats, virtue-scored opinions, a synthesis, and a first-class minority report. Not prompt choreography. Methodology, not metaphysics.",
   "type": "module",
   "private": true,
   "engines": {
