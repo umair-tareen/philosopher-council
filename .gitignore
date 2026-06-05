@@ -10,3 +10,5 @@ dist/
 data/*
 !data/.gitkeep
 !data/README.md
+
+launch/

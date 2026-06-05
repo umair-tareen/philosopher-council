@@ -61,7 +61,14 @@ The council declined to amplify itself. The 0.35-0.69 score spread is the intere
 pnpm ui          # -> http://localhost:4173
 ```
 
-A zero-dependency local web UI: put a question to the council and watch the deliberation stream in live - each philosopher's card fills in as their opinion concludes (virtue bars, one-liner, expandable reasoning, which `provider:model` produced it), followed by the synthesis panel and final verdict. Past transcripts are browsable from the same page. Works in `DRY_RUN=1` for an instant offline demo.
+A zero-dependency local web UI: put a question to the council and watch the deliberation stream in live - each philosopher's card fills in token by token as their opinion concludes (virtue bars, one-liner, expandable reasoning, which `provider:model` produced it), followed by the answer, synthesis, minority report, and final verdict. Past transcripts are browsable from the same page. Works in `DRY_RUN=1` for an instant offline demo.
+
+<p align="center">
+  <img src="assets/chamber.png" alt="The council chamber after a live full-council deliberation" width="850">
+</p>
+<p align="center">
+  <em>A real full-council run: "Should agentic AI systems be allowed to spend money autonomously?"<br>Verdict: 0.41, ignore - the council voted no, with Lao Tzu dissenting hardest.</em>
+</p>
 
 ## 🤔 Why philosophy, and why now
 
