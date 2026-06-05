@@ -24,6 +24,7 @@ import { ibnarabi } from './personas/ibnarabi.js';
 import { ALL_DELIBERATORS, PHILOSOPHERS } from './registry.js';
 import { selectQuorum, type QuorumSeat } from './quorum.js';
 import type { Branch } from '../types.js';
+import { DEBATE_MODES, type DebateModeId } from './modes.js';
 import { ralphLoop } from './ralph.js';
 import { config } from '../config.js';
 import { logger } from '../logger.js';
@@ -59,12 +60,16 @@ async function callPhilosopher(
   branch: Branch,
   item: TrendItem,
   onToken?: (token: string) => void,
+  modeInstruction?: string,
 ): Promise<PhilosopherOpinion> {
   const persona = PERSONAS[id];
   const meta = PHILOSOPHERS[id];
+  const user = modeInstruction
+    ? `${persona.user(item)}\n\n${modeInstruction}`
+    : persona.user(item);
   const { text, model } = await complete({
     system: persona.system,
-    user: persona.user(item),
+    user,
     maxTokens: 700,
     model: config.councilModels[id],
     onToken,
@@ -222,9 +227,15 @@ export async function runCouncil(
   item: TrendItem,
   mode: CouncilMode,
   hooks: CouncilHooks = {},
+  debateModeId: DebateModeId = 'deliberation',
 ): Promise<CouncilVerdict> {
-  const seats: QuorumSeat[] =
-    mode === 'full'
+  const debateMode = DEBATE_MODES[debateModeId] ?? DEBATE_MODES.deliberation;
+  const seats: QuorumSeat[] = debateMode.seats
+    ? debateMode.seats.map((id) => ({
+        id,
+        branch: PHILOSOPHERS[id].primaryBranch,
+      }))
+    : mode === 'full'
       ? ALL_DELIBERATORS.map((id) => ({
           id: id as Exclude<PhilosopherId, 'ibnarabi'>,
           branch: PHILOSOPHERS[id].primaryBranch,
@@ -232,18 +243,30 @@ export async function runCouncil(
       : selectQuorum(item.id);
 
   logger.info(
-    { item: item.id, mode, seats: seats.map((s) => `${s.id}:${s.branch}`) },
+    {
+      item: item.id,
+      mode,
+      debateMode: debateMode.id,
+      seats: seats.map((s) => `${s.id}:${s.branch}`),
+    },
     'council convene',
   );
   hooks.onSeats?.(seats);
 
   const opinions: PhilosopherOpinion[] = [];
-  for (const seat of seats) {
+  for (let i = 0; i < seats.length; i++) {
+    const seat = seats[i] as QuorumSeat;
     try {
       const onToken = hooks.onToken
         ? (t: string) => hooks.onToken?.(seat.id, t)
         : undefined;
-      const opinion = await callPhilosopher(seat.id, seat.branch, item, onToken);
+      const opinion = await callPhilosopher(
+        seat.id,
+        seat.branch,
+        item,
+        onToken,
+        debateMode.instruction?.(i),
+      );
       opinions.push(opinion);
       hooks.onOpinion?.(opinion);
     } catch (err) {
@@ -282,6 +305,7 @@ export async function runCouncil(
   return {
     itemId: item.id,
     mode,
+    debateMode: debateMode.id,
     opinions,
     synthesis,
     aggregateScore,

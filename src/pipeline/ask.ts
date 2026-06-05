@@ -3,6 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { config } from '../config.js';
 import { runCouncil, type CouncilHooks } from '../council/council.js';
+import type { DebateModeId } from '../council/modes.js';
 import { logger } from '../logger.js';
 import { slugify } from '../store/fs.js';
 import type { CouncilMode, CouncilVerdict, TrendItem } from '../types.js';
@@ -11,6 +12,8 @@ export interface AskOptions {
   question: string;
   context?: string;
   fullCouncil?: boolean;
+  /** Named debate format; defaults to open deliberation. */
+  debateMode?: DebateModeId;
   /** Optional live-progress hooks (used by the council chamber UI). */
   hooks?: CouncilHooks;
 }
@@ -36,7 +39,12 @@ export async function runAsk(opts: AskOptions): Promise<AskResult> {
   };
 
   const mode: CouncilMode = opts.fullCouncil ? 'full' : 'quorum';
-  const verdict = await runCouncil(item, mode, opts.hooks ?? {});
+  const verdict = await runCouncil(
+    item,
+    mode,
+    opts.hooks ?? {},
+    opts.debateMode ?? 'deliberation',
+  );
   const markdown = renderAnswer(opts.question, verdict);
 
   const dir = path.join(config.dataDir, 'asks');
@@ -131,7 +139,7 @@ export function renderAnswer(question: string, v: CouncilVerdict): string {
   lines.push('---');
   lines.push('');
   lines.push(
-    `**Final score:** ${v.finalScore.toFixed(2)} · **Recommendation:** ${v.finalRecommendation} · _model: ${v.model} · mode: ${v.mode}_`,
+    `**Final score:** ${v.finalScore.toFixed(2)} · **Recommendation:** ${v.finalRecommendation} · _model: ${v.model} · mode: ${v.mode}${v.debateMode && v.debateMode !== 'deliberation' ? ` · format: ${v.debateMode}` : ''}_`,
   );
   lines.push('');
   return lines.join('\n');

@@ -90,6 +90,8 @@ export interface RalphCritique {
 export interface CouncilVerdict {
   itemId: string;
   mode: CouncilMode;
+  /** Named debate format ('deliberation' | 'socratic' | 'oxford' | 'delphi'). */
+  debateMode?: string;
   opinions: PhilosopherOpinion[];
   synthesis: IbnArabiSynthesis;
   aggregateScore: number;

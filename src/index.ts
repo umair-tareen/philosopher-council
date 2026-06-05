@@ -21,11 +21,30 @@ program
   .argument('<question...>', 'the question to deliberate on')
   .option('--full-council', 'use all 10 deliberators (vs quorum of 4)')
   .option('--context <text>', 'optional extra context for the council')
+  .option(
+    '--mode <mode>',
+    'debate format: deliberation | socratic | oxford | delphi | auto (Method Advisor picks)',
+    'deliberation',
+  )
   .action(async (words: string[], opts) => {
+    const question = words.join(' ');
+    let debateMode = opts.mode as string;
+    if (debateMode === 'auto') {
+      const { adviseMode } = await import('./council/modes.js');
+      const advice = await adviseMode(question);
+      debateMode = advice.mode;
+      console.log(`Method Advisor: ${advice.mode} - ${advice.reason}`);
+    }
+    const { DEBATE_MODES } = await import('./council/modes.js');
+    if (!(debateMode in DEBATE_MODES)) {
+      console.error(`Unknown mode "${debateMode}". Valid: ${Object.keys(DEBATE_MODES).join(', ')}, auto`);
+      process.exit(1);
+    }
     const { markdown, file } = await runAsk({
-      question: words.join(' '),
+      question,
       context: opts.context,
       fullCouncil: !!opts.fullCouncil,
+      debateMode: debateMode as import('./council/modes.js').DebateModeId,
     });
     console.log(`\n${markdown}`);
     console.log(`Saved to ${file}`);

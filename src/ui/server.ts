@@ -23,6 +23,20 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
     return;
   }
   const fullCouncil = url.searchParams.get('full') === '1';
+  const modeParam = url.searchParams.get('mode') ?? 'deliberation';
+  const { DEBATE_MODES, adviseMode } = await import('../council/modes.js');
+  let debateMode = modeParam as keyof typeof DEBATE_MODES;
+  let advisorReason = '';
+  if (modeParam === 'auto') {
+    try {
+      const advice = await adviseMode(question);
+      debateMode = advice.mode;
+      advisorReason = advice.reason;
+    } catch {
+      debateMode = 'deliberation';
+    }
+  }
+  if (!(debateMode in DEBATE_MODES)) debateMode = 'deliberation';
 
   res.writeHead(200, {
     'content-type': 'text/event-stream',
@@ -31,9 +45,11 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
   });
 
   try {
+    sse(res, 'mode', { mode: debateMode, advisorReason });
     const { verdict, file } = await runAsk({
       question,
       fullCouncil,
+      debateMode,
       hooks: {
         onSeats: (seats) =>
           sse(res, 'seats', {

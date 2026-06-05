@@ -114,6 +114,15 @@
   </div>
   <div class="options">
     <label><input type="checkbox" id="full"> Full council (all ten deliberators)</label>
+    <label>Format:
+      <select id="mode" style="background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 0.2rem 0.4rem; font-family: inherit;">
+        <option value="deliberation">Deliberation</option>
+        <option value="socratic">Socratic interrogation</option>
+        <option value="oxford">Oxford debate</option>
+        <option value="delphi">Delphi forecast</option>
+        <option value="auto">Auto (Method Advisor)</option>
+      </select>
+    </label>
     <span class="mono" id="modeinfo"></span>
   </div>
   <div class="status" id="status"></div>
@@ -211,9 +220,17 @@ function convene() {
   $('status').textContent = 'The council convenes…';
   $('status').classList.remove('err');
 
-  const url = '/api/ask/stream?q=' + encodeURIComponent(q) + ($('full').checked ? '&full=1' : '');
+  const url = '/api/ask/stream?q=' + encodeURIComponent(q)
+    + ($('full').checked ? '&full=1' : '')
+    + '&mode=' + encodeURIComponent($('mode').value);
   source = new EventSource(url);
 
+  source.addEventListener('mode', (e) => {
+    const m = JSON.parse(e.data);
+    $('modeinfo').textContent = m.advisorReason
+      ? `advisor chose ${m.mode}: ${m.advisorReason}`
+      : '';
+  });
   source.addEventListener('seats', (e) => {
     const { seats } = JSON.parse(e.data);
     $('grid').innerHTML = seats.map(seatCard).join('');

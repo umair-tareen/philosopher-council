@@ -124,6 +124,14 @@ export function mockComplete(call: CouncilCall): string {
     });
   }
 
+  if (/Method Advisor/i.test(call.system)) {
+    return JSON.stringify({
+      mode: 'socratic',
+      reason:
+        'The question contains an undefined load-bearing term; interrogate the term before any verdict is possible.',
+    });
+  }
+
   if (/council's spokesperson/i.test(call.system)) {
     return 'A qualified no. The strongest evidence cuts against the strong version of the claim: the mechanism is real but bounded, and the gains observed so far depend on conditions that do not generalise. The most serious dissent - that early results are genuinely promising - survives as a qualification, not a refutation: it tells us where the approach works, not that it works everywhere. The verdict would flip on independent replication under adversarial conditions, which has not yet appeared.';
   }
