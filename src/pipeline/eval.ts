@@ -101,16 +101,23 @@ async function runCouncilStrategy(
     tags: [],
   };
   const verdict = await runCouncil(item, mode);
-  const parts = [
-    verdict.synthesis.unifyingReading,
-    verdict.synthesis.hiddenContinuity,
-    `Caution: ${verdict.synthesis.mysticalCaution}`,
-  ];
-  const last = verdict.ralph[verdict.ralph.length - 1];
-  if (last) parts.push(`On reflection: ${last.refinedVerdict}`);
+  // Spokesperson stage gives the direct answer; fall back to the synthesis
+  // composition if it failed (the v1 behaviour that lost the first eval).
+  const answer =
+    verdict.answer ??
+    [
+      verdict.synthesis.unifyingReading,
+      verdict.synthesis.hiddenContinuity,
+      `Caution: ${verdict.synthesis.mysticalCaution}`,
+    ]
+      .join('\n\n')
+      .trim();
   const calls =
-    verdict.opinions.length + 1 /* synthesizer */ + verdict.ralph.length;
-  return { strategy: 'council', answer: parts.join('\n\n').trim(), calls };
+    verdict.opinions.length +
+    1 /* synthesizer */ +
+    verdict.ralph.length +
+    (verdict.answer ? 1 : 0);
+  return { strategy: 'council', answer, calls };
 }
 
 // --- blind judging --------------------------------------------------------

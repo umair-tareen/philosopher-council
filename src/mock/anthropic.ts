@@ -124,6 +124,10 @@ export function mockComplete(call: CouncilCall): string {
     });
   }
 
+  if (/council's spokesperson/i.test(call.system)) {
+    return 'A qualified no. The strongest evidence cuts against the strong version of the claim: the mechanism is real but bounded, and the gains observed so far depend on conditions that do not generalise. The most serious dissent - that early results are genuinely promising - survives as a qualification, not a refutation: it tells us where the approach works, not that it works everywhere. The verdict would flip on independent replication under adversarial conditions, which has not yet appeared.';
+  }
+
   if (/"why now" paragraph/i.test(call.system)) {
     return 'Today\'s items converge on the cost of reasoning: minimal prompting, self-critique loops, and council-style aggregation are all attempts to buy reliability without buying scale. That this cluster surfaced in the same week suggests the field is rotating from capability questions to verification questions. The practical stakes: whoever standardises cheap verification first sets the defaults everyone else inherits.';
   }

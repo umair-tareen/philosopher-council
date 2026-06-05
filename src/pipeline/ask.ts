@@ -60,6 +60,15 @@ export function renderAnswer(question: string, v: CouncilVerdict): string {
   lines.push(`> **Question:** ${question}`);
   lines.push('');
 
+  if (v.answer) {
+    lines.push(`## The council's answer`);
+    lines.push('');
+    lines.push(v.answer);
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+  }
+
   for (const o of v.opinions) {
     lines.push(`## ${o.displayName} _(${o.branch})_ - ${o.verdictScore.toFixed(2)}`);
     lines.push('');

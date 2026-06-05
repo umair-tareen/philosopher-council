@@ -46,6 +46,7 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
           }),
         onOpinion: (opinion) => sse(res, 'opinion', opinion),
         onSynthesis: (synthesis) => sse(res, 'synthesis', synthesis),
+        onAnswer: (answer) => sse(res, 'answer', { answer }),
       },
     });
     sse(res, 'verdict', {

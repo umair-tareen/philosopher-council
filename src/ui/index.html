@@ -120,6 +120,11 @@
 
   <div class="grid" id="grid"></div>
 
+  <div class="synth" id="answer" style="border-color: var(--green)">
+    <h2 style="color: var(--green)">The council's answer</h2>
+    <p id="answertext" style="font-size: 1.05rem"></p>
+  </div>
+
   <div class="synth" id="synth">
     <h2>Ibn ʿArabī - Synthesis <span class="score" id="synthscore"></span></h2>
     <p><b>Unifying reading.</b> <span id="s1"></span></p>
@@ -184,6 +189,7 @@ function convene() {
   $('go').disabled = true;
   $('grid').innerHTML = '';
   $('synth').style.display = 'none';
+  $('answer').style.display = 'none';
   $('final').style.display = 'none';
   $('status').textContent = 'The council convenes…';
   $('status').classList.remove('err');
@@ -205,6 +211,10 @@ function convene() {
     $('synthscore').textContent = s.unifiedScore.toFixed(2);
     $('synth').style.display = 'block';
     $('status').textContent = 'Synthesis delivered. Self-critique in progress…';
+  });
+  source.addEventListener('answer', (e) => {
+    $('answertext').textContent = JSON.parse(e.data).answer;
+    $('answer').style.display = 'block';
   });
   source.addEventListener('verdict', (e) => {
     const v = JSON.parse(e.data);

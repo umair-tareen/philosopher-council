@@ -111,6 +111,47 @@ export interface CouncilHooks {
   onSeats?: (seats: Array<{ id: PhilosopherId; branch: Branch }>) => void;
   onOpinion?: (opinion: PhilosopherOpinion) => void;
   onSynthesis?: (synthesis: IbnArabiSynthesis) => void;
+  onAnswer?: (answer: string) => void;
+}
+
+const SPOKESPERSON_SYSTEM = `You are the council's spokesperson. The deliberation is over; your job is to ANSWER THE QUESTION DIRECTLY, in plain language, on the strength of what the council found.
+
+Rules:
+- Open with your position in the first sentence. No throat-clearing, no describing the deliberation.
+- 200-300 words: the position, the strongest reasons for it (drawn from the deliberators), the strongest dissent and why it does not carry the day (or how it qualifies the answer), and what evidence would change the verdict.
+- Speak about the subject of the question, never about "the council", "the philosophers", or the deliberation process.
+- Plain text. No JSON, no headers.`;
+
+/** Convert the deliberation into a direct first-order answer to the question. */
+async function callSpokesperson(
+  item: TrendItem,
+  opinions: PhilosopherOpinion[],
+  synthesis: IbnArabiSynthesis,
+): Promise<string> {
+  const opinionsText = opinions
+    .map(
+      (o) =>
+        `- ${o.displayName} (${o.verdictScore.toFixed(2)}): ${o.oneLiner} | ${o.reasoning}`,
+    )
+    .join('\n');
+  const { text } = await complete({
+    system: SPOKESPERSON_SYSTEM,
+    user: [
+      `Question: ${item.title}`,
+      item.summary ? `Context: ${item.summary}` : '',
+      '',
+      'Deliberation notes:',
+      opinionsText,
+      '',
+      `Synthesis: ${synthesis.unifyingReading}`,
+      `Noted blind spot: ${synthesis.mysticalCaution}`,
+    ]
+      .filter(Boolean)
+      .join('\n'),
+    maxTokens: 600,
+    model: config.councilModels['spokesperson'],
+  });
+  return text.trim();
 }
 
 export async function runCouncil(
@@ -158,6 +199,17 @@ export async function runCouncil(
     ? (ralph[ralph.length - 1]?.refinedScore ?? aggregateScore)
     : aggregateScore;
 
+  // Direct questions deserve a direct answer, not just an evaluation.
+  let answer: string | undefined;
+  if (item.source === 'question') {
+    try {
+      answer = await callSpokesperson(item, opinions, synthesis);
+      hooks.onAnswer?.(answer);
+    } catch (err) {
+      logger.warn({ err: String(err) }, 'spokesperson call failed; omitting answer');
+    }
+  }
+
   return {
     itemId: item.id,
     mode,
@@ -166,6 +218,7 @@ export async function runCouncil(
     aggregateScore,
     consensus,
     ralph,
+    answer,
     finalScore,
     finalRecommendation: recommend(finalScore),
     model: config.defaultModel,

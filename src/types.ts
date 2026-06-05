@@ -78,6 +78,8 @@ export interface CouncilVerdict {
   aggregateScore: number;
   consensus: string;
   ralph: RalphCritique[];
+  /** Direct first-order answer (spokesperson stage; present for question items). */
+  answer?: string;
   finalScore: number;
   finalRecommendation: Recommendation;
   model: string;
