@@ -2,7 +2,14 @@
 
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Claude](https://img.shields.io/badge/Claude%20API-%23191919.svg?style=for-the-badge&logo=anthropic&logoColor=white) ![Vitest](https://img.shields.io/badge/vitest-%236E9F18.svg?style=for-the-badge&logo=vitest&logoColor=white) ![Zod](https://img.shields.io/badge/zod-%233068b7.svg?style=for-the-badge&logo=zod&logoColor=white)
 
-**An eleven-philosopher LLM council.** Ask it a question — Socrates interrogates it, Kant universalises it, Lao Tzu subtracts from it, and Ibn ʿArabī weaves their verdicts into one reading. Or point it at the AI-research firehose (Reddit / Hacker News / arXiv) and let the council triage what's worth your attention.
+<p align="center">
+  <img src="assets/death-of-socrates.jpg" alt="The Death of Socrates - Jacques-Louis David, 1787" width="850">
+</p>
+<p align="center">
+  <em>Jacques-Louis David, <strong>The Death of Socrates</strong> (1787) - hemlock in reach, finger still raised, argument still running.<br>The founding mood of this project: the questioning does not stop. (Public domain, via Wikimedia Commons.)</em>
+</p>
+
+**An eleven-philosopher LLM council.** Ask it a question - Socrates interrogates it, Kant universalises it, Lao Tzu subtracts from it, and Ibn ʿArabī weaves their verdicts into one reading. Or point it at the AI-research firehose (Reddit / Hacker News / arXiv) and let the council triage what's worth your attention.
 
 **Methodology, not metaphysics.** The philosophers are prompt-engineered lenses, not séance guests. The model is a language model. No production prompt claims the system has a soul, awareness, or being.
 
@@ -16,19 +23,19 @@ pnpm ask --full-council "Should agentic AI systems spend money autonomously?"
 pnpm ask --context "We run a 5-agent trading desk" "Where should a human stay in the loop?"
 ```
 
-Each deliberator answers in character — virtue scores, reasoning, concerns — then the synthesizer speaks last:
+Each deliberator answers in character - virtue scores, reasoning, concerns - then the synthesizer speaks last:
 
 ```
 # The council deliberates
 
 > Question: Is scaling all you need?
 
-## Aristotle (logic) — 0.61
+## Aristotle (logic) - 0.61
 **Argument valid as stated; missing a load-bearing premise.**
 | Wisdom     | Courage    | Justice    | Temperance |
 | ███████░░░ | ██████░░░░ | ██████░░░░ | ███████░░░ |
 
-## Ibn ʿArabī — synthesis (0.62)
+## Ibn ʿArabī - synthesis (0.62)
 **Unifying reading.** The deliberators appear to disagree on novelty
 versus restraint, but each is pointing at the same underlying judgment…
 ```
@@ -37,15 +44,15 @@ Transcripts are saved to `data/asks/<date>-<question>.md`.
 
 ## 🤔 Why philosophy, and why now
 
-Philosophy is already running inside production AI — it's just uncredited:
+Philosophy is already running inside production AI - it's just uncredited:
 
-- **Constitutional AI** (Anthropic's own training method) is literally a written constitution of normative principles the model deliberates against — applied moral philosophy as a training loop.
+- **Constitutional AI** (Anthropic's own training method) is literally a written constitution of normative principles the model deliberates against - applied moral philosophy as a training loop.
 - **RLHF** is preference utilitarianism with a reward model.
 - **AI safety guardrails** are deontology: rules that hold regardless of outcome.
 - **Interpretability research** is epistemology: *how do we know what the model knows?*
-- **Karpathy's "LLM Council"** showed that multiple model perspectives beat one — this project takes the obvious next step and gives the perspectives 2,500 years of documented methodology.
+- **Karpathy's "LLM Council"** showed that multiple model perspectives beat one - this project takes the obvious next step and gives the perspectives 2,500 years of documented methodology.
 
-And there's a fitting irony in the plumbing: **Anthropic** takes its name from the Greek *ánthrōpos* — "human." A company named *human* built the model; this council uses it to put humanity's oldest reasoning traditions — Athens, Baghdad, Córdoba, Qufu — back in the judgment seat over AI's newest claims. The wheel turns full circle: the machines trained on everything we ever wrote are steered by the best of what we ever thought.
+And there's a fitting irony in the plumbing: **Anthropic** takes its name from the Greek *ánthrōpos* - "human." A company named *human* built the model; this council uses it to put humanity's oldest reasoning traditions - Athens, Baghdad, Córdoba, Qufu - back in the judgment seat over AI's newest claims. The wheel turns full circle: the machines trained on everything we ever wrote are steered by the best of what we ever thought.
 
 So: if a constitution of principles can align a model, a council of philosophers can interrogate one. Same move, made explicit.
 
@@ -66,7 +73,7 @@ pnpm trends:run --offline           # full pipeline on fixture data
 ```bash
 cp .env.example .env                # add ANTHROPIC_API_KEY=sk-ant-...
 pnpm ask "your question"            # 5 Claude calls (quorum) per question
-pnpm ask --full-council "..."       # 11 calls — every philosopher speaks
+pnpm ask --full-council "..."       # 11 calls - every philosopher speaks
 pnpm trends:run                     # triage today's AI-research trends
 ```
 
@@ -80,11 +87,11 @@ Default model is `claude-sonnet-4-5` (set `ANTHROPIC_MODEL` to override).
 | Metaphysics    | Plato, Lao Tzu, Avicenna, Ibn Rushd, Descartes                 |
 | Ethics         | Socrates, Aristotle, Confucius, Lao Tzu, Al-Ghazālī, Kant      |
 | Logic          | Aristotle, Ibn Rushd                                           |
-| **Synthesis**  | **Ibn ʿArabī** — fixed seat, speaks last, weaves the verdicts  |
+| **Synthesis**  | **Ibn ʿArabī** - fixed seat, speaks last, weaves the verdicts  |
 
-Quorum mode seats one philosopher per branch, selected deterministically from the item id — the same question always convenes the same bench. Full-council mode seats all ten deliberators. Ibn ʿArabī always closes.
+Quorum mode seats one philosopher per branch, selected deterministically from the item id - the same question always convenes the same bench. Full-council mode seats all ten deliberators. Ibn ʿArabī always closes.
 
-Every opinion is scored against the **four cardinal virtues** — Wisdom, Courage, Justice, Temperance ∈ [0, 1] — using the rubrics in [`canon/02-virtue-rubrics.md`](canon/02-virtue-rubrics.md), making verdicts from very different methodologies commensurable.
+Every opinion is scored against the **four cardinal virtues** - Wisdom, Courage, Justice, Temperance ∈ [0, 1] - using the rubrics in [`canon/02-virtue-rubrics.md`](canon/02-virtue-rubrics.md), making verdicts from very different methodologies commensurable.
 
 ## 🔄 Pipeline stages
 
@@ -95,12 +102,12 @@ fetch ──> filter ────┘                                            
                                                     digest <──────┘
 ```
 
-- **ask** (`src/pipeline/ask.ts`) — wraps your question as the item under deliberation
-- **fetch** (`src/fetchers/`) — Reddit `new.json`, HN Algolia, arXiv RSS (`cs.AI`, `cs.LG`); dedupe via `data/.seen.json`
-- **filter** (`src/filter/`) — keyword regex set + recency/upvote heuristic
-- **council** (`src/council/`) — one Claude call per seat, JSON-only opinions; Ibn ʿArabī synthesises
-- **ralph** (`src/council/ralph.ts`) — self-critique loop, max 2 iterations, early-stops at `stopConfidence ≥ 0.6`
-- **digest** (`src/pipeline/digest.ts`) — daily Markdown digest grouped by `amplify` / `track` / `ignore`
+- **ask** (`src/pipeline/ask.ts`) - wraps your question as the item under deliberation
+- **fetch** (`src/fetchers/`) - Reddit `new.json`, HN Algolia, arXiv RSS (`cs.AI`, `cs.LG`); dedupe via `data/.seen.json`
+- **filter** (`src/filter/`) - keyword regex set + recency/upvote heuristic
+- **council** (`src/council/`) - one Claude call per seat, JSON-only opinions; Ibn ʿArabī synthesises
+- **ralph** (`src/council/ralph.ts`) - self-critique loop, max 2 iterations, early-stops at `stopConfidence ≥ 0.6`
+- **digest** (`src/pipeline/digest.ts`) - daily Markdown digest grouped by `amplify` / `track` / `ignore`
 
 ## 📁 Project layout
 

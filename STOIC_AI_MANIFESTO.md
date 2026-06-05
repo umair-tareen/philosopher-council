@@ -15,7 +15,7 @@ Ibn ʿArabī's *Waḥdat al-Wujūd* read as methodology.
 > philosophers are *lenses the model can be steered through*. The model is
 > a language model.
 
-## 1. Prologue — Why a Stoic reads ML papers
+## 1. Prologue - Why a Stoic reads ML papers
 
 Most takes on a new AI result are hot. The community moves at the pace of
 the most excited reader. Stoicism is older than that pace, and most of
@@ -28,8 +28,8 @@ careful work or careless work.
 
 A Stoic discipline alone is too narrow to read a paper well. So this
 project adds ten other philosophical voices and one synthesizer, giving
-the analysis four distinct lenses — Epistemology, Metaphysics, Ethics,
-Logic — plus a fifth, synthesis, that treats the four readings as facets
+the analysis four distinct lenses - Epistemology, Metaphysics, Ethics,
+Logic - plus a fifth, synthesis, that treats the four readings as facets
 of one judgment about the item.
 
 ## 2. The Dichotomy of Control as a design principle
@@ -65,86 +65,86 @@ of the system.
 
 ## 4. The four classical branches as the council's lenses
 
-The classical fourfold — Epistemology, Metaphysics, Ethics, Logic —
+The classical fourfold - Epistemology, Metaphysics, Ethics, Logic -
 gives the council a coverage guarantee. Every trend item is read through
 all four lenses in the default quorum mode:
 
-- **Epistemology** — how do we know? Is the claim falsifiable?
+- **Epistemology** - how do we know? Is the claim falsifiable?
   Reproducible? Justified by what the authors had access to?
-- **Metaphysics** — what kind of thing is this, really? Is the
+- **Metaphysics** - what kind of thing is this, really? Is the
   proposal pointing at an idea or merely at a benchmark that
   approximates one?
-- **Ethics** — who benefits and who is harmed by adoption? Does the
+- **Ethics** - who benefits and who is harmed by adoption? Does the
   recommended practice cultivate good or careless habits?
-- **Logic** — is the argument valid? Are the premises true? What
+- **Logic** - is the argument valid? Are the premises true? What
   hidden premise carries the load?
 
-The fifth role — **Synthesis** — is held permanently by Ibn ʿArabī and
+The fifth role - **Synthesis** - is held permanently by Ibn ʿArabī and
 discussed in §5.5.
 
 ## 5. The Eleven-Philosopher Council
 
 ### 5.1 The Greek triad
 
-- **Socrates (Epistemology, Ethics)** — the elenchus. Probe the central
+- **Socrates (Epistemology, Ethics)** - the elenchus. Probe the central
   terms; reward what survives questioning.
-- **Plato (Metaphysics, Epistemology)** — the Forms. Distinguish the
+- **Plato (Metaphysics, Epistemology)** - the Forms. Distinguish the
   idea from its imitations; reward proposals that clarify the abstract
   structure of learning.
-- **Aristotle (Logic, Ethics)** — syllogistic rigor plus *hexis*.
+- **Aristotle (Logic, Ethics)** - syllogistic rigor plus *hexis*.
   Restate the claim formally; ask whether the practice cultivates good
   habits.
 
 ### 5.2 The Eastern voices
 
-- **Confucius (Ethics)** — *Ren* and *Li*. Rectify the names — words
+- **Confucius (Ethics)** - *Ren* and *Li*. Rectify the names - words
   like "autonomous" must mean what they say. Reward proposals that
   strengthen the social fabric of practice (peer review, attribution,
   mentorship).
-- **Lao Tzu (Metaphysics, Ethics)** — *Wu wei*. Reward restraint and
+- **Lao Tzu (Metaphysics, Ethics)** - *Wu wei*. Reward restraint and
   emergence; penalise force and complexity. Sometimes the highest score
   is for subtracting.
 
 ### 5.3 The Islamic golden age
 
-- **Avicenna / Ibn Sīnā (Epistemology, Metaphysics)** — the Floating
+- **Avicenna / Ibn Sīnā (Epistemology, Metaphysics)** - the Floating
   Man. Stripped of every input, what would the system still know about
   itself? A discipline for claims about self-learning.
-- **Al-Ghazālī (Epistemology, Ethics)** — the limit of pure reason.
+- **Al-Ghazālī (Epistemology, Ethics)** - the limit of pure reason.
   Where does the argument overreach what discursive thought can settle?
-  What requires another mode of knowing — practical experience,
+  What requires another mode of knowing - practical experience,
   observed failure?
-- **Ibn Rushd / Averroes (Logic, Metaphysics)** — *Burhān* (rigorous
+- **Ibn Rushd / Averroes (Logic, Metaphysics)** - *Burhān* (rigorous
   demonstration). Demand the strongest available demonstration;
   reconcile evidence and theory; prefer evidence when they cannot be
   reconciled.
 
 ### 5.4 The modern Europeans
 
-- **Descartes (Epistemology, Metaphysics)** — methodic doubt. Strip the
+- **Descartes (Epistemology, Metaphysics)** - methodic doubt. Strip the
   proposal to its *cogito*: what survives radical scrutiny?
-- **Kant (Ethics, Epistemology)** — the Categorical Imperative.
+- **Kant (Ethics, Epistemology)** - the Categorical Imperative.
   Universalise the principle behind the claim. Separate the *synthetic
   a priori* contributions (the inductive biases that make learning
   possible at all) from the empirical contingencies.
 
-### 5.5 Ibn ʿArabī and *Waḥdat al-Wujūd* — the synthesizer
+### 5.5 Ibn ʿArabī and *Waḥdat al-Wujūd* - the synthesizer
 
 The other ten philosophers deliberate. Ibn ʿArabī does not. He receives
-their verdicts as input and applies *Waḥdat al-Wujūd* — the Oneness of
-Being — read here as a *methodological* lens: apparently incompatible
+their verdicts as input and applies *Waḥdat al-Wujūd* - the Oneness of
+Being - read here as a *methodological* lens: apparently incompatible
 opinions about a single object often turn out to be facets of one
 underlying judgment once each vantage point is made explicit. His
 output is a structured `IbnArabiSynthesis` with four fields:
 
-- **`unifyingReading`** — how the conflicting opinions are facets of
+- **`unifyingReading`** - how the conflicting opinions are facets of
   one judgment.
-- **`hiddenContinuity`** — what each voice was really saying, once
+- **`hiddenContinuity`** - what each voice was really saying, once
   read as expressions of one truth about the item.
-- **`mysticalCaution`** — what the council collectively missed because
+- **`mysticalCaution`** - what the council collectively missed because
   it stayed within discursive reasoning alone. (Methodology, not
   metaphysics: blind spots in framing, gaps in vocabulary.)
-- **`unifiedScore`** — Ibn ʿArabī's own synthesised verdict, not a
+- **`unifiedScore`** - Ibn ʿArabī's own synthesised verdict, not a
   mean.
 
 He is the bridge between analytic philosophy and the project's wider
@@ -162,10 +162,10 @@ council's deliberations into a single, communicable reading.
 Every philosopher prompt opens with a pre-inference scratchpad
 (`src/council/personas/_shared.ts`) modeled on three Stoic exercises:
 
-- **Morning Preparation** — list the failure modes of the claim before
+- **Morning Preparation** - list the failure modes of the claim before
   scoring it.
-- **View From Above** — consider the claim at a five-year horizon.
-- **Negative Visualization** — imagine the field without this idea or
+- **View From Above** - consider the claim at a five-year horizon.
+- **Negative Visualization** - imagine the field without this idea or
   with the opposite idea.
 
 These are prompt-engineering devices. The model is not asked to feel
@@ -178,11 +178,11 @@ the bare prompt misses.
 
 Two strands of epistemology contribute orthogonally to the council:
 
-- **Rationalism** (Descartes, Kant) — knowledge grounded in structure.
+- **Rationalism** (Descartes, Kant) - knowledge grounded in structure.
   In the codebase, the `canon/` directory plays this role: a small
   hand-edited body of texts the council *must* cite. It is the
   council's a priori.
-- **Empiricism** (the live items themselves) — knowledge grounded in
+- **Empiricism** (the live items themselves) - knowledge grounded in
   fresh observation. The fetcher pulls Reddit, Hacker News, and arXiv;
   the council reads what is in front of it today.
 
@@ -210,11 +210,11 @@ drifting on what the latest training data happens to contain. The
 
 Current canon entries:
 
-- `canon/00-stoic-primer.md` — the Stoic frame
-- `canon/01-karpathy-concepts.md` — working definitions of Ralph loop,
+- `canon/00-stoic-primer.md` - the Stoic frame
+- `canon/01-karpathy-concepts.md` - working definitions of Ralph loop,
   LLM Council, LLM Wiki, Caveman LLM, vibe coding, autoresearch
-- `canon/02-virtue-rubrics.md` — what each virtue score means
-- `canon/03-philosophy-of-learning.md` — epistemology vocabulary
+- `canon/02-virtue-rubrics.md` - what each virtue score means
+- `canon/03-philosophy-of-learning.md` - epistemology vocabulary
 
 ## 10. Pragmatism and vibe coding
 
@@ -245,10 +245,10 @@ vocabulary.
 
 | Concept              | In this project                                             |
 | -------------------- | ----------------------------------------------------------- |
-| Ralph loop           | `src/council/ralph.ts` — runs after the council             |
+| Ralph loop           | `src/council/ralph.ts` - runs after the council             |
 | LLM Council          | `src/council/council.ts` + eleven `personas/`               |
 | LLM Wiki             | `canon/` directory                                          |
-| Caveman LLM          | `src/council/caveman.ts` — minimal fallback prompt          |
+| Caveman LLM          | `src/council/caveman.ts` - minimal fallback prompt          |
 | Vibe coding          | Developer UX: short pnpm scripts, no config ceremony        |
 | Autoresearch         | The whole pipeline, run on a schedule                       |
 
@@ -291,7 +291,7 @@ self-correction; the council is its raw signal.
   (perhaps an open-weight model run locally) would be a meaningful
   upgrade.
 - **Continual canon.** The canon is currently static. A discipline
-  for adding to it — call it *canon promotion* — would let the
+  for adding to it - call it *canon promotion* - would let the
   council's own best work feed back into its priors without drifting.
 - **Disagreement metrics.** The synthesis treats disagreement as
   illuminating, but the codebase does not yet score *how* the council
@@ -303,20 +303,20 @@ self-correction; the council is its raw signal.
   later, with the original verdict available, would catch hype that
   matures and quietness that turns out to matter.
 
-## 17. Appendix — Glossary
+## 17. Appendix - Glossary
 
-- **Branch** — one of Epistemology, Metaphysics, Ethics, Logic, Synthesis.
-- **Canon** — the small body of seed texts the council must cite
+- **Branch** - one of Epistemology, Metaphysics, Ethics, Logic, Synthesis.
+- **Canon** - the small body of seed texts the council must cite
   (`canon/*.md`).
-- **Caveman** — the minimal fallback prompt
+- **Caveman** - the minimal fallback prompt
   (`src/council/caveman.ts`).
-- **Quorum** — the four deliberators picked for a single item in
+- **Quorum** - the four deliberators picked for a single item in
   quorum mode, one per branch.
-- **Ralph loop** — the post-council self-critique pass.
-- **Seat** — a `{ philosopher, branch }` pairing for one item.
-- **Synthesis** — Ibn ʿArabī's fifth-stage reading of the four (or
+- **Ralph loop** - the post-council self-critique pass.
+- **Seat** - a `{ philosopher, branch }` pairing for one item.
+- **Synthesis** - Ibn ʿArabī's fifth-stage reading of the four (or
   ten) deliberator verdicts.
-- **Wisdom / Courage / Justice / Temperance** — the four virtue
+- **Wisdom / Courage / Justice / Temperance** - the four virtue
   scoring axes (`canon/02-virtue-rubrics.md`).
 
 ---

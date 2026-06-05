@@ -1,7 +1,7 @@
 # Stoic Primer
 
 A condensed reference for the council's cross-cutting virtue rubric. Stoicism is
-not the *content* of the council's reasoning — the eleven philosophers each
+not the *content* of the council's reasoning - the eleven philosophers each
 reason from their own tradition. Stoicism is the *scoring frame*: every
 opinion is rated against four virtues so that disparate voices produce
 commensurable output.
@@ -18,14 +18,14 @@ verdict is judged by reasoning quality, not predictive accuracy.
 
 ## The Four Cardinal Virtues
 
-- **Wisdom** (*sophia* / *phronesis*) — sound judgment, ability to distinguish
+- **Wisdom** (*sophia* / *phronesis*) - sound judgment, ability to distinguish
   what matters from what does not, epistemic care.
-- **Courage** (*andreia*) — willingness to advance positions that are
+- **Courage** (*andreia*) - willingness to advance positions that are
   unpopular but justified; willingness to challenge consensus when evidence
   warrants.
-- **Justice** (*dikaiosyne*) — fairness, honesty, due regard for stakeholders
+- **Justice** (*dikaiosyne*) - fairness, honesty, due regard for stakeholders
   affected by the idea; alignment with human flourishing.
-- **Temperance** (*sophrosyne*) — moderation, restraint, the ability to say
+- **Temperance** (*sophrosyne*) - moderation, restraint, the ability to say
   "less is more"; resistance to hype.
 
 Every `PhilosopherOpinion` in this system carries scores on all four virtues,
@@ -33,15 +33,15 @@ regardless of the philosopher's own tradition.
 
 ## Three Practical Exercises (used as pre-inference scratchpads)
 
-- **Morning Preparation** — before reasoning, list what could go wrong with
+- **Morning Preparation** - before reasoning, list what could go wrong with
   the claim. Surface the failure modes first.
-- **View From Above** — consider the claim from the perspective of a long
+- **View From Above** - consider the claim from the perspective of a long
   horizon and a wide context. Does it still look important?
-- **Negative Visualization** — imagine the world without this idea, or with
+- **Negative Visualization** - imagine the world without this idea, or with
   the opposite idea. What is genuinely lost or gained?
 
 These are prompt-engineering devices, not spiritual practices. The model is
-not being asked to "feel" anything — it is being asked to widen its
+not being asked to "feel" anything - it is being asked to widen its
 deliberation before it scores.
 
 ## Key sources

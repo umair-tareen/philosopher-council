@@ -16,9 +16,9 @@ persistence (`src/council/ralph.ts`).
 
 ## LLM Council
 
-A pattern in which multiple model calls — typically with different system
+A pattern in which multiple model calls - typically with different system
 prompts representing different viewpoints, or different model providers
-entirely — produce independent opinions on a single question, which are
+entirely - produce independent opinions on a single question, which are
 then aggregated. The aggregation can be a vote, a weighted score, or a
 narrative synthesis. This system uses eleven prompt-defined philosopher
 personas. Multi-provider is left as future work.
@@ -32,7 +32,7 @@ the working LLM Wiki for the council.
 
 ## Caveman LLM
 
-A deliberately minimal prompt — small token budget, no scaffolding — used
+A deliberately minimal prompt - small token budget, no scaffolding - used
 as a sanity check and as a budget fallback when the full council is too
 expensive. The point is to verify that a stripped-down version of the
 analysis still recovers the obvious cases.
@@ -48,6 +48,6 @@ defaults, minimal configuration) is itself an example.
 ## Autoresearch
 
 A loop in which an agent fetches new information from the world (papers,
-posts), processes it, writes analysis, and persists results — running on
+posts), processes it, writes analysis, and persists results - running on
 a schedule. This entire pipeline is an autoresearch loop with a
 philosophical-analysis stage.
