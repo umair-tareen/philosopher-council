@@ -32,10 +32,13 @@ describe('council chamber ui', () => {
     expect(res.headers.get('content-type')).toContain('text/event-stream');
     const body = await res.text();
     expect(body).toContain('event: seats');
+    expect(body).toContain('event: token'); // token-level streaming
     expect((body.match(/event: opinion/g) ?? []).length).toBe(4); // quorum
     expect(body).toContain('event: synthesis');
+    expect(body).toContain('event: answertoken');
     expect(body).toContain('event: verdict');
     expect(body).toContain('event: done');
+    expect(body).toContain('"minority"');
   });
 
   it('lists transcripts', async () => {

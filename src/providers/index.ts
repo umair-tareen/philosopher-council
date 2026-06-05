@@ -53,16 +53,17 @@ export function formatModelSpec(spec: ModelSpec): string {
 export async function completeWith(
   spec: ModelSpec,
   req: Omit<ProviderRequest, 'model'>,
+  onToken?: (token: string) => void,
 ): Promise<ProviderResult> {
   const full: ProviderRequest = { ...req, model: spec.model };
   switch (spec.provider) {
     case 'anthropic':
-      return anthropicComplete(full);
+      return anthropicComplete(full, onToken);
     case 'openai':
       if (!config.openaiApiKey) {
         throw new Error('OPENAI_API_KEY is required for openai: model specs');
       }
-      return openAiCompatComplete('https://api.openai.com/v1', config.openaiApiKey, full);
+      return openAiCompatComplete('https://api.openai.com/v1', config.openaiApiKey, full, onToken);
     case 'gemini':
       if (!config.geminiApiKey) {
         throw new Error('GEMINI_API_KEY is required for gemini: model specs');
@@ -71,8 +72,14 @@ export async function completeWith(
         'https://generativelanguage.googleapis.com/v1beta/openai',
         config.geminiApiKey,
         full,
+        onToken,
       );
     case 'ollama':
-      return openAiCompatComplete(`${config.ollamaBaseUrl.replace(/\/$/, '')}/v1`, 'ollama', full);
+      return openAiCompatComplete(
+        `${config.ollamaBaseUrl.replace(/\/$/, '')}/v1`,
+        'ollama',
+        full,
+        onToken,
+      );
   }
 }

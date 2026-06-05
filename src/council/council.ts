@@ -58,6 +58,7 @@ async function callPhilosopher(
   id: Exclude<PhilosopherId, 'ibnarabi'>,
   branch: Branch,
   item: TrendItem,
+  onToken?: (token: string) => void,
 ): Promise<PhilosopherOpinion> {
   const persona = PERSONAS[id];
   const meta = PHILOSOPHERS[id];
@@ -66,6 +67,7 @@ async function callPhilosopher(
     user: persona.user(item),
     maxTokens: 700,
     model: config.councilModels[id],
+    onToken,
   });
   const raw = extractJson<RawOpinion>(text);
   const virtueScores = clampVirtues(raw.virtueScores);
@@ -110,8 +112,12 @@ async function callSynthesizer(
 
 export interface CouncilHooks {
   onSeats?: (seats: Array<{ id: PhilosopherId; branch: Branch }>) => void;
+  /** Raw text deltas from a deliberator while their opinion streams in. */
+  onToken?: (philosopher: PhilosopherId, token: string) => void;
   onOpinion?: (opinion: PhilosopherOpinion) => void;
   onSynthesis?: (synthesis: IbnArabiSynthesis) => void;
+  /** Raw text deltas from the spokesperson while the answer streams in. */
+  onAnswerToken?: (token: string) => void;
   onAnswer?: (answer: string) => void;
 }
 
@@ -130,6 +136,7 @@ async function callSpokesperson(
   opinions: PhilosopherOpinion[],
   synthesis: IbnArabiSynthesis,
   minority: MinorityReport,
+  onToken?: (token: string) => void,
 ): Promise<string> {
   const opinionsText = opinions
     .map(
@@ -157,6 +164,7 @@ async function callSpokesperson(
       .join('\n'),
     maxTokens: 600,
     model: config.councilModels['spokesperson'],
+    onToken,
   });
   return text.trim();
 }
@@ -232,7 +240,10 @@ export async function runCouncil(
   const opinions: PhilosopherOpinion[] = [];
   for (const seat of seats) {
     try {
-      const opinion = await callPhilosopher(seat.id, seat.branch, item);
+      const onToken = hooks.onToken
+        ? (t: string) => hooks.onToken?.(seat.id, t)
+        : undefined;
+      const opinion = await callPhilosopher(seat.id, seat.branch, item, onToken);
       opinions.push(opinion);
       hooks.onOpinion?.(opinion);
     } catch (err) {
@@ -261,7 +272,7 @@ export async function runCouncil(
   let answer: string | undefined;
   if (item.source === 'question') {
     try {
-      answer = await callSpokesperson(item, opinions, synthesis, minority);
+      answer = await callSpokesperson(item, opinions, synthesis, minority, hooks.onAnswerToken);
       hooks.onAnswer?.(answer);
     } catch (err) {
       logger.warn({ err: String(err) }, 'spokesperson call failed; omitting answer');

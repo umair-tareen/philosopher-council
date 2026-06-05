@@ -44,8 +44,10 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
               tradition: PHILOSOPHERS[s.id].tradition,
             })),
           }),
+        onToken: (philosopher, t) => sse(res, 'token', { philosopher, t }),
         onOpinion: (opinion) => sse(res, 'opinion', opinion),
         onSynthesis: (synthesis) => sse(res, 'synthesis', synthesis),
+        onAnswerToken: (t) => sse(res, 'answertoken', { t }),
         onAnswer: (answer) => sse(res, 'answer', { answer }),
       },
     });

@@ -162,7 +162,17 @@ function seatCard(seat) {
     <h3>${seat.displayName}<span class="badge">${seat.branch}</span></h3>
     <div class="meta">${seat.tradition}</div>
     <div class="thinking">deliberating…</div>
+    <div class="livestream mono" id="live-${seat.id}" style="display:none; color: var(--muted); font-size: 0.72rem; line-height: 1.45; max-height: 7.5em; overflow: hidden; margin-top: 0.4rem; white-space: pre-wrap;"></div>
   </div>`;
+}
+
+function appendToken(philosopher, t) {
+  const live = $('live-' + philosopher);
+  if (!live) return;
+  live.style.display = 'block';
+  live.textContent += t;
+  // keep the tail visible while streaming
+  live.scrollTop = live.scrollHeight;
 }
 
 function fillCard(o) {
@@ -195,6 +205,7 @@ function convene() {
   $('grid').innerHTML = '';
   $('synth').style.display = 'none';
   $('answer').style.display = 'none';
+  $('answertext').textContent = '';
   $('minority').style.display = 'none';
   $('final').style.display = 'none';
   $('status').textContent = 'The council convenes…';
@@ -208,7 +219,15 @@ function convene() {
     $('grid').innerHTML = seats.map(seatCard).join('');
     $('status').textContent = `${seats.length} deliberators seated. Opinions arrive as each concludes.`;
   });
+  source.addEventListener('token', (e) => {
+    const { philosopher, t } = JSON.parse(e.data);
+    appendToken(philosopher, t);
+  });
   source.addEventListener('opinion', (e) => fillCard(JSON.parse(e.data)));
+  source.addEventListener('answertoken', (e) => {
+    $('answertext').textContent += JSON.parse(e.data).t;
+    $('answer').style.display = 'block';
+  });
   source.addEventListener('synthesis', (e) => {
     const s = JSON.parse(e.data);
     $('s1').textContent = s.unifyingReading;
@@ -219,6 +238,7 @@ function convene() {
     $('status').textContent = 'Synthesis delivered. Self-critique in progress…';
   });
   source.addEventListener('answer', (e) => {
+    // replace the streamed tokens with the final trimmed answer
     $('answertext').textContent = JSON.parse(e.data).answer;
     $('answer').style.display = 'block';
   });
