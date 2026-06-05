@@ -17,13 +17,13 @@
       "id": "fixt-arxiv-002",
       "source": "arxiv",
       "subSource": "cs.AI",
-      "title": "Caveman LLM: Minimal Prompts Recover Most of the Gain",
+      "title": "Minimal Prompts Recover Most of the Gain",
       "url": "https://arxiv.org/abs/example2",
       "author": "Doe et al.",
       "publishedAt": "2026-05-18T09:00:00Z",
       "fetchedAt": "2026-05-20T01:00:00Z",
-      "summary": "We show that a deliberately minimal prompt template (\"caveman\" style) recovers most of the performance gain attributed to elaborate scaffolding on 4 of 6 reasoning benchmarks. The result suggests prompt complexity is often a confound.",
-      "tags": ["caveman-llm", "karpathy"]
+      "summary": "We show that a deliberately minimal prompt template recovers most of the performance gain attributed to elaborate scaffolding on 4 of 6 reasoning benchmarks. The result suggests prompt complexity is often a confound.",
+      "tags": ["karpathy"]
     },
     {
       "id": "fixt-hn-003",

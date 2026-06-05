@@ -137,15 +137,6 @@ export function mockComplete(call: CouncilCall): string {
     });
   }
 
-  if (/novelty.*soundness.*alignment/i.test(call.system)) {
-    return JSON.stringify({
-      novelty: 0.6,
-      soundness: 0.55,
-      alignment: 0.7,
-      oneLiner: 'Plausible incremental idea; track for replication.',
-    });
-  }
-
   for (const p of PROFILES) {
     if (p.match.test(call.system)) {
       return JSON.stringify({

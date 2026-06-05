@@ -212,7 +212,7 @@ Current canon entries:
 
 - `canon/00-stoic-primer.md` - the Stoic frame
 - `canon/01-karpathy-concepts.md` - working definitions of Ralph loop,
-  LLM Council, LLM Wiki, Caveman LLM, vibe coding, autoresearch
+  LLM Council, LLM Wiki, vibe coding, autoresearch
 - `canon/02-virtue-rubrics.md` - what each virtue score means
 - `canon/03-philosophy-of-learning.md` - epistemology vocabulary
 
@@ -248,7 +248,6 @@ vocabulary.
 | Ralph loop           | `src/council/ralph.ts` - runs after the council             |
 | LLM Council          | `src/council/council.ts` + eleven `personas/`               |
 | LLM Wiki             | `canon/` directory                                          |
-| Caveman LLM          | `src/council/caveman.ts` - minimal fallback prompt          |
 | Vibe coding          | Developer UX: short pnpm scripts, no config ceremony        |
 | Autoresearch         | The whole pipeline, run on a schedule                       |
 
@@ -262,7 +261,6 @@ vocabulary.
 | Eleven personas                  | `src/council/personas/*.ts`                         |
 | Ibn ʿArabī synthesis             | `src/council/personas/ibnarabi.ts`                  |
 | Ralph self-critique              | `src/council/ralph.ts`                              |
-| Caveman fallback                 | `src/council/caveman.ts`                            |
 | Canon / LLM Wiki                 | `canon/*.md`                                        |
 | Autoresearch loop                | `src/pipeline/run.ts` + `src/scheduler.ts`          |
 | Empirical layer                  | `src/fetchers/*.ts`                                 |
@@ -308,8 +306,6 @@ self-correction; the council is its raw signal.
 - **Branch** - one of Epistemology, Metaphysics, Ethics, Logic, Synthesis.
 - **Canon** - the small body of seed texts the council must cite
   (`canon/*.md`).
-- **Caveman** - the minimal fallback prompt
-  (`src/council/caveman.ts`).
 - **Quorum** - the four deliberators picked for a single item in
   quorum mode, one per branch.
 - **Ralph loop** - the post-council self-critique pass.

@@ -30,13 +30,6 @@ against. Distinct from RAG over the public web: the wiki is small,
 hand-edited, and a kind of "canon." The `canon/` directory in this repo is
 the working LLM Wiki for the council.
 
-## Caveman LLM
-
-A deliberately minimal prompt - small token budget, no scaffolding - used
-as a sanity check and as a budget fallback when the full council is too
-expensive. The point is to verify that a stripped-down version of the
-analysis still recovers the obvious cases.
-
 ## Vibe coding
 
 Building software by short natural-language descriptions iterated with an

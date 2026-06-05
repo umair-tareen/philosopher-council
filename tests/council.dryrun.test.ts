@@ -38,12 +38,12 @@ describe('council dry-run', () => {
     const item = {
       id: 'test-2',
       source: 'arxiv' as const,
-      title: 'Caveman LLM',
+      title: 'Minimal prompt templates',
       url: 'https://example/test2',
       publishedAt: '2026-05-20T00:00:00Z',
       fetchedAt: '2026-05-20T01:00:00Z',
       summary: 'Minimal prompts recover most of the gain.',
-      tags: ['caveman-llm'],
+      tags: ['karpathy'],
     };
     const verdict = await runCouncil(item, 'full');
     expect(verdict.opinions.length).toBe(10);

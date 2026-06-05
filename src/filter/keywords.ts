@@ -5,7 +5,6 @@ export interface KeywordRule {
 
 export const KARPATHY_KEYWORDS: KeywordRule[] = [
   { tag: 'ralph-loop', pattern: /\bralph[- ]?loop\b/i },
-  { tag: 'caveman-llm', pattern: /\bcaveman\b/i },
   { tag: 'llm-council', pattern: /\bllm[- ]?council\b/i },
   { tag: 'llm-wiki', pattern: /\bllm[- ]?wiki\b/i },
   { tag: 'vibe-coding', pattern: /\bvibe[ -]?cod(?:ing|e[rd]?)\b/i },

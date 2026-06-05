@@ -18,8 +18,8 @@ describe('matchKeywords', () => {
   });
 
   it('does not double-count overlapping keywords', () => {
-    const tags = matchKeywords('Caveman LLM caveman caveman');
-    expect(tags.filter((t) => t === 'caveman-llm')).toHaveLength(1);
+    const tags = matchKeywords('Ralph loop ralph-loop ralph loop');
+    expect(tags.filter((t) => t === 'ralph-loop')).toHaveLength(1);
   });
 });
 
