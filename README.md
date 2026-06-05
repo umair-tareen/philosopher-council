@@ -131,6 +131,24 @@ Now Lao Tzu deliberates on a local 7B (fitting, for the philosopher of doing les
 | `gemini:`    | Gemini OpenAI-compat endpoint             | `GEMINI_API_KEY`    |
 | `ollama:`    | local Ollama (`OLLAMA_BASE_URL` override) | none                |
 
+## 📊 Does it actually work? (eval)
+
+`pnpm eval` blind-judges three strategies on the same questions: a **single direct answer** (1 call), a **generic Advocate/Critic/Judge debate** (3 calls), and the **philosopher council** (7 calls). Answers are anonymized and shuffled; the judge scores insight, rigor, blind-spot coverage, and actionability.
+
+The first live run (N=5) was an honest loss - and the most useful result this project has produced:
+
+| Strategy | v1 score | v1 wins | v2 score | v2 wins |
+|----------|---------|---------|---------|---------|
+| single   | 0.763   | 5/5     | 0.758   | 1/5     |
+| debate   | 0.667   | 0/5     | 0.588   | 0/5     |
+| council  | 0.370   | 0/5     | **0.717** | **4/5** |
+
+**What happened between v1 and v2.** The judge's rationales in v1 were unanimous: the council "spends more effort critiquing its own methodology than addressing the question." The architecture evaluated questions but never answered them - the synthesis described the deliberation instead of delivering a verdict on the matter. The fix was a **spokesperson stage**: one final call that converts the deliberation into a direct first-order answer. In v2 the council wins 4/5 head-to-head, with the judge crediting it for "identifying hidden assumptions in the question itself" and "surfacing specific blindspots" - exactly what eleven lenses are for.
+
+Full unedited reports: [v1](evals/2026-06-05-v1-no-spokesperson.md) · [v2](evals/2026-06-05-v2-with-spokesperson.md)
+
+**Caveats, honestly:** single LLM judge (shares biases with the systems under test), small N, council burns 7x the calls of a single answer for its win rate. Directional signal, not a benchmark. Run your own: `pnpm eval "your question"`.
+
 ## 🏛️ The eleven philosophers
 
 | Branch         | Quorum candidates                                              |
