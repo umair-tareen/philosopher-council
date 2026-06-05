@@ -24,6 +24,7 @@ import { ALL_DELIBERATORS, PHILOSOPHERS } from './registry.js';
 import { selectQuorum, type QuorumSeat } from './quorum.js';
 import type { Branch } from '../types.js';
 import { ralphLoop } from './ralph.js';
+import { config } from '../config.js';
 import { logger } from '../logger.js';
 
 type PersonaModule = {
@@ -59,10 +60,11 @@ async function callPhilosopher(
 ): Promise<PhilosopherOpinion> {
   const persona = PERSONAS[id];
   const meta = PHILOSOPHERS[id];
-  const { text } = await complete({
+  const { text, model } = await complete({
     system: persona.system,
     user: persona.user(item),
     maxTokens: 700,
+    model: config.councilModels[id],
   });
   const raw = extractJson<RawOpinion>(text);
   const virtueScores = clampVirtues(raw.virtueScores);
@@ -82,6 +84,7 @@ async function callPhilosopher(
     reasoning: raw.reasoning ?? '',
     concerns: Array.isArray(raw.concerns) ? raw.concerns.slice(0, 4) : [],
     citations: Array.isArray(raw.citations) ? raw.citations.slice(0, 4) : [],
+    model,
   };
 }
 
@@ -93,6 +96,7 @@ async function callSynthesizer(
     system: ibnarabi.system,
     user: ibnarabi.user(item, opinions),
     maxTokens: 800,
+    model: config.councilModels['ibnarabi'],
   });
   const raw = extractJson<IbnArabiSynthesis>(text);
   return {
@@ -153,7 +157,7 @@ export async function runCouncil(
     ralph,
     finalScore,
     finalRecommendation: recommend(finalScore),
-    model: process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-5',
+    model: config.defaultModel,
     generatedAt: new Date().toISOString(),
   };
 }

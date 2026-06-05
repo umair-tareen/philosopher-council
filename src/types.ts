@@ -50,6 +50,8 @@ export interface PhilosopherOpinion {
   reasoning: string;
   concerns: string[];
   citations: string[];
+  /** The "provider:model" that produced this opinion. */
+  model?: string;
 }
 
 export interface IbnArabiSynthesis {

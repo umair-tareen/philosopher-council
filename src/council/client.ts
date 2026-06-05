@@ -1,12 +1,14 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { config } from '../config.js';
 import { logger } from '../logger.js';
 import { mockComplete } from '../mock/anthropic.js';
+import { completeWith, parseModelSpec } from '../providers/index.js';
 
 export interface CouncilCall {
   system: string;
   user: string;
   maxTokens?: number;
+  /** Model spec "provider:model" (e.g. "ollama:llama3.1"). Defaults to config.defaultModel. */
+  model?: string;
   cacheKey?: string;
 }
 
@@ -15,44 +17,31 @@ export interface CouncilCallResult {
   model: string;
 }
 
-let realClient: Anthropic | null = null;
-
-function getClient(): Anthropic {
-  if (!realClient) {
-    if (!config.anthropicApiKey) {
-      throw new Error('ANTHROPIC_API_KEY is required (or set DRY_RUN=1).');
-    }
-    realClient = new Anthropic({ apiKey: config.anthropicApiKey });
-  }
-  return realClient;
-}
-
 export async function complete(call: CouncilCall): Promise<CouncilCallResult> {
   if (config.dryRun) {
     const text = mockComplete(call);
     return { text, model: 'mock-anthropic' };
   }
-  const client = getClient();
+  const spec = parseModelSpec(call.model ?? config.defaultModel);
   let lastErr: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const res = await client.messages.create({
-        model: config.anthropicModel,
-        max_tokens: call.maxTokens ?? 1024,
+      return await completeWith(spec, {
         system: call.system,
-        messages: [{ role: 'user', content: call.user }],
+        user: call.user,
+        maxTokens: call.maxTokens ?? 1024,
       });
-      const block = res.content[0];
-      const text = block && block.type === 'text' ? block.text : '';
-      return { text, model: res.model };
     } catch (err) {
       lastErr = err;
       const delay = 500 * 2 ** attempt;
-      logger.warn({ attempt, err: String(err) }, 'anthropic call failed, retrying');
+      logger.warn(
+        { attempt, provider: spec.provider, model: spec.model, err: String(err) },
+        'provider call failed, retrying',
+      );
       await new Promise((r) => setTimeout(r, delay));
     }
   }
-  throw lastErr ?? new Error('anthropic call failed');
+  throw lastErr ?? new Error('provider call failed');
 }
 
 export function extractJson<T>(text: string): T {

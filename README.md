@@ -90,7 +90,26 @@ pnpm ask --full-council "..."       # 11 calls - every philosopher speaks
 pnpm trends:run                     # triage today's AI-research trends
 ```
 
-Default model is `claude-sonnet-4-5` (set `ANTHROPIC_MODEL` to override).
+Default model is `claude-sonnet-4-5` (set `ANTHROPIC_MODEL` or `DEFAULT_MODEL` to override).
+
+## 🔀 Mixed councils (multi-provider)
+
+Every seat can run on a different provider. Model specs are `provider:model`, covering **Anthropic**, **OpenAI**, **Gemini**, and local **Ollama**:
+
+```bash
+# .env
+DEFAULT_MODEL=anthropic:claude-sonnet-4-5
+COUNCIL_MODELS=laotzu=ollama:llama3.1,kant=openai:gpt-4o,descartes=gemini:gemini-2.0-flash,ralph=anthropic:claude-haiku-4-5-20251001
+```
+
+Now Lao Tzu deliberates on a local 7B (fitting, for the philosopher of doing less), Kant runs on GPT-4o, Descartes doubts via Gemini, and the self-critique loop uses a cheap fast model. Seat ids are the philosopher ids plus `ibnarabi` (synthesizer) and `ralph` (critic). Each opinion records which `provider:model` produced it.
+
+| Spec prefix  | Endpoint                                  | Key required        |
+| ------------ | ----------------------------------------- | ------------------- |
+| `anthropic:` | Anthropic Messages API                    | `ANTHROPIC_API_KEY` |
+| `openai:`    | OpenAI chat completions                   | `OPENAI_API_KEY`    |
+| `gemini:`    | Gemini OpenAI-compat endpoint             | `GEMINI_API_KEY`    |
+| `ollama:`    | local Ollama (`OLLAMA_BASE_URL` override) | none                |
 
 ## 🏛️ The eleven philosophers
 

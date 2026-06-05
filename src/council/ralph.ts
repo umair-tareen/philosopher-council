@@ -6,6 +6,7 @@ import type {
 } from '../types.js';
 import { complete, extractJson } from './client.js';
 import { renderItem } from './personas/_shared.js';
+import { config } from '../config.js';
 import { logger } from '../logger.js';
 
 const MAX_ITERATIONS = 2;
@@ -38,6 +39,7 @@ export async function ralphLoop(
         system: SYSTEM,
         user: buildUser(item, opinions, prevVerdict, prevScore),
         maxTokens: 700,
+        model: config.councilModels['ralph'],
       });
       const raw = extractJson<{
         weaknesses?: string[];
