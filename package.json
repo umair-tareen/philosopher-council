@@ -12,6 +12,8 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/index.ts",
     "test": "vitest run",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "ask": "tsx src/index.ts ask",
     "eval": "tsx src/index.ts eval",
     "ui": "tsx src/index.ts ui",
@@ -34,6 +36,7 @@
     "node-cron": "^3.0.3"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.16",
     "@types/node": "^22.9.0",
     "@types/node-cron": "^3.0.11",
     "tsx": "^4.19.2",

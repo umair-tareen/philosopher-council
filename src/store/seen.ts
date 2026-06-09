@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { config } from '../config.js';
 import { writeFileAtomic } from './atomic.js';

@@ -1,5 +1,5 @@
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { config } from '../config.js';
 import { jaccard, tokenize } from '../filter/novelty.js';
@@ -60,10 +60,7 @@ export async function savePrecedent(
   await writeFile(file, JSON.stringify(record, null, 2));
 }
 
-export async function findPrecedents(
-  question: string,
-  limit = 2,
-): Promise<Precedent[]> {
+export async function findPrecedents(question: string, limit = 2): Promise<Precedent[]> {
   const dir = ASKS_DIR();
   if (!existsSync(dir)) return [];
   const tokens = tokenize(question);
@@ -76,9 +73,7 @@ export async function findPrecedents(
   const scored: Precedent[] = [];
   for (const f of files) {
     try {
-      const raw = JSON.parse(
-        await readFile(path.join(dir, f), 'utf-8'),
-      ) as PrecedentRecord;
+      const raw = JSON.parse(await readFile(path.join(dir, f), 'utf-8')) as PrecedentRecord;
       const similarity = jaccard(tokens, tokenize(raw.question));
       if (similarity < MIN_SIMILARITY) continue;
       scored.push({

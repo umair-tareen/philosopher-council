@@ -2,12 +2,7 @@ export type Source = 'reddit' | 'hn' | 'arxiv' | 'question';
 
 export type Virtue = 'wisdom' | 'courage' | 'justice' | 'temperance';
 
-export type Branch =
-  | 'epistemology'
-  | 'metaphysics'
-  | 'ethics'
-  | 'logic'
-  | 'synthesis';
+export type Branch = 'epistemology' | 'metaphysics' | 'ethics' | 'logic' | 'synthesis';
 
 export type PhilosopherId =
   | 'socrates'

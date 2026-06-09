@@ -13,11 +13,7 @@ describe('eval dry-run', () => {
     });
     expect(report.results).toHaveLength(1);
     const r = report.results[0]!;
-    expect(r.answers.map((a) => a.strategy).sort()).toEqual([
-      'council',
-      'debate',
-      'single',
-    ]);
+    expect(r.answers.map((a) => a.strategy).sort()).toEqual(['council', 'debate', 'single']);
     // every strategy got a score and a rank from the blind judge
     for (const s of ['single', 'debate', 'council'] as const) {
       expect(r.meanScores[s]).toBeGreaterThanOrEqual(0);

@@ -1,5 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { Server } from 'node:http';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const PORT = 41973;
 let server: Server;
@@ -55,9 +55,7 @@ describe('council chamber ui', () => {
   });
 
   it('rejects an oversized question', async () => {
-    const res = await fetch(
-      `http://localhost:${PORT}/api/ask/stream?q=${'x'.repeat(4001)}`,
-    );
+    const res = await fetch(`http://localhost:${PORT}/api/ask/stream?q=${'x'.repeat(4001)}`);
     expect(res.status).toBe(413);
   });
 

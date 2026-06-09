@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Mock } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { IbnArabiSynthesis, PhilosopherOpinion, TrendItem } from '../src/types.js';
 
 vi.mock('../src/council/client.js', async (importOriginal) => {

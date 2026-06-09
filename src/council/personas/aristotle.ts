@@ -14,6 +14,5 @@ Cite canon/02-virtue-rubrics.md and canon/03-philosophy-of-learning.md where rel
 ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
-  user: (item: TrendItem) =>
-    evaluateAs('Aristotle', item),
+  user: (item: TrendItem) => evaluateAs('Aristotle', item),
 };

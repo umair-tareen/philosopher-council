@@ -1,12 +1,7 @@
 import type { Branch, PhilosopherId } from '../types.js';
 import { BRANCH_INDEX } from './registry.js';
 
-const DELIBERATIVE_BRANCHES: Branch[] = [
-  'logic',
-  'metaphysics',
-  'epistemology',
-  'ethics',
-];
+const DELIBERATIVE_BRANCHES: Branch[] = ['logic', 'metaphysics', 'epistemology', 'ethics'];
 
 export interface QuorumSeat {
   id: Exclude<PhilosopherId, 'ibnarabi'>;

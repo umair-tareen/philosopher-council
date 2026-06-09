@@ -1,7 +1,7 @@
 import { KARPATHY_KEYWORDS, matchKeywords } from '../filter/keywords.js';
-import { hashId } from './index.js';
 import { logger } from '../logger.js';
 import type { TrendItem } from '../types.js';
+import { hashId } from './index.js';
 
 interface AlgoliaHit {
   objectID: string;
@@ -38,7 +38,8 @@ export async function fetchHN(): Promise<TrendItem[]> {
       }
       for (const hit of body.hits) {
         const title = hit.title ?? hit.story_title ?? '';
-        const link = hit.url ?? hit.story_url ?? `https://news.ycombinator.com/item?id=${hit.objectID}`;
+        const link =
+          hit.url ?? hit.story_url ?? `https://news.ycombinator.com/item?id=${hit.objectID}`;
         const text = `${title}\n${hit.story_text ?? ''}`;
         all.push({
           id: hashId('hn', link),

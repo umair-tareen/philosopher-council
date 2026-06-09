@@ -1,5 +1,5 @@
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { config } from '../config.js';
 import { logger } from '../logger.js';
@@ -26,17 +26,11 @@ export async function saveItem(item: TrendItem): Promise<string> {
   return file;
 }
 
-export async function saveVerdict(
-  item: TrendItem,
-  verdict: CouncilVerdict,
-): Promise<string> {
+export async function saveVerdict(item: TrendItem, verdict: CouncilVerdict): Promise<string> {
   const dir = dayDir('trends');
   await mkdir(dir, { recursive: true });
   const file = path.join(dir, `${slugify(item.title) || item.id}-${item.id}.verdict.json`);
-  await writeFile(
-    file,
-    JSON.stringify({ item, verdict }, null, 2),
-  );
+  await writeFile(file, JSON.stringify({ item, verdict }, null, 2));
   return file;
 }
 
@@ -58,7 +52,9 @@ export async function loadTodaysItems(): Promise<TrendItem[]> {
   return out;
 }
 
-export async function loadTodaysVerdicts(): Promise<Array<{ item: TrendItem; verdict: CouncilVerdict }>> {
+export async function loadTodaysVerdicts(): Promise<
+  Array<{ item: TrendItem; verdict: CouncilVerdict }>
+> {
   const dir = dayDir('trends');
   if (!existsSync(dir)) return [];
   const files = await readdir(dir);

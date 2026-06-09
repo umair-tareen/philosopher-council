@@ -14,6 +14,5 @@ Cite canon/01-karpathy-concepts.md and canon/02-virtue-rubrics.md (Temperance) w
 ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
-  user: (item: TrendItem) =>
-    evaluateAs('Lao Tzu', item),
+  user: (item: TrendItem) => evaluateAs('Lao Tzu', item),
 };

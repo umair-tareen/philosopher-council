@@ -14,6 +14,5 @@ Cite canon/03-philosophy-of-learning.md and canon/01-karpathy-concepts.md where 
 ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
-  user: (item: TrendItem) =>
-    evaluateAs('Plato', item),
+  user: (item: TrendItem) => evaluateAs('Plato', item),
 };

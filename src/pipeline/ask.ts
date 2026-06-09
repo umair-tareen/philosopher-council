@@ -3,15 +3,15 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { config } from '../config.js';
 import { clerkBrief } from '../council/clerk.js';
-import { runCouncil, type CouncilHooks } from '../council/council.js';
+import { type CouncilHooks, runCouncil } from '../council/council.js';
 import type { DebateModeId } from '../council/modes.js';
 import { logger } from '../logger.js';
 import { slugify } from '../store/fs.js';
 import {
   findPrecedents,
+  type Precedent,
   renderPrecedentContext,
   savePrecedent,
-  type Precedent,
 } from '../store/precedents.js';
 import type { CouncilMode, CouncilVerdict, TrendItem } from '../types.js';
 
@@ -102,7 +102,13 @@ export async function runAsk(opts: AskOptions): Promise<AskResult> {
     await savePrecedent(item, verdict, file);
   }
   logger.info(
-    { file, mode, seats: verdict.opinions.length, precedents: precedents.length, clerk: !!clerk },
+    {
+      file,
+      mode,
+      seats: verdict.opinions.length,
+      precedents: precedents.length,
+      clerk: !!clerk,
+    },
     'ask answered',
   );
 
@@ -204,7 +210,9 @@ export function renderAnswer(
   if (v.ralph.length) {
     const last = v.ralph[v.ralph.length - 1];
     if (last) {
-      lines.push(`## Self-critique (Ralph loop, ${v.ralph.length} pass${v.ralph.length > 1 ? 'es' : ''})`);
+      lines.push(
+        `## Self-critique (Ralph loop, ${v.ralph.length} pass${v.ralph.length > 1 ? 'es' : ''})`,
+      );
       lines.push('');
       lines.push(last.refinedVerdict);
       lines.push('');

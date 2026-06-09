@@ -16,7 +16,7 @@ describe('ask dry-run', () => {
     expect(['amplify', 'track', 'ignore']).toContain(verdict.finalRecommendation);
     expect(markdown).toContain('The council deliberates');
     expect(markdown).toContain("The council's answer");
-    expect(verdict.answer && verdict.answer.length).toBeGreaterThan(50);
+    expect(verdict.answer?.length).toBeGreaterThan(50);
     expect(markdown).toContain('Ibn ʿArabī - synthesis');
     expect(markdown).toContain('Minority report');
     expect(verdict.minority.disagreement).toBeGreaterThanOrEqual(0);

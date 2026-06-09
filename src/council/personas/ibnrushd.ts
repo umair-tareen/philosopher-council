@@ -14,6 +14,5 @@ Cite canon/01-karpathy-concepts.md and canon/03-philosophy-of-learning.md where 
 ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
-  user: (item: TrendItem) =>
-    evaluateAs('Ibn Rushd', item),
+  user: (item: TrendItem) => evaluateAs('Ibn Rushd', item),
 };

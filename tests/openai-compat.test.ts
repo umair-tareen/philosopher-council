@@ -44,17 +44,18 @@ describe('openAiCompatComplete streaming', () => {
   });
 
   it('throws on a stream that delivered no data events', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      streamResponse([': keepalive\n\n']),
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(streamResponse([': keepalive\n\n']));
+    await expect(openAiCompatComplete('http://x/v1', 'k', req, () => {})).rejects.toThrow(
+      /no data events/,
     );
-    await expect(
-      openAiCompatComplete('http://x/v1', 'k', req, () => {}),
-    ).rejects.toThrow(/no data events/);
   });
 
   it('rejects a non-JSON 200 body on the non-streaming path', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response('<html>oops</html>', { status: 200, headers: { 'content-type': 'text/html' } }),
+      new Response('<html>oops</html>', {
+        status: 200,
+        headers: { 'content-type': 'text/html' },
+      }),
     );
     await expect(openAiCompatComplete('http://x/v1', 'k', req)).rejects.toThrow(/non-JSON/);
   });

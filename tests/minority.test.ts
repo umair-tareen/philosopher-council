@@ -62,10 +62,7 @@ describe('buildMinorityReport', () => {
   it('flags contested virtues when one axis splits', async () => {
     const { buildMinorityReport } = await import('../src/council/council.js');
     const m = buildMinorityReport(
-      [
-        opinion('kant', 0.6, { temperance: 0.9 }),
-        opinion('laotzu', 0.6, { temperance: 0.2 }),
-      ],
+      [opinion('kant', 0.6, { temperance: 0.9 }), opinion('laotzu', 0.6, { temperance: 0.2 })],
       synthesis(0.6),
     );
     expect(m.contestedVirtues).toContain('temperance');

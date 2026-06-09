@@ -1,4 +1,7 @@
+import { config } from '../config.js';
+import { logger } from '../logger.js';
 import type {
+  Branch,
   CouncilMode,
   CouncilVerdict,
   IbnArabiSynthesis,
@@ -10,25 +13,22 @@ import type {
   Virtue,
 } from '../types.js';
 import { complete, extractJson } from './client.js';
-import { rawOpinionSchema, rawSynthesisSchema } from './schemas.js';
-import { socrates } from './personas/socrates.js';
-import { plato } from './personas/plato.js';
-import { aristotle } from './personas/aristotle.js';
-import { confucius } from './personas/confucius.js';
-import { laotzu } from './personas/laotzu.js';
-import { avicenna } from './personas/avicenna.js';
-import { alghazali } from './personas/alghazali.js';
-import { ibnrushd } from './personas/ibnrushd.js';
-import { descartes } from './personas/descartes.js';
-import { kant } from './personas/kant.js';
-import { ibnarabi } from './personas/ibnarabi.js';
-import { ALL_DELIBERATORS, PHILOSOPHERS } from './registry.js';
-import { selectQuorum, type QuorumSeat } from './quorum.js';
-import type { Branch } from '../types.js';
 import { DEBATE_MODES, type DebateModeId } from './modes.js';
+import { alghazali } from './personas/alghazali.js';
+import { aristotle } from './personas/aristotle.js';
+import { avicenna } from './personas/avicenna.js';
+import { confucius } from './personas/confucius.js';
+import { descartes } from './personas/descartes.js';
+import { ibnarabi } from './personas/ibnarabi.js';
+import { ibnrushd } from './personas/ibnrushd.js';
+import { kant } from './personas/kant.js';
+import { laotzu } from './personas/laotzu.js';
+import { plato } from './personas/plato.js';
+import { socrates } from './personas/socrates.js';
+import { type QuorumSeat, selectQuorum } from './quorum.js';
 import { ralphLoop } from './ralph.js';
-import { config } from '../config.js';
-import { logger } from '../logger.js';
+import { ALL_DELIBERATORS, PHILOSOPHERS } from './registry.js';
+import { rawOpinionSchema, rawSynthesisSchema } from './schemas.js';
 
 type PersonaModule = {
   system: string;
@@ -184,9 +184,7 @@ export function buildMinorityReport(
   }
   const scores = opinions.map((o) => o.verdictScore);
   const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
-  const stddev = Math.sqrt(
-    scores.reduce((s, v) => s + (v - mean) ** 2, 0) / scores.length,
-  );
+  const stddev = Math.sqrt(scores.reduce((s, v) => s + (v - mean) ** 2, 0) / scores.length);
   // Verdict scores live in a practical band of ~0.5; 4x stddev maps a
   // strongly split council (e.g. 0.35 vs 0.69) to ~0.5+ disagreement.
   const disagreement = Math.min(1, stddev * 4);
@@ -260,9 +258,7 @@ export async function runCouncil(
       if (i >= seats.length) return;
       const seat = seats[i] as QuorumSeat;
       try {
-        const onToken = hooks.onToken
-          ? (t: string) => hooks.onToken?.(seat.id, t)
-          : undefined;
+        const onToken = hooks.onToken ? (t: string) => hooks.onToken?.(seat.id, t) : undefined;
         const opinion = await callPhilosopher(
           seat.id,
           seat.branch,
@@ -360,13 +356,8 @@ export async function runCouncil(
   };
 }
 
-function buildConsensus(
-  opinions: PhilosopherOpinion[],
-  synthesis: IbnArabiSynthesis,
-): string {
-  const lines = opinions
-    .map((o) => `- ${o.displayName}: ${o.oneLiner}`)
-    .join('\n');
+function buildConsensus(opinions: PhilosopherOpinion[], synthesis: IbnArabiSynthesis): string {
+  const lines = opinions.map((o) => `- ${o.displayName}: ${o.oneLiner}`).join('\n');
   return `${lines}\n\nSynthesis (Ibn ʿArabī): ${synthesis.unifyingReading}`;
 }
 

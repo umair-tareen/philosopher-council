@@ -51,7 +51,7 @@ const PROFILES: PersonaProfile[] = [
     match: /You are Lao Tzu/,
     oneLiner: 'Adds where subtracting would have served better.',
     reasoning:
-      'Wu wei would have removed the scaffolding rather than added a critic on top of it. The proposal grows; it does not flow. The same gain may be available with less by trusting the model\'s defaults.',
+      "Wu wei would have removed the scaffolding rather than added a critic on top of it. The proposal grows; it does not flow. The same gain may be available with less by trusting the model's defaults.",
     scores: { wisdom: 0.55, courage: 0.6, justice: 0.55, temperance: 0.75 },
     concerns: ['Adds complexity', 'Achievable by subtraction'],
   },
@@ -87,7 +87,7 @@ const PROFILES: PersonaProfile[] = [
     match: /You are René Descartes/,
     oneLiner: 'Cogito of the proposal survives; periphery does not.',
     reasoning:
-      'Methodic doubt strips away the proposal\'s rhetorical envelope and leaves a small, defensible kernel: that iterated critique can sometimes correct overclaims. The wider claims do not survive the same scrutiny.',
+      "Methodic doubt strips away the proposal's rhetorical envelope and leaves a small, defensible kernel: that iterated critique can sometimes correct overclaims. The wider claims do not survive the same scrutiny.",
     scores: { wisdom: 0.6, courage: 0.5, justice: 0.55, temperance: 0.6 },
     concerns: ['Wider claims unsupported', 'Kernel narrower than advertised'],
   },
@@ -137,7 +137,7 @@ export function mockComplete(call: CouncilCall): string {
   }
 
   if (/"why now" paragraph/i.test(call.system)) {
-    return 'Today\'s items converge on the cost of reasoning: minimal prompting, self-critique loops, and council-style aggregation are all attempts to buy reliability without buying scale. That this cluster surfaced in the same week suggests the field is rotating from capability questions to verification questions. The practical stakes: whoever standardises cheap verification first sets the defaults everyone else inherits.';
+    return "Today's items converge on the cost of reasoning: minimal prompting, self-critique loops, and council-style aggregation are all attempts to buy reliability without buying scale. That this cluster surfaced in the same week suggests the field is rotating from capability questions to verification questions. The practical stakes: whoever standardises cheap verification first sets the defaults everyone else inherits.";
   }
 
   if (/You are the Advocate/i.test(call.system)) {

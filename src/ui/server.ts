@@ -1,13 +1,12 @@
-import { createServer, type ServerResponse } from 'node:http';
-import { readdir, readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { readdir, readFile } from 'node:fs/promises';
+import { createServer, type ServerResponse } from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { config } from '../config.js';
-import { runCouncil } from '../council/council.js';
 import { PHILOSOPHERS } from '../council/registry.js';
-import { runAsk } from '../pipeline/ask.js';
 import { logger } from '../logger.js';
+import { runAsk } from '../pipeline/ask.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 
@@ -56,7 +55,10 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
   const abort = new AbortController();
   res.on('close', () => {
     if (!res.writableEnded) {
-      logger.info({ question: question.slice(0, 60) }, 'sse client disconnected; aborting deliberation');
+      logger.info(
+        { question: question.slice(0, 60) },
+        'sse client disconnected; aborting deliberation',
+      );
       abort.abort();
     }
   });
@@ -174,7 +176,9 @@ export async function serveUi(port: number): Promise<import('node:http').Server>
   const shown = host === '127.0.0.1' ? 'localhost' : host;
   console.log(`\n  🏛️  Council chamber: http://${shown}:${port}\n`);
   if (host !== '127.0.0.1') {
-    console.log('  ⚠️  Exposed on a non-loopback interface with no auth - anyone who can reach it spends your API budget.\n');
+    console.log(
+      '  ⚠️  Exposed on a non-loopback interface with no auth - anyone who can reach it spends your API budget.\n',
+    );
   }
   return server;
 }

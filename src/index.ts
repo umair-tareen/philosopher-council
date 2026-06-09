@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
+import { logger } from './logger.js';
 import { runAnalyze } from './pipeline/analyze.js';
 import { runAsk } from './pipeline/ask.js';
 import { runDigest } from './pipeline/digest.js';
 import { runFetch } from './pipeline/fetch.js';
 import { runAll } from './pipeline/run.js';
 import { serve } from './scheduler.js';
-import { logger } from './logger.js';
 
 const program = new Command();
 program
@@ -38,12 +38,16 @@ program
     }
     const { DEBATE_MODES } = await import('./council/modes.js');
     if (!(debateMode in DEBATE_MODES)) {
-      console.error(`Unknown mode "${debateMode}". Valid: ${Object.keys(DEBATE_MODES).join(', ')}, auto`);
+      console.error(
+        `Unknown mode "${debateMode}". Valid: ${Object.keys(DEBATE_MODES).join(', ')}, auto`,
+      );
       process.exit(1);
     }
     const resolvedMode = debateMode as import('./council/modes.js').DebateModeId;
     if (opts.fullCouncil && DEBATE_MODES[resolvedMode]?.seats) {
-      console.log(`Note: --mode ${debateMode} seats a fixed bench; --full-council is ignored.`);
+      console.log(
+        `Note: --mode ${debateMode} seats a fixed bench; --full-council is ignored.`,
+      );
     }
     const { markdown, file, precedents, clerk } = await runAsk({
       question,
@@ -70,7 +74,8 @@ program
     await runFetch({ offline: !!opts.offline });
   });
 
-program.command('analyze')
+program
+  .command('analyze')
   .option('--full-council', 'use all 10 deliberators (vs quorum of 4)')
   .action(async (opts) => {
     await runAnalyze({ fullCouncil: !!opts.fullCouncil });
@@ -90,7 +95,9 @@ program
 
 program
   .command('eval')
-  .description('blind-judged comparison: single answer vs generic debate vs philosopher council')
+  .description(
+    'blind-judged comparison: single answer vs generic debate vs philosopher council',
+  )
   .argument('[questions...]', 'a question to evaluate (defaults to the built-in set)')
   .option('--full-council', 'council strategy uses all 10 deliberators')
   .option('-n, --limit <count>', 'limit number of questions', parseInt)

@@ -1,14 +1,14 @@
+import { config } from '../config.js';
+import { logger } from '../logger.js';
 import type {
   IbnArabiSynthesis,
   PhilosopherOpinion,
   RalphCritique,
   TrendItem,
 } from '../types.js';
+import { clamp01 } from '../util/num.js';
 import { complete, extractJson } from './client.js';
 import { renderItem } from './personas/_shared.js';
-import { clamp01 } from '../util/num.js';
-import { config } from '../config.js';
-import { logger } from '../logger.js';
 
 const MAX_ITERATIONS = 2;
 const CONFIDENCE_FLOOR = 0.6;
