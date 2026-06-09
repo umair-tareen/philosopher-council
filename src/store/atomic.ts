@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { mkdir, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -8,7 +9,9 @@ import path from 'node:path';
  */
 export async function writeFileAtomic(file: string, data: string): Promise<void> {
   await mkdir(path.dirname(file), { recursive: true });
-  const tmp = `${file}.${process.pid}.${Math.round(performance.now())}.tmp`;
+  // A UUID per write: pid+timestamp can collide for two writes in the same
+  // millisecond, making them clobber each other's temp file.
+  const tmp = `${file}.${randomUUID()}.tmp`;
   await writeFile(tmp, data);
   await rename(tmp, file);
 }

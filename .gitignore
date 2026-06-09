@@ -5,6 +5,7 @@ dist/
 *.log
 .DS_Store
 .test-data/
+.test-data-store/
 
 # Generated data — keep the folder, ignore contents
 data/*

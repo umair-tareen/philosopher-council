@@ -4,6 +4,7 @@
   "description": "An AI deliberation instrument with visible protocol: eleven philosophers as concurrent seats, virtue-scored opinions, a synthesis, and a first-class minority report. Not prompt choreography. Methodology, not metaphysics.",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=20"
   },
@@ -21,7 +22,7 @@
     "trends:serve": "tsx src/index.ts serve"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.0",
+    "@anthropic-ai/sdk": "^0.103.0",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",
     "fast-xml-parser": "^4.5.0",

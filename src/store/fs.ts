@@ -2,6 +2,7 @@ import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { config } from '../config.js';
+import { logger } from '../logger.js';
 import type { CouncilVerdict, TrendItem } from '../types.js';
 
 function dayDir(kind: 'trends' | 'digests'): string {
@@ -47,7 +48,12 @@ export async function loadTodaysItems(): Promise<TrendItem[]> {
   for (const f of files) {
     if (!f.endsWith('.item.json')) continue;
     const buf = await readFile(path.join(dir, f), 'utf-8');
-    out.push(JSON.parse(buf) as TrendItem);
+    // One corrupted file on disk must not take down the whole run.
+    try {
+      out.push(JSON.parse(buf) as TrendItem);
+    } catch (err) {
+      logger.warn({ file: f, err: String(err) }, 'skipping unparseable item file');
+    }
   }
   return out;
 }
@@ -60,7 +66,11 @@ export async function loadTodaysVerdicts(): Promise<Array<{ item: TrendItem; ver
   for (const f of files) {
     if (!f.endsWith('.verdict.json')) continue;
     const buf = await readFile(path.join(dir, f), 'utf-8');
-    out.push(JSON.parse(buf) as { item: TrendItem; verdict: CouncilVerdict });
+    try {
+      out.push(JSON.parse(buf) as { item: TrendItem; verdict: CouncilVerdict });
+    } catch (err) {
+      logger.warn({ file: f, err: String(err) }, 'skipping unparseable verdict file');
+    }
   }
   return out;
 }

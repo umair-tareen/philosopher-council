@@ -12,17 +12,21 @@ export async function serve(): Promise<void> {
   // Single-flight: if a run (slow LLM council) outlasts the cron interval,
   // skip the tick rather than overlapping read-modify-write of the seen-store.
   let running = false;
-  mod.default.schedule(config.cronExpr, () => {
+  mod.default.schedule(config.cronExpr, async () => {
     if (running) {
       logger.warn('previous scheduled run still in progress; skipping this tick');
       return;
     }
     running = true;
-    runAll()
-      .catch((err) => logger.error({ err: String(err) }, 'scheduled run failed'))
-      .finally(() => {
-        running = false;
-      });
+    // try/finally (not .finally on the promise) so a synchronous throw out of
+    // runAll() cannot leave the flag stuck and wedge the scheduler for good.
+    try {
+      await runAll();
+    } catch (err) {
+      logger.error({ err: String(err) }, 'scheduled run failed');
+    } finally {
+      running = false;
+    }
   });
   await new Promise<void>(() => {
     /* keep alive */

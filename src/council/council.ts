@@ -10,7 +10,7 @@ import type {
   Virtue,
 } from '../types.js';
 import { complete, extractJson } from './client.js';
-import { clamp01 } from '../util/num.js';
+import { rawOpinionSchema, rawSynthesisSchema } from './schemas.js';
 import { socrates } from './personas/socrates.js';
 import { plato } from './personas/plato.js';
 import { aristotle } from './personas/aristotle.js';
@@ -48,14 +48,6 @@ const PERSONAS: Record<Exclude<PhilosopherId, 'ibnarabi'>, PersonaModule> = {
   kant,
 };
 
-interface RawOpinion {
-  virtueScores: Record<Virtue, number>;
-  oneLiner: string;
-  reasoning: string;
-  concerns: string[];
-  citations: string[];
-}
-
 async function callPhilosopher(
   id: Exclude<PhilosopherId, 'ibnarabi'>,
   branch: Branch,
@@ -77,8 +69,8 @@ async function callPhilosopher(
     onToken,
     signal,
   });
-  const raw = extractJson<RawOpinion>(text);
-  const virtueScores = clampVirtues(raw.virtueScores);
+  const raw = rawOpinionSchema.parse(extractJson<unknown>(text));
+  const { virtueScores } = raw;
   const verdictScore =
     (virtueScores.wisdom +
       virtueScores.courage +
@@ -91,10 +83,10 @@ async function callPhilosopher(
     branch,
     virtueScores,
     verdictScore,
-    oneLiner: (raw.oneLiner ?? '').slice(0, 140),
-    reasoning: raw.reasoning ?? '',
-    concerns: Array.isArray(raw.concerns) ? raw.concerns.slice(0, 4) : [],
-    citations: Array.isArray(raw.citations) ? raw.citations.slice(0, 4) : [],
+    oneLiner: raw.oneLiner,
+    reasoning: raw.reasoning,
+    concerns: raw.concerns,
+    citations: raw.citations,
     model,
   };
 }
@@ -111,13 +103,7 @@ async function callSynthesizer(
     model: config.councilModels['ibnarabi'],
     signal,
   });
-  const raw = extractJson<IbnArabiSynthesis>(text);
-  return {
-    unifyingReading: raw.unifyingReading ?? '',
-    hiddenContinuity: raw.hiddenContinuity ?? '',
-    mysticalCaution: raw.mysticalCaution ?? '',
-    unifiedScore: clamp01(Number(raw.unifiedScore ?? 0.5)),
-  };
+  return rawSynthesisSchema.parse(extractJson<unknown>(text));
 }
 
 export interface CouncilHooks {
@@ -371,15 +357,6 @@ export async function runCouncil(
     finalRecommendation: recommend(finalScore),
     model: config.defaultModel,
     generatedAt: new Date().toISOString(),
-  };
-}
-
-function clampVirtues(v: Partial<Record<Virtue, number>>): Record<Virtue, number> {
-  return {
-    wisdom: clamp01(Number(v.wisdom ?? 0.5)),
-    courage: clamp01(Number(v.courage ?? 0.5)),
-    justice: clamp01(Number(v.justice ?? 0.5)),
-    temperance: clamp01(Number(v.temperance ?? 0.5)),
   };
 }
 
