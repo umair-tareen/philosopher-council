@@ -21,6 +21,19 @@ export interface CouncilCallResult {
   model: string;
 }
 
+/**
+ * Whether a failed provider call is worth retrying. 4xx client errors (bad
+ * model id, missing key, not found) are terminal - retrying just burns
+ * backoff. 408/429, 5xx, and statusless errors (network/timeout) are retried.
+ */
+function isRetryable(err: unknown): boolean {
+  const status = (err as { status?: unknown })?.status;
+  if (typeof status === 'number' && status >= 400 && status < 500) {
+    return status === 408 || status === 429;
+  }
+  return true;
+}
+
 export async function complete(call: CouncilCall): Promise<CouncilCallResult> {
   if (call.signal?.aborted) throw new Error('aborted: client disconnected');
   if (config.dryRun) {
@@ -60,8 +73,9 @@ export async function complete(call: CouncilCall): Promise<CouncilCallResult> {
       );
     } catch (err) {
       lastErr = err;
-      // Never retry after an abort or after tokens reached the consumer.
-      if (call.signal?.aborted || emitted) break;
+      // Never retry after an abort, after tokens reached the consumer, or on a
+      // client error (bad model id, auth, not found) that a retry can't fix.
+      if (call.signal?.aborted || emitted || !isRetryable(err)) break;
       const delay = 500 * 2 ** attempt;
       logger.warn(
         { attempt, provider: spec.provider, model: spec.model, err: String(err) },

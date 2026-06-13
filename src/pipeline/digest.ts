@@ -36,12 +36,7 @@ export async function runDigest(): Promise<string> {
 
   lines.push('## Recommendations', '');
 
-  const buckets: Record<'amplify' | 'track' | 'ignore', typeof entries> = {
-    amplify: [],
-    track: [],
-    ignore: [],
-  };
-  for (const e of entries) buckets[e.verdict.finalRecommendation].push(e);
+  const buckets = bucketByRecommendation(entries);
 
   for (const key of ['amplify', 'track', 'ignore'] as const) {
     lines.push(`### ${key.toUpperCase()} (${buckets[key].length})`, '');
@@ -53,6 +48,23 @@ export async function runDigest(): Promise<string> {
   const file = await writeDigest(md);
   logger.info({ file }, 'digest written');
   return file;
+}
+
+type Recommendation = 'amplify' | 'track' | 'ignore';
+
+/**
+ * Group entries by recommendation. An unrecognised value (corrupted or
+ * older-schema verdict) is bucketed as `track` rather than crashing the whole
+ * digest on `buckets[unknown].push` - loadTodaysVerdicts already tolerates bad
+ * files, and this keeps that promise through to rendering.
+ */
+export function bucketByRecommendation(entries: Entry[]): Record<Recommendation, Entry[]> {
+  const buckets: Record<Recommendation, Entry[]> = { amplify: [], track: [], ignore: [] };
+  for (const e of entries) {
+    const rec = e.verdict.finalRecommendation;
+    (buckets[rec as Recommendation] ?? buckets.track).push(e);
+  }
+  return buckets;
 }
 
 interface Cluster {

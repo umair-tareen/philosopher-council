@@ -1,11 +1,11 @@
 import { createHash } from 'node:crypto';
-import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { config } from '../config.js';
 import { clerkBrief } from '../council/clerk.js';
 import { type CouncilHooks, runCouncil } from '../council/council.js';
 import type { DebateModeId } from '../council/modes.js';
 import { logger } from '../logger.js';
+import { writeFileAtomic } from '../store/atomic.js';
 import { slugify } from '../store/fs.js';
 import {
   findPrecedents,
@@ -93,9 +93,11 @@ export async function runAsk(opts: AskOptions): Promise<AskResult> {
   const markdown = renderAnswer(opts.question, verdict, { precedents, clerk });
 
   const dir = path.join(config.dataDir, 'asks');
-  await mkdir(dir, { recursive: true });
   const file = path.join(dir, `${now.slice(0, 10)}-${slugify(opts.question) || id}.md`);
-  await writeFile(file, markdown);
+  // writeFileAtomic creates the dir and renames over the target, so a crash
+  // mid-write can't leave a truncated transcript that load-time JSON.parse
+  // would silently drop.
+  await writeFileAtomic(file, markdown);
   // Only sound verdicts become case law - a degraded run (no opinions, or a
   // failed synthesis) must not be retrievable as precedent for later questions.
   if (verdict.opinions.length > 0) {

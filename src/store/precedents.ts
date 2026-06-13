@@ -1,10 +1,11 @@
 import { existsSync } from 'node:fs';
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { config } from '../config.js';
 import { jaccard, tokenize } from '../filter/novelty.js';
 import { logger } from '../logger.js';
 import type { CouncilVerdict, TrendItem } from '../types.js';
+import { writeFileAtomic } from './atomic.js';
 
 /**
  * Council case law: every ask deliberation is saved as a structured record,
@@ -56,8 +57,7 @@ export async function savePrecedent(
       : undefined,
   };
   const file = markdownFile.replace(/\.md$/, '.json');
-  await mkdir(path.dirname(file), { recursive: true });
-  await writeFile(file, JSON.stringify(record, null, 2));
+  await writeFileAtomic(file, JSON.stringify(record, null, 2));
 }
 
 export async function findPrecedents(question: string, limit = 2): Promise<Precedent[]> {

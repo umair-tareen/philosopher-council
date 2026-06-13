@@ -1,15 +1,15 @@
 import { z } from 'zod';
-import { clamp01 } from '../util/num.js';
+import { coerceScore } from '../util/num.js';
 
 const NEUTRAL = 0.5;
 
 /**
  * A 0..1 score from model output: accepts numbers or numeric strings,
- * degrades anything unusable to neutral, and clamps the rest.
+ * degrades anything unusable to neutral, and clamps the rest. `coerceScore`
+ * (not `Number()`) is deliberate: `Number('')`/`Number(false)` are a finite 0
+ * that would otherwise pass validation as the worst possible score.
  */
-const score = z
-  .preprocess((v) => Number(v ?? NEUTRAL), z.number().catch(NEUTRAL))
-  .transform(clamp01);
+const score = z.unknown().transform((v) => coerceScore(v, NEUTRAL));
 
 const NEUTRAL_VIRTUES = {
   wisdom: NEUTRAL,

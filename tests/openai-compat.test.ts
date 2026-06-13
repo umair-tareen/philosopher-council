@@ -59,4 +59,26 @@ describe('openAiCompatComplete streaming', () => {
     );
     await expect(openAiCompatComplete('http://x/v1', 'k', req)).rejects.toThrow(/non-JSON/);
   });
+
+  it('rejects a 200 with empty content so the retry layer can fire', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ model: 'm', choices: [{ message: { content: '' } }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    await expect(openAiCompatComplete('http://x/v1', 'k', req)).rejects.toThrow(
+      /empty completion/,
+    );
+  });
+
+  it('throws a ProviderHttpError carrying the status on a 4xx', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response('nope', { status: 404, headers: { 'content-type': 'text/plain' } }),
+    );
+    await expect(openAiCompatComplete('http://x/v1', 'k', req)).rejects.toMatchObject({
+      name: 'ProviderHttpError',
+      status: 404,
+    });
+  });
 });

@@ -1,6 +1,7 @@
 import { KARPATHY_KEYWORDS, matchKeywords } from '../filter/keywords.js';
 import { logger } from '../logger.js';
 import type { TrendItem } from '../types.js';
+import { safeIso } from '../util/time.js';
 import { hashId } from './index.js';
 
 interface AlgoliaHit {
@@ -47,7 +48,7 @@ export async function fetchHN(): Promise<TrendItem[]> {
           title,
           url: link,
           author: hit.author,
-          publishedAt: hit.created_at,
+          publishedAt: safeIso(hit.created_at, now),
           fetchedAt: now,
           summary: (hit.story_text ?? '').slice(0, 1200),
           rawScore: hit.points,
