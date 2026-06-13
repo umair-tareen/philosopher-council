@@ -26,9 +26,14 @@ export async function complete(call: CouncilCall): Promise<CouncilCallResult> {
   if (config.dryRun) {
     const text = mockComplete(call);
     if (call.onToken) {
-      // Simulate streaming so the UI path is exercised offline.
-      const step = Math.max(1, Math.ceil(text.length / 5));
-      for (let i = 0; i < text.length; i += step) call.onToken(text.slice(i, i + step));
+      // Simulate streaming so the UI path is exercised offline. With
+      // DRY_RUN_STREAM_MS set, pace finer chunks so demos read like live tokens.
+      const delay = config.dryRunStreamMs;
+      const step = Math.max(1, Math.ceil(text.length / (delay > 0 ? 48 : 5)));
+      for (let i = 0; i < text.length; i += step) {
+        if (delay > 0) await new Promise((r) => setTimeout(r, delay));
+        call.onToken(text.slice(i, i + step));
+      }
     }
     return { text, model: 'mock-anthropic' };
   }

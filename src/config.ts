@@ -28,6 +28,9 @@ const schema = z.object({
   SOURCES_REDDIT: z.string().default('LocalLLaMA,MachineLearning,singularity'),
   MAX_ITEMS_PER_RUN: z.coerce.number().int().positive().default(10),
   DRY_RUN: z.coerce.number().int().min(0).max(1).default(0),
+  // Per-chunk delay (ms) for mock streaming in DRY_RUN - 0 emits instantly.
+  // Set ~20 to make the offline chamber demo stream like a live deliberation.
+  DRY_RUN_STREAM_MS: z.coerce.number().int().min(0).max(500).default(0),
   DATA_DIR: z.string().default('./data'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 });
@@ -78,6 +81,7 @@ export const config = {
     .filter(Boolean),
   maxItemsPerRun: parsed.MAX_ITEMS_PER_RUN,
   dryRun: parsed.DRY_RUN === 1,
+  dryRunStreamMs: parsed.DRY_RUN_STREAM_MS,
   dataDir: parsed.DATA_DIR,
   logLevel: parsed.LOG_LEVEL,
 } as const;
