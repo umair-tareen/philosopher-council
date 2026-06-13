@@ -14,6 +14,5 @@ Cite canon/02-virtue-rubrics.md (Temperance, Justice) and canon/03-philosophy-of
 ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
-  user: (item: TrendItem) =>
-    evaluateAs('Al-Ghazālī', item),
+  user: (item: TrendItem) => evaluateAs('Al-Ghazālī', item),
 };

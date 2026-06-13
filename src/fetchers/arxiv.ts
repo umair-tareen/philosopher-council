@@ -1,8 +1,8 @@
 import { XMLParser } from 'fast-xml-parser';
 import { matchKeywords } from '../filter/keywords.js';
-import { hashId } from './index.js';
 import { logger } from '../logger.js';
 import type { TrendItem } from '../types.js';
+import { hashId } from './index.js';
 
 interface RssItem {
   title?: string;

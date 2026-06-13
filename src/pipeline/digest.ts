@@ -1,6 +1,6 @@
 import { complete } from '../council/client.js';
-import { loadTodaysVerdicts, writeDigest } from '../store/fs.js';
 import { logger } from '../logger.js';
+import { loadTodaysVerdicts, writeDigest } from '../store/fs.js';
 import type { CouncilVerdict, TrendItem } from '../types.js';
 
 type Entry = { item: TrendItem; verdict: CouncilVerdict };
@@ -27,7 +27,9 @@ export async function runDigest(): Promise<string> {
   if (clusters.length > 1) {
     lines.push('## Clusters', '');
     for (const c of clusters) {
-      lines.push(`- **${c.signature}** (${c.entries.length}): ${c.entries.map((e) => e.item.title).join(' · ')}`);
+      lines.push(
+        `- **${c.signature}** (${c.entries.length}): ${c.entries.map((e) => e.item.title).join(' · ')}`,
+      );
     }
     lines.push('');
   }
@@ -90,12 +92,14 @@ export function clusterByTags(entries: Entry[]): Cluster[] {
   return [...groups.values()]
     .map((group) => {
       const tagCounts = new Map<string, number>();
-      for (const e of group) for (const t of e.item.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
-      const signature = [...tagCounts.entries()]
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-        .map(([t]) => t)
-        .join(' + ') || 'untagged';
+      for (const e of group)
+        for (const t of e.item.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+      const signature =
+        [...tagCounts.entries()]
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([t]) => t)
+          .join(' + ') || 'untagged';
       return { signature, entries: group };
     })
     .sort((a, b) => b.entries.length - a.entries.length);
@@ -148,7 +152,9 @@ function renderEntry(item: TrendItem, v: CouncilVerdict): string {
           )
           .join('\n');
   const opinions = v.opinions
-    .map((o) => `  - ${o.displayName} (${o.branch}, ${o.verdictScore.toFixed(2)}): ${o.oneLiner}`)
+    .map(
+      (o) => `  - ${o.displayName} (${o.branch}, ${o.verdictScore.toFixed(2)}): ${o.oneLiner}`,
+    )
     .join('\n');
   return [
     `- **[${score}] ${item.title}** - _${item.source}${item.subSource ? ` · ${item.subSource}` : ''}_`,

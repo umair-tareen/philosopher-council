@@ -14,6 +14,5 @@ Cite canon/03-philosophy-of-learning.md where relevant.
 ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
-  user: (item: TrendItem) =>
-    evaluateAs('Ibn Sīnā', item),
+  user: (item: TrendItem) => evaluateAs('Ibn Sīnā', item),
 };

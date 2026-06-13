@@ -14,6 +14,5 @@ Cite canon/02-virtue-rubrics.md (Justice) and canon/03-philosophy-of-learning.md
 ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
-  user: (item: TrendItem) =>
-    evaluateAs('Kant', item),
+  user: (item: TrendItem) => evaluateAs('Kant', item),
 };

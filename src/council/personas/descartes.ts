@@ -14,6 +14,5 @@ Cite canon/03-philosophy-of-learning.md (Rationalism, Kantian synthesis) where r
 ${PRE_INFERENCE_SCRATCHPAD}
 
 ${JSON_ENVELOPE}`,
-  user: (item: TrendItem) =>
-    evaluateAs('Descartes', item),
+  user: (item: TrendItem) => evaluateAs('Descartes', item),
 };

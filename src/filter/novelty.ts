@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { config } from '../config.js';
 import { writeFileAtomic } from '../store/atomic.js';
@@ -9,9 +9,35 @@ const TITLES_PATH = () => path.join(config.dataDir, '.titles.json');
 const MAX_CORPUS = 500;
 
 const STOPWORDS = new Set([
-  'a', 'an', 'the', 'of', 'for', 'on', 'in', 'to', 'with', 'and', 'or',
-  'is', 'are', 'was', 'be', 'has', 'have', 'how', 'why', 'what', 'via',
-  'from', 'by', 'at', 'its', 'this', 'that', 'new', 'using',
+  'a',
+  'an',
+  'the',
+  'of',
+  'for',
+  'on',
+  'in',
+  'to',
+  'with',
+  'and',
+  'or',
+  'is',
+  'are',
+  'was',
+  'be',
+  'has',
+  'have',
+  'how',
+  'why',
+  'what',
+  'via',
+  'from',
+  'by',
+  'at',
+  'its',
+  'this',
+  'that',
+  'new',
+  'using',
 ]);
 
 export function tokenize(title: string): Set<string> {
@@ -55,7 +81,12 @@ export async function loadTitleCorpus(): Promise<string[][]> {
   }
 }
 
-export async function saveTitleCorpus(corpus: string[][], newItems: TrendItem[]): Promise<void> {
-  const merged = [...corpus, ...newItems.map((i) => [...tokenize(i.title)])].slice(-MAX_CORPUS);
+export async function saveTitleCorpus(
+  corpus: string[][],
+  newItems: TrendItem[],
+): Promise<void> {
+  const merged = [...corpus, ...newItems.map((i) => [...tokenize(i.title)])].slice(
+    -MAX_CORPUS,
+  );
   await writeFileAtomic(TITLES_PATH(), JSON.stringify(merged));
 }

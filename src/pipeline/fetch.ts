@@ -1,13 +1,13 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { config } from '../config.js';
 import { fetchAll } from '../fetchers/index.js';
 import { loadTitleCorpus, noveltyFor, saveTitleCorpus } from '../filter/novelty.js';
 import { rankByScore } from '../filter/score.js';
-import { config } from '../config.js';
 import { logger } from '../logger.js';
-import { loadSeen, saveSeen } from '../store/seen.js';
 import { saveItem } from '../store/fs.js';
+import { loadSeen, saveSeen } from '../store/seen.js';
 import type { TrendItem } from '../types.js';
 
 interface FetchOptions {
@@ -36,7 +36,12 @@ export async function runFetch(opts: FetchOptions = {}): Promise<TrendItem[]> {
   await saveTitleCorpus(corpus, limited);
 
   logger.info(
-    { fetched: items.length, tagged: tagged.length, fresh: fresh.length, saved: limited.length },
+    {
+      fetched: items.length,
+      tagged: tagged.length,
+      fresh: fresh.length,
+      saved: limited.length,
+    },
     'fetch complete',
   );
   return limited;

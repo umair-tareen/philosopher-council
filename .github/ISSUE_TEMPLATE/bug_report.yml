@@ -1,0 +1,40 @@
+name: Bug report
+description: Something misbehaves - a crash, a wrong verdict shape, a UI glitch
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you run, and what went wrong?
+      placeholder: |
+        pnpm ask "..." crashed with ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Exact commands. If it reproduces with DRY_RUN=1 (no API key), say so - that makes it much easier to fix.
+      placeholder: |
+        DRY_RUN=1 pnpm ask "What is a benchmark, really?"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node version, and the model spec in use (provider:model)
+      placeholder: 'macOS 15, Node 22, anthropic:claude-sonnet-4-5'
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant output (set LOG_LEVEL=debug for more). Redact API keys.
+      render: shell

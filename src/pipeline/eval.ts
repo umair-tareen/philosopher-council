@@ -4,9 +4,9 @@ import path from 'node:path';
 import { config } from '../config.js';
 import { complete, extractJson } from '../council/client.js';
 import { runCouncil } from '../council/council.js';
-import { clamp01 } from '../util/num.js';
 import { logger } from '../logger.js';
 import type { CouncilMode, TrendItem } from '../types.js';
+import { clamp01 } from '../util/num.js';
 
 export type StrategyId = 'single' | 'debate' | 'council';
 
@@ -193,10 +193,7 @@ export interface EvalOptions {
   concurrency?: number;
 }
 
-async function evalOneQuestion(
-  question: string,
-  fullCouncil: boolean,
-): Promise<EvalResult> {
+async function evalOneQuestion(question: string, fullCouncil: boolean): Promise<EvalResult> {
   logger.info({ question }, 'eval question start');
   const answers: StrategyAnswer[] = [
     await runSingle(question),
@@ -232,9 +229,7 @@ async function evalOneQuestion(
     ranks[strategy] = prev && prev[1] === score ? ranks[prev[0]]! : i + 1;
   });
 
-  const rationale = judged
-    .map((j, i) => `Judge ${i + 1}: ${j.rationale ?? ''}`)
-    .join(' | ');
+  const rationale = judged.map((j, i) => `Judge ${i + 1}: ${j.rationale ?? ''}`).join(' | ');
 
   return { question, answers, meanScores, ranks, rationale };
 }

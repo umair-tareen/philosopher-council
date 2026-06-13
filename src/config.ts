@@ -25,15 +25,14 @@ const schema = z.object({
   // How many philosopher seats deliberate concurrently (1 = sequential).
   COUNCIL_CONCURRENCY: z.coerce.number().int().min(1).max(11).default(4),
   CRON_EXPR: z.string().default('0 */6 * * *'),
-  SOURCES_REDDIT: z
-    .string()
-    .default('LocalLLaMA,MachineLearning,singularity'),
+  SOURCES_REDDIT: z.string().default('LocalLLaMA,MachineLearning,singularity'),
   MAX_ITEMS_PER_RUN: z.coerce.number().int().positive().default(10),
   DRY_RUN: z.coerce.number().int().min(0).max(1).default(0),
+  // Per-chunk delay (ms) for mock streaming in DRY_RUN - 0 emits instantly.
+  // Set ~20 to make the offline chamber demo stream like a live deliberation.
+  DRY_RUN_STREAM_MS: z.coerce.number().int().min(0).max(500).default(0),
   DATA_DIR: z.string().default('./data'),
-  LOG_LEVEL: z
-    .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
-    .default('info'),
+  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 });
 
 const parsed = schema.parse(process.env);
@@ -72,12 +71,17 @@ export const config = {
   defaultModel: parsed.DEFAULT_MODEL || `anthropic:${parsed.ANTHROPIC_MODEL}`,
   councilModels: parsePairs(parsed.COUNCIL_MODELS),
   sourceWeights: parseSourceWeights(parsed.SOURCE_WEIGHTS),
-  evalJudges: parsed.EVAL_JUDGES.split(',').map((s) => s.trim()).filter(Boolean),
+  evalJudges: parsed.EVAL_JUDGES.split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
   councilConcurrency: parsed.COUNCIL_CONCURRENCY,
   cronExpr: parsed.CRON_EXPR,
-  redditSubs: parsed.SOURCES_REDDIT.split(',').map((s) => s.trim()).filter(Boolean),
+  redditSubs: parsed.SOURCES_REDDIT.split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
   maxItemsPerRun: parsed.MAX_ITEMS_PER_RUN,
   dryRun: parsed.DRY_RUN === 1,
+  dryRunStreamMs: parsed.DRY_RUN_STREAM_MS,
   dataDir: parsed.DATA_DIR,
   logLevel: parsed.LOG_LEVEL,
 } as const;

@@ -1,6 +1,6 @@
 # 🏛️ philosopher-council
 
-![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Claude](https://img.shields.io/badge/Claude%20API-%23191919.svg?style=for-the-badge&logo=anthropic&logoColor=white) ![Vitest](https://img.shields.io/badge/vitest-%236E9F18.svg?style=for-the-badge&logo=vitest&logoColor=white) ![Zod](https://img.shields.io/badge/zod-%233068b7.svg?style=for-the-badge&logo=zod&logoColor=white) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Node.js](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Claude](https://img.shields.io/badge/Claude%20API-%23191919.svg?style=for-the-badge&logo=anthropic&logoColor=white) ![Vitest](https://img.shields.io/badge/vitest-%236E9F18.svg?style=for-the-badge&logo=vitest&logoColor=white) ![Zod](https://img.shields.io/badge/zod-%233068b7.svg?style=for-the-badge&logo=zod&logoColor=white) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge) [![CI](https://img.shields.io/github/actions/workflow/status/umair-tareen/philosopher-council/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI)](https://github.com/umair-tareen/philosopher-council/actions/workflows/ci.yml)
 
 <p align="center">
   <img src="assets/death-of-socrates.jpg" alt="The Death of Socrates - Jacques-Louis David, 1787" width="850">
@@ -67,7 +67,14 @@ For questions about events newer than the models' training data, the **clerk** c
 pnpm ui          # -> http://localhost:4173
 ```
 
-A zero-dependency local web UI: put a question to the council and watch the deliberation stream in live - each philosopher's card fills in token by token as their opinion concludes (virtue bars, one-liner, expandable reasoning, which `provider:model` produced it), followed by the answer, synthesis, minority report, and final verdict. Past transcripts are browsable from the same page. Works in `DRY_RUN=1` for an instant offline demo.
+<p align="center">
+  <img src="assets/chamber-demo.gif" alt="A quorum deliberation streaming live in the council chamber" width="850">
+</p>
+<p align="center">
+  <em>The chamber in motion - recorded in offline demo mode (<code>DRY_RUN=1 DRY_RUN_STREAM_MS=35 pnpm ui</code>), no API key needed.</em>
+</p>
+
+A zero-dependency local web UI: put a question to the council and watch the deliberation stream in live - each philosopher's card fills in token by token as their opinion concludes (virtue bars, one-liner, expandable reasoning, which `provider:model` produced it), followed by the answer, synthesis, minority report, and final verdict. Past transcripts are browsable from the same page. Works in `DRY_RUN=1` for an instant offline demo; set `DRY_RUN_STREAM_MS=35` to pace the mock tokens so the demo streams like a live deliberation (that's what the clip above shows).
 
 <p align="center">
   <img src="assets/chamber.png" alt="The council chamber after a live full-council deliberation" width="850">

@@ -24,7 +24,9 @@ describe('novelty', () => {
     const { noveltyFor, tokenize } = await import('../src/filter/novelty.js');
     const corpus = [[...tokenize('Ralph loop self-critique on a 7B model')]];
     expect(noveltyFor('Ralph loop self-critique on a 7B model', corpus)).toBeLessThan(0.1);
-    expect(noveltyFor('Mixture-of-experts routing for tabular data', corpus)).toBeGreaterThan(0.9);
+    expect(noveltyFor('Mixture-of-experts routing for tabular data', corpus)).toBeGreaterThan(
+      0.9,
+    );
   });
 });
 
