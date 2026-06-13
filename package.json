@@ -30,7 +30,7 @@
     "fast-xml-parser": "^4.5.0",
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0",
-    "zod": "^3.23.8"
+    "zod": "^4.4.3"
   },
   "optionalDependencies": {
     "node-cron": "^3.0.3"
