@@ -1,9 +1,10 @@
 import { existsSync } from 'node:fs';
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { config } from '../config.js';
 import { logger } from '../logger.js';
 import type { CouncilVerdict, TrendItem } from '../types.js';
+import { writeFileAtomic } from './atomic.js';
 
 function dayDir(kind: 'trends' | 'digests'): string {
   const day = new Date().toISOString().slice(0, 10);
@@ -22,7 +23,7 @@ export async function saveItem(item: TrendItem): Promise<string> {
   const dir = dayDir('trends');
   await mkdir(dir, { recursive: true });
   const file = path.join(dir, `${slugify(item.title) || item.id}-${item.id}.item.json`);
-  await writeFile(file, JSON.stringify(item, null, 2));
+  await writeFileAtomic(file, JSON.stringify(item, null, 2));
   return file;
 }
 
@@ -30,7 +31,7 @@ export async function saveVerdict(item: TrendItem, verdict: CouncilVerdict): Pro
   const dir = dayDir('trends');
   await mkdir(dir, { recursive: true });
   const file = path.join(dir, `${slugify(item.title) || item.id}-${item.id}.verdict.json`);
-  await writeFile(file, JSON.stringify({ item, verdict }, null, 2));
+  await writeFileAtomic(file, JSON.stringify({ item, verdict }, null, 2));
   return file;
 }
 
@@ -72,11 +73,11 @@ export async function loadTodaysVerdicts(): Promise<
 }
 
 export async function writeDigest(markdown: string): Promise<string> {
-  const dir = dayDir('digests');
-  await mkdir(dir, { recursive: true });
   const day = new Date().toISOString().slice(0, 10);
   const file = path.join(config.dataDir, 'digests', `${day}.md`);
-  await mkdir(path.dirname(file), { recursive: true });
-  await writeFile(file, markdown);
+  // writeFileAtomic mkdirs the target dir; the digest lives directly under
+  // digests/ (not digests/<day>/), so dayDir('digests') was creating an unused
+  // empty directory - dropped.
+  await writeFileAtomic(file, markdown);
   return file;
 }

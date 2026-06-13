@@ -2,6 +2,15 @@ import Anthropic from '@anthropic-ai/sdk';
 import { config } from '../config.js';
 import type { ProviderRequest, ProviderResult } from './index.js';
 
+/** Join every text block - reading only content[0] drops text that follows a
+ *  leading thinking/tool block and yields empty output. */
+function joinText(content: Anthropic.ContentBlock[]): string {
+  return content
+    .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+    .map((b) => b.text)
+    .join('');
+}
+
 let client: Anthropic | null = null;
 
 function getClient(): Anthropic {
@@ -30,9 +39,7 @@ export async function anthropicComplete(
     );
     stream.on('text', (delta) => onToken(delta));
     const final = await stream.finalMessage();
-    const block = final.content[0];
-    const text = block && block.type === 'text' ? block.text : '';
-    return { text, model: `anthropic:${final.model}` };
+    return { text: joinText(final.content), model: `anthropic:${final.model}` };
   }
   const res = await getClient().messages.create(
     {
@@ -43,7 +50,5 @@ export async function anthropicComplete(
     },
     { signal: req.signal },
   );
-  const block = res.content[0];
-  const text = block && block.type === 'text' ? block.text : '';
-  return { text, model: `anthropic:${res.model}` };
+  return { text: joinText(res.content), model: `anthropic:${res.model}` };
 }

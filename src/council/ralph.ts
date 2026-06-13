@@ -6,7 +6,7 @@ import type {
   RalphCritique,
   TrendItem,
 } from '../types.js';
-import { clamp01 } from '../util/num.js';
+import { coerceScore } from '../util/num.js';
 import { complete, extractJson } from './client.js';
 import { renderItem } from './personas/_shared.js';
 
@@ -54,12 +54,14 @@ export async function ralphLoop(
         iteration: i,
         weaknesses: Array.isArray(raw.weaknesses) ? raw.weaknesses.slice(0, 3) : [],
         refinedVerdict: raw.refinedVerdict ?? prevVerdict,
-        refinedScore: clamp01(Number(raw.refinedScore ?? prevScore)),
+        // Keep the prior aggregate when the model omits/mangles the score,
+        // rather than collapsing an empty string to 0 (the worst verdict).
+        refinedScore: coerceScore(raw.refinedScore, prevScore),
       };
       out.push(critique);
       prevScore = critique.refinedScore;
       prevVerdict = critique.refinedVerdict;
-      const stop = clamp01(Number(raw.stopConfidence ?? 0));
+      const stop = coerceScore(raw.stopConfidence, 0);
       if (stop >= CONFIDENCE_FLOOR) break;
     } catch (err) {
       logger.warn({ err: String(err) }, 'ralph iteration failed');

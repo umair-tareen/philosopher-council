@@ -28,6 +28,18 @@ describe('rawOpinionSchema', () => {
     expect(out.virtueScores.wisdom).toBe(0.7);
   });
 
+  it('degrades empty/blank/falsy scores to neutral, NOT to 0', () => {
+    // Regression guard: Number('')/Number(false) are a finite 0 that the old
+    // schema accepted as the worst possible score.
+    const out = rawOpinionSchema.parse({
+      virtueScores: { wisdom: '', courage: '   ', justice: false, temperance: 'high' },
+    });
+    expect(out.virtueScores.wisdom).toBe(0.5);
+    expect(out.virtueScores.courage).toBe(0.5);
+    expect(out.virtueScores.justice).toBe(0.5);
+    expect(out.virtueScores.temperance).toBe(0.5);
+  });
+
   it('degrades missing or garbage fields to safe defaults instead of throwing', () => {
     const out = rawOpinionSchema.parse({
       virtueScores: 'not an object',

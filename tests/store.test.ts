@@ -45,6 +45,27 @@ describe('fs store', () => {
     const verdicts = await loadTodaysVerdicts();
     expect(verdicts.length).toBe(0);
   });
+
+  it('saveItem writes atomically: valid JSON round-trips with no .tmp left behind', async () => {
+    const { saveItem, loadTodaysItems } = await import('../src/store/fs.js');
+    const file = await saveItem({
+      id: 'atomic-1',
+      source: 'arxiv',
+      title: 'Atomic write check',
+      url: 'https://example/atomic',
+      publishedAt: '2026-06-13T00:00:00Z',
+      fetchedAt: '2026-06-13T01:00:00Z',
+      tags: ['x'],
+    });
+    expect(file.endsWith('.item.json')).toBe(true);
+    const items = await loadTodaysItems();
+    expect(items.some((i) => i.id === 'atomic-1')).toBe(true);
+
+    const day = new Date().toISOString().slice(0, 10);
+    const dir = path.join(DATA_DIR, 'trends', day);
+    const tmps = (await readdir(dir)).filter((f) => f.includes('.tmp'));
+    expect(tmps).toEqual([]);
+  });
 });
 
 describe('writeFileAtomic', () => {

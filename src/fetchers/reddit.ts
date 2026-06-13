@@ -1,6 +1,7 @@
 import { matchKeywords } from '../filter/keywords.js';
 import { logger } from '../logger.js';
 import type { TrendItem } from '../types.js';
+import { safeIso } from '../util/time.js';
 import { hashId } from './index.js';
 
 const UA = 'stoic-ai-council/0.1';
@@ -47,7 +48,7 @@ export async function fetchReddit(subreddit: string): Promise<TrendItem[]> {
       title: c.data.title,
       url: canonical,
       author: c.data.author,
-      publishedAt: new Date(c.data.created_utc * 1000).toISOString(),
+      publishedAt: safeIso(c.data.created_utc * 1000, now),
       fetchedAt: now,
       summary: (c.data.selftext ?? '').slice(0, 1200),
       rawScore: c.data.score,

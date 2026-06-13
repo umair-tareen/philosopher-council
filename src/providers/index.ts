@@ -23,6 +23,17 @@ export interface ProviderResult {
   model: string;
 }
 
+/** An HTTP error from a provider, carrying the status so the retry layer can
+ *  distinguish retryable (429/5xx/network) from terminal (400/401/403/404). */
+export class ProviderHttpError extends Error {
+  readonly status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = 'ProviderHttpError';
+    this.status = status;
+  }
+}
+
 /**
  * Parse a model spec string like "anthropic:claude-sonnet-4-5",
  * "openai:gpt-4o", "gemini:gemini-2.0-flash", "ollama:llama3.1".

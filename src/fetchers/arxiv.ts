@@ -2,6 +2,7 @@ import { XMLParser } from 'fast-xml-parser';
 import { matchKeywords } from '../filter/keywords.js';
 import { logger } from '../logger.js';
 import type { TrendItem } from '../types.js';
+import { safeIso } from '../util/time.js';
 import { hashId } from './index.js';
 
 interface RssItem {
@@ -19,7 +20,7 @@ interface RssFeed {
 const parser = new XMLParser({ ignoreAttributes: false });
 
 export async function fetchArxiv(category: string): Promise<TrendItem[]> {
-  const url = `http://export.arxiv.org/rss/${category}`;
+  const url = `https://export.arxiv.org/rss/${encodeURIComponent(category)}`;
   try {
     const res = await fetch(url);
     if (!res.ok) {
@@ -43,7 +44,7 @@ export async function fetchArxiv(category: string): Promise<TrendItem[]> {
         title,
         url: link,
         author: it['dc:creator'],
-        publishedAt: it.pubDate ? new Date(it.pubDate).toISOString() : now,
+        publishedAt: safeIso(it.pubDate, now),
         fetchedAt: now,
         summary: desc.slice(0, 1200),
         tags: matchKeywords(`${title}\n${desc}`),

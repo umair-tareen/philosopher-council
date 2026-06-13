@@ -5,7 +5,11 @@ const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 
 export function heuristicScore(item: TrendItem, now = Date.now()): number {
-  const ageMs = Math.max(0, now - Date.parse(item.publishedAt));
+  // A missing/malformed date yields NaN from Date.parse, which would poison
+  // both this score and the sort comparator that ranks on it. Treat unknown
+  // dates as "just now" (recency 1) rather than letting NaN propagate.
+  const published = Date.parse(item.publishedAt);
+  const ageMs = Number.isFinite(published) ? Math.max(0, now - published) : 0;
   const recency = Math.exp(-ageMs / (3 * DAY_MS));
   const tagBoost = Math.min(1, item.tags.length / 3);
   // Clamp to >= 0: downvoted Reddit items have negative scores, and

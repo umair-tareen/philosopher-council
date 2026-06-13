@@ -1,4 +1,4 @@
-import type { ProviderRequest, ProviderResult } from './index.js';
+import { ProviderHttpError, type ProviderRequest, type ProviderResult } from './index.js';
 
 interface ChatCompletionResponse {
   model?: string;
@@ -36,7 +36,11 @@ export async function openAiCompatComplete(
   });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`${baseUrl} returned ${res.status}: ${body.slice(0, 300)}`);
+    // Carry the status so the retry layer can skip non-retryable 4xx.
+    throw new ProviderHttpError(
+      res.status,
+      `${baseUrl} returned ${res.status}: ${body.slice(0, 300)}`,
+    );
   }
 
   if (onToken && res.body) {
@@ -55,6 +59,10 @@ export async function openAiCompatComplete(
   const data = (await res.json()) as ChatCompletionResponse;
   if (data.error?.message) throw new Error(data.error.message);
   const text = data.choices?.[0]?.message?.content ?? '';
+  // A 200 with empty content (truncation, refusal, content filter) is a
+  // transient failure, not an answer - throw so the retry loop can fire,
+  // matching the streaming path's no-data guard.
+  if (!text) throw new Error(`${baseUrl} returned an empty completion`);
   return { text, model: data.model ?? req.model };
 }
 
