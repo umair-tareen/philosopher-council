@@ -34,7 +34,7 @@
     "zod": "^3.23.8"
   },
   "optionalDependencies": {
-    "node-cron": "^3.0.3"
+    "node-cron": "^4.2.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
