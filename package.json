@@ -25,16 +25,16 @@
     "typecheck": "vitest --typecheck --run"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.104.2",
+    "@anthropic-ai/sdk": "^0.105.0",
     "commander": "^15.0.0",
     "dotenv": "^16.4.5",
-    "fast-xml-parser": "^5.9.0",
+    "fast-xml-parser": "^5.9.3",
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0",
     "zod": "^4.4.3"
   },
   "optionalDependencies": {
-    "node-cron": "^4.2.1"
+    "node-cron": "^4.4.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
