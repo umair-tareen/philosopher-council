@@ -10,6 +10,13 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # Staying on zod 3 is deliberate: the degrade-don't-fail schemas in
+      # src/council/schemas.ts depend on v3 .catch()/.transform() semantics,
+      # and the v4 bump broke them (7 test failures). Migrate intentionally,
+      # not via a bot bump.
+      - dependency-name: zod
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:
