@@ -25,6 +25,7 @@ import { kant } from './personas/kant.js';
 import { laotzu } from './personas/laotzu.js';
 import { plato } from './personas/plato.js';
 import { socrates } from './personas/socrates.js';
+import { measurePreservation } from './preservation.js';
 import { type QuorumSeat, selectQuorum } from './quorum.js';
 import { ralphLoop } from './ralph.js';
 import { ALL_DELIBERATORS, PHILOSOPHERS } from './registry.js';
@@ -338,6 +339,8 @@ export async function runCouncil(
     }
   }
 
+  const preservation = measurePreservation(opinions, synthesis, answer, minority);
+
   return {
     itemId: item.id,
     mode,
@@ -349,6 +352,7 @@ export async function runCouncil(
     ralph,
     answer,
     minority,
+    preservation,
     finalScore,
     finalRecommendation: recommend(finalScore),
     model: config.defaultModel,

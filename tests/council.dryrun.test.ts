@@ -31,6 +31,11 @@ describe('council dry-run', () => {
     expect(verdict.synthesis.unifiedScore).toBeGreaterThanOrEqual(0);
     expect(verdict.synthesis.unifiedScore).toBeLessThanOrEqual(1);
     expect(['amplify', 'track', 'ignore']).toContain(verdict.finalRecommendation);
+
+    expect(verdict.preservation).toBeDefined();
+    expect(verdict.preservation?.conceptSurvival).toBeGreaterThanOrEqual(0);
+    expect(verdict.preservation?.conceptSurvival).toBeLessThanOrEqual(1);
+    expect(verdict.preservation?.total).toBeGreaterThan(0);
   });
 
   it('produces 10 opinions in full-council mode', async () => {

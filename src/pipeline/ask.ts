@@ -206,6 +206,16 @@ export function renderAnswer(
       lines.push('');
       lines.push(`> ${d.reasoning}`);
     }
+    if (v.preservation) {
+      const { conceptSurvival, surviving, total, dissentEngagement } = v.preservation;
+      lines.push('');
+      lines.push(
+        `Preservation: ${(conceptSurvival * 100).toFixed(0)}% of seat concerns traceable into the synthesis/answer (${surviving}/${total})` +
+          (dissentEngagement !== undefined
+            ? ` · dissent engagement ${dissentEngagement.toFixed(2)}`
+            : ''),
+      );
+    }
     lines.push('');
   }
 
