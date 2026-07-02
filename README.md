@@ -13,6 +13,8 @@
 
 **Methodology, not metaphysics.** The philosophers are prompt-engineered lenses, not séance guests. The model is a language model. No production prompt claims the system has a soul, awareness, or being.
 
+**Built around what deliberation destroys.** The 2026 research on LLM councils is blunt: multi-agent discussion "erases up to 72% of issue-critical facts" while final stances "remain anchored in base-model priors" ([*The Deliberative Illusion*](https://arxiv.org/abs/2606.03032)), and a panel of nine frontier judges carries roughly **two effective votes** because their errors correlate ([*Nine Judges, Two Effective Votes*](https://arxiv.org/abs/2605.29800)). A council is not a machine for out-answering a strong single model - so this one doesn't pretend to be. It is a **deliberation instrument**: independent seats that never see each other's output, virtue scores you can audit, and a first-class minority report - built to show you *which facts, uncertainties, and legitimate disagreements survived*, which is precisely the evaluation those researchers say is missing.
+
 ---
 
 ## 💬 Ask the council anything
@@ -111,13 +113,22 @@ Philosophy is already running inside production AI - it's just uncredited:
 - **RLHF** is preference utilitarianism with a reward model.
 - **AI safety guardrails** are deontology: rules that hold regardless of outcome.
 - **Interpretability research** is epistemology: *how do we know what the model knows?*
-- **Karpathy's "LLM Council"** showed that multiple model perspectives beat one - this project takes the obvious next step and gives the perspectives 2,500 years of documented methodology.
+- **Karpathy's "LLM Council"** put multi-model deliberation on the map (~22k stars) and was then explicitly abandoned ("provided here as is") - this project is the maintained next step, and it gives the perspectives 2,500 years of documented methodology.
 
 And there's a fitting irony in the plumbing: **Anthropic** takes its name from the Greek *ánthrōpos* - "human." A company named *human* built the model; this council uses it to put humanity's oldest reasoning traditions - Athens, Baghdad, Córdoba, Qufu - back in the judgment seat over AI's newest claims. The wheel turns full circle: the machines trained on everything we ever wrote are steered by the best of what we ever thought.
 
 So: if a constitution of principles can align a model, a council of philosophers can interrogate one. Same move, made explicit.
 
-The premise has academic legs too: [Du, Liang, Tenenbaum et al. (ICML 2024)](https://arxiv.org/abs/2305.14325) showed multiagent debate improves factuality and reasoning, and [Mixture-of-Agents](https://github.com/togethercomputer/MoA) beat GPT-4o on AlpacaEval using only open models layered as proposers and aggregators. What those lines of work leave open is *which* perspectives to seat and *how* to keep disagreement legible - which is exactly where 2,500 years of documented methodology comes in.
+The premise has academic legs - and, as of 2026, academic teeth. On the legs: [Du, Liang, Tenenbaum et al. (ICML 2024)](https://arxiv.org/abs/2305.14325) showed multiagent debate can improve factuality, and [Mixture-of-Agents](https://github.com/togethercomputer/MoA) beat GPT-4o on AlpacaEval with layered open models. On the teeth: the newest results cut against naive councils - and this project is designed around each cut:
+
+| What the research found | Where | How this council answers it |
+|---|---|---|
+| Multi-agent discussion "erases up to 72% of issue-critical facts" and final stances "remain anchored in base-model priors" - agents *agree more while knowing less* | [*The Deliberative Illusion*](https://arxiv.org/abs/2606.03032) (Wan et al.) | Seats deliberate **independently** - no seat ever sees another's output, so there is no discussion loop to shed facts or homogenize stances |
+| The same authors "call for evaluations that measure which facts, uncertainties, and legitimate disagreements survive interaction" | same paper | That artifact is this repo's centerpiece: the **minority report** (disagreement metrics, contested virtues, the dissenter verbatim) plus full per-seat transcripts |
+| Nine frontier judges across seven model families ≈ **two effective votes** - errors correlate, and the best single judge matches or outperforms the whole panel | [*Nine Judges, Two Effective Votes*](https://arxiv.org/abs/2605.29800) (Kohli) | Seat count is a roster, not an accuracy claim: the default bench is a quorum of four deliberators + synthesizer, not all eleven - and our own eval publishes the thin margin instead of hiding it (below) |
+| Council **procedure** decides the outcome: only 4 of 7 governance structures beat the best single model at all, and the best gained **+9.2pp** - with small open models | [llm-council-governance](https://github.com/andybhall/llm-council-governance) | Debate formats are explicit, named, and swappable (deliberation / socratic / oxford / delphi), and per-seat providers let the bench run on small local models - where ensemble gains are largest |
+
+Read that last column top to bottom and you have this project's design rationale in one place. What the literature still leaves open - *which* perspectives to seat and *how* to keep disagreement legible - is exactly where 2,500 years of documented methodology comes in.
 
 ## ⚖️ How this compares
 
@@ -128,7 +139,7 @@ The premise has academic legs too: [Du, Liang, Tenenbaum et al. (ICML 2024)](htt
 | Disagreement | **first-class minority report** | chairman decides ([criticized](https://github.com/karpathy/llm-council/issues/3)) | per-method | semantic clustering |
 | Proof it works | blind-judged eval, published incl. the run it lost | none | none | none |
 | Providers | Anthropic, OpenAI, Gemini, Ollama, per-seat | OpenRouter only | multiple | many (via llm) |
-| License | **MIT** | MIT, explicitly unmaintained ("provided as is") | BSL 1.1 (proprietary until 2029) | Apache-2.0 |
+| License | **MIT** | MIT, explicitly unmaintained ("provided here as is") | BSL 1.1 (proprietary until 2029) | Apache-2.0 |
 | Maintained | yes | no ("I'm not going to support it in any way") | yes | partially |
 
 Different tools for different jobs - quorum-cli has more debate formats, consortium plugs into the `llm` ecosystem. What this project uniquely offers: perspectives that are *characters with documented methodologies* rather than interchangeable model slots, scoring a human can audit, dissent that survives synthesis, and an eval harness honest enough to publish its own losses.
@@ -208,6 +219,8 @@ The council beats a single direct answer head-to-head 31-18, and generic debate 
 [v1 - the loss](evals/2026-06-05-v1-no-spokesperson.md) · [v2 - after the fix, N=5](evals/2026-06-05-v2-with-spokesperson.md) · [v3 - main result, N=50](evals/2026-06-05-v3-n50-multijudge.md)
 
 **Caveats, honestly:** both judges are same-family (Claude) models and share biases with two of the three strategies under test; the council burns 7x the calls of a single answer for a +0.011 mean and a 62% win rate; the mean margin is narrow even where the win rate is not. Reproduce it: `pnpm eval --file evals/questions.json`.
+
+**The field measures the same thing.** [*Nine Judges, Two Effective Votes*](https://arxiv.org/abs/2605.29800) reports the identical shape at frontier-panel scale: a nine-judge, seven-family panel whose errors correlate so strongly it carries about two independent votes' worth of information, with the best single judge matching or outperforming the ensemble across all conditions (on MNLI the panel edges the best judge **72.0% to 71.8%** - and on the paper's other two datasets the panel loses to it outright). Our 0.728-vs-0.717 was never a failed attempt at a better ensemble - it is an independent local measurement, on our own harness, of the same general property of correlated LLM committees. The margin is not the product. The **legible deliberation** is: which lenses were applied, where they disagreed, what the dissent said, and what evidence would change the verdict.
 
 ## 🏛️ The eleven philosophers
 
