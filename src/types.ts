@@ -87,8 +87,14 @@ export interface RalphCritique {
 export interface CouncilVerdict {
   itemId: string;
   mode: CouncilMode;
-  /** Named debate format ('deliberation' | 'socratic' | 'oxford' | 'delphi'). */
+  /** Named debate format ('deliberation' | 'socratic' | 'oxford' | 'delphi' | 'vote'). */
   debateMode?: string;
+  /**
+   * How the final verdict was derived ('synthesis' via ralph critic, or
+   * 'vote' via median score + plurality). Optional so old persisted
+   * verdicts (predating this field) still parse.
+   */
+  governance?: 'synthesis' | 'vote';
   opinions: PhilosopherOpinion[];
   synthesis: IbnArabiSynthesis;
   aggregateScore: number;

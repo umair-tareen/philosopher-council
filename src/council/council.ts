@@ -8,6 +8,7 @@ import type {
   MinorityReport,
   PhilosopherId,
   PhilosopherOpinion,
+  RalphCritique,
   Recommendation,
   TrendItem,
   Virtue,
@@ -217,6 +218,53 @@ export function buildMinorityReport(
   return { disagreement, contestedVirtues, dissenter };
 }
 
+/** Sorted middle; even length averages the two middles. Empty array is 0. */
+export function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 0) {
+    return ((sorted[mid - 1] as number) + (sorted[mid] as number)) / 2;
+  }
+  return sorted[mid] as number;
+}
+
+/** Highest-count recommendation wins; any tie for the top count returns tieBreak. */
+export function pluralityRecommendation(
+  recs: Recommendation[],
+  tieBreak: Recommendation,
+): Recommendation {
+  const counts = new Map<Recommendation, number>();
+  for (const r of recs) {
+    counts.set(r, (counts.get(r) ?? 0) + 1);
+  }
+  let best = 0;
+  for (const count of counts.values()) {
+    if (count > best) best = count;
+  }
+  const top = [...counts.entries()].filter(([, count]) => count === best);
+  return top.length === 1 ? (top[0]?.[0] as Recommendation) : tieBreak;
+}
+
+/**
+ * The Deliberate → Vote tally: median seat score, plurality recommendation
+ * with a median-derived tie-break. Pure, so the wiring is unit-testable with
+ * ballots where plurality and recommend(median) genuinely diverge.
+ */
+export function voteOutcome(opinions: PhilosopherOpinion[]): {
+  finalScore: number;
+  finalRecommendation: Recommendation;
+} {
+  const finalScore = median(opinions.map((o) => o.verdictScore));
+  return {
+    finalScore,
+    finalRecommendation: pluralityRecommendation(
+      opinions.map((o) => recommend(o.verdictScore)),
+      recommend(finalScore),
+    ),
+  };
+}
+
 export async function runCouncil(
   item: TrendItem,
   mode: CouncilMode,
@@ -224,7 +272,11 @@ export async function runCouncil(
   debateModeId: DebateModeId = 'deliberation',
   signal?: AbortSignal,
 ): Promise<CouncilVerdict> {
-  const debateMode = DEBATE_MODES[debateModeId] ?? DEBATE_MODES.deliberation;
+  // Object.hasOwn, not `in` or a truthy index: 'toString' is `in` every
+  // object via the prototype chain, and DEBATE_MODES['constructor'] is truthy.
+  const debateMode = Object.hasOwn(DEBATE_MODES, debateModeId)
+    ? DEBATE_MODES[debateModeId]
+    : DEBATE_MODES.deliberation;
   const seats: QuorumSeat[] = debateMode.seats
     ? debateMode.seats.map((id) => ({
         id,
@@ -314,10 +366,20 @@ export async function runCouncil(
 
   const consensus = buildConsensus(opinions, synthesis);
 
-  const ralph = await ralphLoop(item, opinions, synthesis, aggregateScore, signal);
-  const finalScore = ralph.length
-    ? (ralph[ralph.length - 1]?.refinedScore ?? aggregateScore)
-    : aggregateScore;
+  const governance = debateMode.governance ?? 'synthesis';
+  let ralph: RalphCritique[];
+  let finalScore: number;
+  let finalRecommendation: Recommendation;
+  if (governance === 'vote') {
+    ralph = [];
+    ({ finalScore, finalRecommendation } = voteOutcome(opinions));
+  } else {
+    ralph = await ralphLoop(item, opinions, synthesis, aggregateScore, signal);
+    finalScore = ralph.length
+      ? (ralph[ralph.length - 1]?.refinedScore ?? aggregateScore)
+      : aggregateScore;
+    finalRecommendation = recommend(finalScore);
+  }
 
   const minority = buildMinorityReport(opinions, synthesis);
 
@@ -345,6 +407,7 @@ export async function runCouncil(
     itemId: item.id,
     mode,
     debateMode: debateMode.id,
+    governance,
     opinions,
     synthesis,
     aggregateScore,
@@ -354,7 +417,7 @@ export async function runCouncil(
     minority,
     preservation,
     finalScore,
-    finalRecommendation: recommend(finalScore),
+    finalRecommendation,
     model: config.defaultModel,
     generatedAt: new Date().toISOString(),
   };
@@ -365,7 +428,7 @@ function buildConsensus(opinions: PhilosopherOpinion[], synthesis: IbnArabiSynth
   return `${lines}\n\nSynthesis (Ibn ʿArabī): ${synthesis.unifyingReading}`;
 }
 
-function recommend(score: number): Recommendation {
+export function recommend(score: number): Recommendation {
   if (score >= 0.7) return 'amplify';
   if (score >= 0.45) return 'track';
   return 'ignore';

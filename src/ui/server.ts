@@ -43,7 +43,7 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
       debateMode = 'deliberation';
     }
   }
-  if (!(debateMode in DEBATE_MODES)) debateMode = 'deliberation';
+  if (!Object.hasOwn(DEBATE_MODES, debateMode)) debateMode = 'deliberation';
 
   res.writeHead(200, {
     'content-type': 'text/event-stream',
