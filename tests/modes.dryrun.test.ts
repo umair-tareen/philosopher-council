@@ -34,6 +34,14 @@ describe('debate modes', () => {
     );
   });
 
+  it('vote mode convenes a quorum of 4 seats and reports vote governance', async () => {
+    const { runCouncil } = await import('../src/council/council.js');
+    const verdict = await runCouncil(item('mode-4'), 'quorum', {}, 'vote');
+    expect(verdict.debateMode).toBe('vote');
+    expect(verdict.governance).toBe('vote');
+    expect(verdict.opinions).toHaveLength(4);
+  });
+
   it('default deliberation is unchanged', async () => {
     const { runCouncil } = await import('../src/council/council.js');
     const verdict = await runCouncil(item('mode-3'), 'quorum');

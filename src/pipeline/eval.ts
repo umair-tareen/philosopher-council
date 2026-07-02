@@ -4,6 +4,7 @@ import path from 'node:path';
 import { config } from '../config.js';
 import { complete, extractJson } from '../council/client.js';
 import { runCouncil } from '../council/council.js';
+import type { DebateModeId } from '../council/modes.js';
 import { logger } from '../logger.js';
 import type { CouncilMode, TrendItem } from '../types.js';
 import { clamp01 } from '../util/num.js';
@@ -92,6 +93,7 @@ async function runDebate(question: string): Promise<StrategyAnswer> {
 async function runCouncilStrategy(
   question: string,
   mode: CouncilMode,
+  debateMode?: DebateModeId,
 ): Promise<StrategyAnswer> {
   const now = new Date().toISOString();
   const item: TrendItem = {
@@ -103,7 +105,7 @@ async function runCouncilStrategy(
     fetchedAt: now,
     tags: [],
   };
-  const verdict = await runCouncil(item, mode);
+  const verdict = await runCouncil(item, mode, {}, debateMode ?? 'deliberation');
   // Spokesperson stage gives the direct answer; fall back to the synthesis
   // composition if it failed (the v1 behaviour that lost the first eval).
   const answer =
@@ -191,14 +193,20 @@ export interface EvalOptions {
   fullCouncil?: boolean;
   /** How many questions to evaluate concurrently (default 3). */
   concurrency?: number;
+  /** Council debate format for the ablation (default 'deliberation'). */
+  debateMode?: DebateModeId;
 }
 
-async function evalOneQuestion(question: string, fullCouncil: boolean): Promise<EvalResult> {
+async function evalOneQuestion(
+  question: string,
+  fullCouncil: boolean,
+  debateMode?: DebateModeId,
+): Promise<EvalResult> {
   logger.info({ question }, 'eval question start');
   const answers: StrategyAnswer[] = [
     await runSingle(question),
     await runDebate(question),
-    await runCouncilStrategy(question, fullCouncil ? 'full' : 'quorum'),
+    await runCouncilStrategy(question, fullCouncil ? 'full' : 'quorum', debateMode),
   ];
   const { judged, labelToStrategy } = await judgeAnswers(question, answers);
 
@@ -244,7 +252,11 @@ export async function runEval(opts: EvalOptions = {}): Promise<EvalReport> {
     for (;;) {
       const i = next++;
       if (i >= questions.length) return;
-      results[i] = await evalOneQuestion(questions[i] as string, !!opts.fullCouncil);
+      results[i] = await evalOneQuestion(
+        questions[i] as string,
+        !!opts.fullCouncil,
+        opts.debateMode,
+      );
       logger.info({ done: i + 1, total: questions.length }, 'eval progress');
     }
   }
@@ -262,7 +274,7 @@ export async function runEval(opts: EvalOptions = {}): Promise<EvalReport> {
   }
 
   const judges = config.evalJudges.length ? config.evalJudges : [config.defaultModel];
-  const markdown = renderReport(results, overall, wins, judges);
+  const markdown = renderReport(results, overall, wins, judges, opts.debateMode);
   const dir = path.join(config.dataDir, 'evals');
   await mkdir(dir, { recursive: true });
   const file = path.join(dir, `${new Date().toISOString().slice(0, 10)}.md`);
@@ -277,12 +289,18 @@ export function renderReport(
   overall: Record<StrategyId, number>,
   wins: Record<StrategyId, number>,
   judges: string[],
+  debateMode?: DebateModeId,
 ): string {
   const lines: string[] = [];
-  lines.push('# Eval: single answer vs generic debate vs philosopher council');
+  const nonDefaultMode = debateMode && debateMode !== 'deliberation' ? debateMode : undefined;
+  lines.push(
+    nonDefaultMode
+      ? `# Eval: single answer vs generic debate vs philosopher council (${nonDefaultMode})`
+      : '# Eval: single answer vs generic debate vs philosopher council',
+  );
   lines.push('');
   lines.push(
-    `Blind-judged by ${judges.map((j) => `\`${j}\``).join(' + ')} on insight, rigor, blind-spot coverage, and actionability. Scores are averaged across judges; ranks derive from the averaged scores. Answers were anonymized and shuffled per question. N=${results.length}.`,
+    `Blind-judged by ${judges.map((j) => `\`${j}\``).join(' + ')} on insight, rigor, blind-spot coverage, and actionability. Scores are averaged across judges; ranks derive from the averaged scores. Answers were anonymized and shuffled per question. N=${results.length}.${nonDefaultMode ? ` Council debate mode: **${nonDefaultMode}**.` : ''}`,
   );
   lines.push('');
   lines.push('| Strategy | Mean score | Wins (rank 1) | Calls per question |');

@@ -27,4 +27,18 @@ describe('eval dry-run', () => {
     expect(council.calls).toBeGreaterThan(single.calls);
     expect(report.file).toContain('evals');
   });
+
+  it('runs the council strategy in vote mode', async () => {
+    const { runEval } = await import('../src/pipeline/eval.js');
+    const report = await runEval({
+      questions: ['Is synthetic training data a dead end?'],
+      debateMode: 'vote',
+      concurrency: 1,
+    });
+    expect(report.results).toHaveLength(1);
+    expect(report.file).toContain('evals');
+    expect(Number.isFinite(report.overall.council)).toBe(true);
+    expect(report.overall.council).toBeGreaterThanOrEqual(0);
+    expect(report.overall.council).toBeLessThanOrEqual(1);
+  });
 });

@@ -37,7 +37,7 @@ program
       console.log(`Method Advisor: ${advice.mode} - ${advice.reason}`);
     }
     const { DEBATE_MODES } = await import('./council/modes.js');
-    if (!(debateMode in DEBATE_MODES)) {
+    if (!Object.hasOwn(DEBATE_MODES, debateMode)) {
       console.error(
         `Unknown mode "${debateMode}". Valid: ${Object.keys(DEBATE_MODES).join(', ')}, auto`,
       );
@@ -103,8 +103,20 @@ program
   .option('-n, --limit <count>', 'limit number of questions', parseInt)
   .option('--file <path>', 'JSON file with a {questions: string[]} benchmark set')
   .option('--concurrency <count>', 'questions evaluated in parallel', parseInt)
+  .option(
+    '--mode <mode>',
+    'council debate format for the ablation: deliberation | socratic | oxford | delphi | vote',
+    'deliberation',
+  )
   .action(async (words: string[], opts) => {
     const { runEval, DEFAULT_QUESTIONS } = await import('./pipeline/eval.js');
+    const { DEBATE_MODES } = await import('./council/modes.js');
+    if (!Object.hasOwn(DEBATE_MODES, opts.mode)) {
+      console.error(
+        `Unknown mode "${opts.mode}". Valid: ${Object.keys(DEBATE_MODES).join(', ')}`,
+      );
+      process.exit(1);
+    }
     let questions: string[];
     if (words.length) {
       questions = [words.join(' ')];
@@ -122,6 +134,7 @@ program
       questions,
       fullCouncil: !!opts.fullCouncil,
       concurrency: opts.concurrency,
+      debateMode: opts.mode as import('./council/modes.js').DebateModeId,
     });
     console.log(`\nOverall (mean blind-judge score):`);
     for (const [s, v] of Object.entries(report.overall)) {

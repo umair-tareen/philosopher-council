@@ -80,7 +80,9 @@ export function buildServer(): McpServer {
         mode: z
           .enum(MODE_IDS)
           .optional()
-          .describe('Debate format: deliberation (default) | socratic | oxford | delphi'),
+          .describe(
+            'Debate format: deliberation (default) | socratic | oxford | delphi | vote (median score, plurality recommendation, no critic pass)',
+          ),
       },
     },
     async ({ question, context, fullCouncil, mode }) => {
