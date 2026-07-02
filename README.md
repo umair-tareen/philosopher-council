@@ -83,6 +83,26 @@ A zero-dependency local web UI: put a question to the council and watch the deli
   <em>A real full-council run: "Should agentic AI systems be allowed to spend money autonomously?"<br>Verdict: 0.41, ignore - the council voted no, with Lao Tzu dissenting hardest.</em>
 </p>
 
+## 🔌 Use it inside Claude Code: `/philo-council`
+
+The council ships as an **MCP server** and a **Claude Code skill**, so "convene the philosophers on this decision" becomes a one-liner inside the tool you already work in:
+
+```bash
+# 1. Register the MCP server (from your clone of this repo)
+claude mcp add philo-council -- pnpm --dir /path/to/philosopher-council mcp
+
+# 2. Install the skill (gives Claude the /philo-council playbook)
+cp -r /path/to/philosopher-council/skills/philo-council ~/.claude/skills/
+```
+
+Then, in any Claude Code session:
+
+```
+> /philo-council Should we migrate this service to event sourcing?
+```
+
+Claude checks the council's **precedents** first (free), convenes the bench via the `deliberate` tool, and reports the answer *with the minority report intact*. Two MCP tools are exposed: `deliberate` (question, context, fullCouncil, mode) and `precedents` (case-law search, no LLM calls). Works with `DRY_RUN=1` for an instant offline demo.
+
 ## 🤔 Why philosophy, and why now
 
 Philosophy is already running inside production AI - it's just uncredited:

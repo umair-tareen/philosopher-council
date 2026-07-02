@@ -15,6 +15,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "ask": "tsx src/index.ts ask",
+    "mcp": "tsx src/mcp/main.ts",
     "eval": "tsx src/index.ts eval",
     "ui": "tsx src/index.ts ui",
     "trends:fetch": "tsx src/index.ts fetch",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.109.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "commander": "^15.0.0",
     "dotenv": "^17.4.2",
     "fast-xml-parser": "^5.9.3",
