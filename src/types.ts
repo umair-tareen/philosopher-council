@@ -1,3 +1,5 @@
+import type { PreservationReport } from './council/preservation.js';
+
 export type Source = 'reddit' | 'hn' | 'arxiv' | 'question';
 
 export type Virtue = 'wisdom' | 'courage' | 'justice' | 'temperance';
@@ -96,6 +98,12 @@ export interface CouncilVerdict {
   answer?: string;
   /** Where the council split: disagreement metrics and the strongest dissent. */
   minority: MinorityReport;
+  /**
+   * Mechanical (token-overlap) measure of which seat concerns survived into
+   * the synthesis/answer, and whether the dissent was engaged. Lexical
+   * proxy, zero LLM calls.
+   */
+  preservation?: PreservationReport;
   finalScore: number;
   finalRecommendation: Recommendation;
   model: string;

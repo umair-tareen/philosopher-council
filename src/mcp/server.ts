@@ -34,6 +34,16 @@ export function renderDeliberation(verdict: CouncilVerdict, file: string): strin
         `${d.displayName} dissented (${d.verdictScore.toFixed(2)}, ${d.delta > 0 ? '+' : ''}${d.delta.toFixed(2)} vs synthesis): "${d.oneLiner}"`,
     );
   }
+  if (verdict.preservation) {
+    const { conceptSurvival, surviving, total, dissentEngagement } = verdict.preservation;
+    lines.push(
+      '',
+      `**Preservation:** ${surviving}/${total} seat concerns survived (${(conceptSurvival * 100).toFixed(0)}%)` +
+        (dissentEngagement !== undefined
+          ? ` · dissent engagement ${dissentEngagement.toFixed(2)}`
+          : ''),
+    );
+  }
   if (verdict.synthesis.mysticalCaution) {
     lines.push('', `**Caution:** ${verdict.synthesis.mysticalCaution}`);
   }
