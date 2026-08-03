@@ -26,7 +26,7 @@ import { laotzu } from './personas/laotzu.js';
 import { plato } from './personas/plato.js';
 import { socrates } from './personas/socrates.js';
 import { type QuorumSeat, selectQuorum } from './quorum.js';
-import { ralphLoop } from './ralph.js';
+import { groundedRalphLoop } from './ralph.js';
 import { ALL_DELIBERATORS, PHILOSOPHERS } from './registry.js';
 import { rawOpinionSchema, rawSynthesisSchema } from './schemas.js';
 
@@ -313,7 +313,7 @@ export async function runCouncil(
 
   const consensus = buildConsensus(opinions, synthesis);
 
-  const ralph = await ralphLoop(item, opinions, synthesis, aggregateScore, signal);
+  const ralph = await groundedRalphLoop(item, aggregateScore, synthesis.unifyingReading, signal);
   const finalScore = ralph.length
     ? (ralph[ralph.length - 1]?.refinedScore ?? aggregateScore)
     : aggregateScore;

@@ -31,6 +31,7 @@ export interface TrendItem {
   publishedAt: string;
   fetchedAt: string;
   summary?: string;
+  content?: string; // Full text content for analysis
   rawScore?: number;
   tags: string[];
   /** 1 = nothing like it seen recently, 0 = near-duplicate of a past title. */
@@ -77,7 +78,8 @@ export interface MinorityReport {
 
 export interface RalphCritique {
   iteration: number;
-  weaknesses: string[];
+  weakestClaim: string;
+  searchEvidence: string;
   refinedVerdict: string;
   refinedScore: number;
 }
