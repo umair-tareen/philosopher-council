@@ -1,95 +1,95 @@
 import { config } from '../config.js';
-import { logger } from '../logger.js';
 import type {
-  IbnArabiSynthesis,
-  PhilosopherOpinion,
   RalphCritique,
   TrendItem,
 } from '../types.js';
-import { coerceScore } from '../util/num.js';
 import { complete, extractJson } from './client.js';
 import { renderItem } from './personas/_shared.js';
 
 const MAX_ITERATIONS = 2;
-const CONFIDENCE_FLOOR = 0.6;
+const SCORE_DELTA_THRESHOLD = 0.05; // Stop if critique moves the score by < 5%
 
-const SYSTEM = `You are the Ralph-loop critic. You read the council's prior verdict on an AI-research trend item and look for the three weakest claims in it. For each weakness, you either strengthen it with evidence the council should have cited (referencing canon/*) or downgrade the score accordingly.
-
-You MUST respond with a single JSON object and nothing else:
-{
-  "weaknesses": string[],         // up to 3 short bullets describing weak claims
-  "refinedVerdict": string,       // 2-4 sentences summarising the revised reading
-  "refinedScore": number,         // 0..1, the corrected aggregate
-  "stopConfidence": number        // 0..1: how confident you are that no further iteration is needed
+// Stub for your search tool (e.g., Tavily, Serper, or direct Arxiv API)
+async function searchWeb(query: string): Promise<string> {
+  // TODO: Implement actual search here
+  return `Search results for "${query}": [No implementation yet, assume baseline facts]`; 
 }
-If stopConfidence >= ${CONFIDENCE_FLOOR}, the next loop will stop. Be honest.`;
 
-export async function ralphLoop(
+export interface RalphCritique {
+  iteration: number;
+  weakestClaim: string;
+  searchEvidence: string;
+  refinedVerdict: string;
+  refinedScore: number;
+}
+
+export async function groundedRalphLoop(
   item: TrendItem,
-  opinions: PhilosopherOpinion[],
-  synthesis: IbnArabiSynthesis,
   initialScore: number,
+  prevVerdict: string,
   signal?: AbortSignal,
 ): Promise<RalphCritique[]> {
   const out: RalphCritique[] = [];
-  let prevScore = initialScore;
-  let prevVerdict = synthesis.unifyingReading;
+  let currentScore = initialScore;
+  let currentVerdict = prevVerdict;
 
   for (let i = 1; i <= MAX_ITERATIONS; i++) {
     try {
-      const { text } = await complete({
-        system: SYSTEM,
-        user: buildUser(item, opinions, prevVerdict, prevScore),
-        maxTokens: 700,
+      // STEP 1: Identify the weakest claim
+      const identifyPrompt = `Read this verdict: "${currentVerdict}". Identify the single weakest, most unsubstantiated claim in it. Return ONLY JSON: {"weakestClaim": "..."}`;
+      const { text: weakText } = await complete({
+        system: "You are a ruthless fact-checker.",
+        user: identifyPrompt,
+        maxTokens: 150,
         model: config.councilModels['ralph'],
         signal,
       });
-      const raw = extractJson<{
-        weaknesses?: string[];
-        refinedVerdict?: string;
-        refinedScore?: number;
-        stopConfidence?: number;
-      }>(text);
-      const critique: RalphCritique = {
+      const { weakestClaim } = extractJson<{ weakestClaim: string }>(weakText);
+
+      // STEP 2: Ground the critique with external search
+      const evidence = await searchWeb(weakestClaim);
+
+      // STEP 3: Refine the verdict and score based on EVIDENCE, not just vibes
+      const refineSystem = `You are the Ralph-loop critic. The council claimed: "${weakestClaim}". 
+Here is external evidence: "${evidence}". 
+Revise the verdict to correct any hallucinations, and provide a new aggregate score (0..1).
+Return ONLY JSON: {"refinedVerdict": "...", "refinedScore": 0.0}`;
+
+      const { text: refineText } = await complete({
+        system: refineSystem,
+        user: `Original Verdict: ${currentVerdict}\nItem: ${renderItem(item)}`,
+        maxTokens: 500,
+        model: config.councilModels['ralph'],
+        signal,
+      });
+
+      const raw = extractJson<{ refinedVerdict?: string; refinedScore?: number }>(refineText);
+      
+      const refinedScore = typeof raw.refinedScore === 'number' ? raw.refinedScore : currentScore;
+      const refinedVerdict = raw.refinedVerdict || currentVerdict;
+
+      out.push({
         iteration: i,
-        weaknesses: Array.isArray(raw.weaknesses) ? raw.weaknesses.slice(0, 3) : [],
-        refinedVerdict: raw.refinedVerdict ?? prevVerdict,
-        // Keep the prior aggregate when the model omits/mangles the score,
-        // rather than collapsing an empty string to 0 (the worst verdict).
-        refinedScore: coerceScore(raw.refinedScore, prevScore),
-      };
-      out.push(critique);
-      prevScore = critique.refinedScore;
-      prevVerdict = critique.refinedVerdict;
-      const stop = coerceScore(raw.stopConfidence, 0);
-      if (stop >= CONFIDENCE_FLOOR) break;
+        weakestClaim,
+        searchEvidence: evidence,
+        refinedVerdict,
+        refinedScore,
+      });
+
+      // STEP 4: Deterministic Stopping
+      const scoreDelta = Math.abs(refinedScore - currentScore);
+      if (scoreDelta < SCORE_DELTA_THRESHOLD) {
+        break; // The critique didn't change the fundamental math, stop looping.
+      }
+
+      currentScore = refinedScore;
+      currentVerdict = refinedVerdict;
+
     } catch (err) {
-      logger.warn({ err: String(err) }, 'ralph iteration failed');
+      console.warn('Ralph iteration failed:', err);
       break;
     }
   }
-  return out;
-}
 
-function buildUser(
-  item: TrendItem,
-  opinions: PhilosopherOpinion[],
-  verdict: string,
-  score: number,
-): string {
-  const opinionsText = opinions
-    .map((o) => `- ${o.displayName} (${o.verdictScore.toFixed(2)}): ${o.oneLiner}`)
-    .join('\n');
-  return [
-    'Item:',
-    renderItem(item),
-    '',
-    'Opinions summary:',
-    opinionsText,
-    '',
-    `Prior verdict: ${verdict}`,
-    `Prior aggregate score: ${score.toFixed(2)}`,
-    '',
-    'Identify the three weakest claims. Strengthen with canon/* citations or downgrade the score.',
-  ].join('\n');
+  return out;
 }

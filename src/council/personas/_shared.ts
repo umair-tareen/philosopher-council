@@ -1,8 +1,32 @@
 import type { TrendItem } from '../../types.js';
 
+export interface EpistemicMetrics {
+  empirical_rigor: number; // 0-1: Backed by ablation studies/math?
+  paradigm_novelty: number; // 0-1: Derivative vs. fundamental shift?
+  reproducibility: number; // 0-1: Open code/data vs. closed/proprietary?
+  hype_penalty: number;    // 0-1: Higher score = LESS hype (inverted for easier math)
+}
+
+export interface PhilosopherOpinion {
+  philosopherId: string;
+  providerModel: string;
+  verdict: string;
+  metrics: EpistemicMetrics;
+  minority_flag: boolean; // Set to true if this philosopher's score variance is highest
+}
+
+// Update the shared system prompt preamble to instruct the models on these new metrics
+export const SHARED_SYSTEM_PREAMBLE = `
+You must evaluate the item across four epistemic metrics (scored 0.0 to 1.0):
+1. empirical_rigor: Are claims backed by rigorous proof/benchmarks?
+2. paradigm_novelty: Is this a fundamental shift or just a wrapper?
+3. reproducibility: Can an independent researcher verify this today?
+4. hype_penalty: Score HIGH if the text avoids buzzwords ("AGI", "sentient", "100x") and stays grounded.
+`;
+
 export const JSON_ENVELOPE = `You MUST respond with a single JSON object matching this TypeScript shape and nothing else:
 {
-  "virtueScores": { "wisdom": number, "courage": number, "justice": number, "temperance": number },
+  "metrics": { "empirical_rigor": number, "paradigm_novelty": number, "reproducibility": number, "hype_penalty": number },
   "oneLiner": string,        // <= 140 chars
   "reasoning": string,       // 3-5 sentences, in your voice
   "concerns": string[],      // at most 4 short bullets
