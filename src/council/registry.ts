@@ -43,34 +43,6 @@ export const PHILOSOPHERS: Record<PhilosopherId, PhilosopherMeta> = {
     secondaryBranch: 'ethics',
     tradition: 'Chinese / Taoist',
   },
-  avicenna: {
-    id: 'avicenna',
-    displayName: 'Ibn Sīnā (Avicenna)',
-    primaryBranch: 'epistemology',
-    secondaryBranch: 'metaphysics',
-    tradition: 'Persian / Islamic',
-  },
-  alghazali: {
-    id: 'alghazali',
-    displayName: 'Al-Ghazālī',
-    primaryBranch: 'epistemology',
-    secondaryBranch: 'ethics',
-    tradition: 'Persian / Islamic',
-  },
-  ibnrushd: {
-    id: 'ibnrushd',
-    displayName: 'Ibn Rushd (Averroes)',
-    primaryBranch: 'logic',
-    secondaryBranch: 'metaphysics',
-    tradition: 'Andalusian / Islamic',
-  },
-  descartes: {
-    id: 'descartes',
-    displayName: 'René Descartes',
-    primaryBranch: 'epistemology',
-    secondaryBranch: 'metaphysics',
-    tradition: 'Modern European',
-  },
   kant: {
     id: 'kant',
     displayName: 'Immanuel Kant',
@@ -88,10 +60,10 @@ export const PHILOSOPHERS: Record<PhilosopherId, PhilosopherMeta> = {
 };
 
 export const BRANCH_INDEX: Record<Branch, PhilosopherId[]> = {
-  epistemology: ['socrates', 'avicenna', 'alghazali', 'descartes', 'kant'],
-  metaphysics: ['plato', 'laotzu', 'avicenna', 'ibnrushd', 'descartes'],
-  ethics: ['socrates', 'aristotle', 'confucius', 'laotzu', 'alghazali', 'kant'],
-  logic: ['aristotle', 'ibnrushd'],
+  epistemology: ['socrates', 'plato', 'kant'],
+  metaphysics: ['plato', 'laotzu'],
+  ethics: ['socrates', 'aristotle', 'confucius', 'laotzu', 'kant'],
+  logic: ['aristotle'],
   synthesis: ['ibnarabi'],
 };
 
@@ -101,9 +73,5 @@ export const ALL_DELIBERATORS: PhilosopherId[] = [
   'aristotle',
   'confucius',
   'laotzu',
-  'avicenna',
-  'alghazali',
-  'ibnrushd',
-  'descartes',
   'kant',
 ];

@@ -12,10 +12,6 @@ export type PhilosopherId =
   | 'aristotle'
   | 'confucius'
   | 'laotzu'
-  | 'avicenna'
-  | 'alghazali'
-  | 'ibnrushd'
-  | 'descartes'
   | 'kant'
   | 'ibnarabi';
 

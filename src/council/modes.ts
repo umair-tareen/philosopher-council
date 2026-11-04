@@ -25,7 +25,7 @@ export const DEBATE_MODES: Record<DebateModeId, DebateMode> = {
     title: 'Socratic interrogation',
     description:
       'Best for fuzzy or loaded questions whose terms need examining before any answer is possible.',
-    seats: ['socrates', 'plato', 'alghazali', 'kant'],
+    seats: ['socrates', 'plato', 'confucius', 'kant'],
     instruction: () =>
       'MODE - Socratic interrogation: before scoring, pose the three most probing questions this claim must survive, answer each honestly, and let the survivors determine your verdict. Surface any undefined term.',
   },
@@ -34,7 +34,7 @@ export const DEBATE_MODES: Record<DebateModeId, DebateMode> = {
     title: 'Oxford debate',
     description:
       'Best for binary propositions: two seats argue FOR, two argue AGAINST, then score honestly.',
-    seats: ['aristotle', 'kant', 'laotzu', 'alghazali'],
+    seats: ['aristotle', 'kant', 'laotzu', 'socrates'],
     instruction: (i) =>
       i < 2
         ? 'MODE - Oxford debate, you are on the FOR bench: make the strongest possible case FOR the proposition first, in your own method. Then score honestly - your virtue scores may disagree with your assigned side.'
@@ -45,7 +45,7 @@ export const DEBATE_MODES: Record<DebateModeId, DebateMode> = {
     title: 'Delphi forecast',
     description:
       'Best for predictions: each seat gives an independent probability estimate and the conditions it hinges on.',
-    seats: ['aristotle', 'ibnrushd', 'avicenna', 'descartes'],
+    seats: ['aristotle', 'plato', 'kant', 'confucius'],
     instruction: () =>
       'MODE - Delphi forecast: treat this as a forecasting question. State your probability estimate (as a percentage) and the two or three conditioning factors it most depends on, then score. Reward calibration over confidence.',
   },

@@ -26,13 +26,13 @@ describe('ask dry-run', () => {
     expect(file).toContain('asks');
   });
 
-  it('uses all 10 deliberators with fullCouncil', async () => {
+  it('uses all 6 deliberators with fullCouncil', async () => {
     const { runAsk } = await import('../src/pipeline/ask.js');
     const { verdict } = await runAsk({
       question: 'Should agentic AI systems be allowed to spend money autonomously?',
       fullCouncil: true,
     });
-    expect(verdict.opinions.length).toBe(10);
+    expect(verdict.opinions.length).toBe(6);
   });
 
   it('aborts the deliberation when the signal fires', async () => {

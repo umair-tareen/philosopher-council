@@ -14,13 +14,9 @@ import type {
 } from '../types.js';
 import { complete, extractJson } from './client.js';
 import { DEBATE_MODES, type DebateModeId } from './modes.js';
-import { alghazali } from './personas/alghazali.js';
 import { aristotle } from './personas/aristotle.js';
-import { avicenna } from './personas/avicenna.js';
 import { confucius } from './personas/confucius.js';
-import { descartes } from './personas/descartes.js';
 import { ibnarabi } from './personas/ibnarabi.js';
-import { ibnrushd } from './personas/ibnrushd.js';
 import { kant } from './personas/kant.js';
 import { laotzu } from './personas/laotzu.js';
 import { plato } from './personas/plato.js';
@@ -42,10 +38,6 @@ const PERSONAS: Record<Exclude<PhilosopherId, 'ibnarabi'>, PersonaModule> = {
   aristotle,
   confucius,
   laotzu,
-  avicenna,
-  alghazali,
-  ibnrushd,
-  descartes,
   kant,
 };
 
