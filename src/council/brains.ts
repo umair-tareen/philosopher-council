@@ -14,7 +14,13 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const BRAINS_DIR = path.resolve(HERE, '..', '..', 'canon', 'brains');
 
 /** Loaded into the prompt in this order; sources.md is for humans and stays out. */
-const PROMPT_FILES = ['_hot.md', 'frameworks.md', 'books.md', 'voice.md', 'quotes.md'] as const;
+const PROMPT_FILES = [
+  '_hot.md',
+  'frameworks.md',
+  'books.md',
+  'voice.md',
+  'quotes.md',
+] as const;
 
 const cache = new Map<PhilosopherId, string>();
 

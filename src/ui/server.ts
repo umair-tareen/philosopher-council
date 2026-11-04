@@ -117,7 +117,9 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
   res.end();
 }
 
-async function listTranscripts(): Promise<Array<{ name: string; file: string; replay?: string }>> {
+async function listTranscripts(): Promise<
+  Array<{ name: string; file: string; replay?: string }>
+> {
   const dir = path.join(config.dataDir, 'asks');
   if (!existsSync(dir)) return [];
   const files = await readdir(dir);
@@ -129,7 +131,11 @@ async function listTranscripts(): Promise<Array<{ name: string; file: string; re
     .reverse()
     .map((f) => {
       const replay = f.replace(/\.md$/, '.json');
-      return { name: f.replace(/\.md$/, ''), file: f, ...(replays.has(replay) ? { replay } : {}) };
+      return {
+        name: f.replace(/\.md$/, ''),
+        file: f,
+        ...(replays.has(replay) ? { replay } : {}),
+      };
     });
 }
 
@@ -162,7 +168,9 @@ export async function serveUi(port: number): Promise<import('node:http').Server>
         res.end(JSON.stringify(ids));
         return;
       }
-      const portraitMatch = url.pathname.match(/^\/portraits\/([a-z]+-(?:base|mid|open|blink)\.webp)$/);
+      const portraitMatch = url.pathname.match(
+        /^\/portraits\/([a-z]+-(?:base|mid|open|blink)\.webp)$/,
+      );
       if (portraitMatch) {
         const file = path.join(PORTRAIT_DIR, portraitMatch[1] as string);
         if (!existsSync(file)) {

@@ -6,13 +6,19 @@ const CORPUS = `- "The unexamined life is not worth living for a man." (SOC-S01)
 
 describe('verifyQuotes', () => {
   it('accepts a verbatim quote regardless of case, punctuation and curly quotes', () => {
-    const r = verifyQuotes('As I said, “the unexamined life is not worth living” - so examine it.', CORPUS);
+    const r = verifyQuotes(
+      'As I said, “the unexamined life is not worth living” - so examine it.',
+      CORPUS,
+    );
     expect(r.verified).toEqual(['the unexamined life is not worth living']);
     expect(r.unverified).toEqual([]);
   });
 
   it('flags a quote that is not in the corpus', () => {
-    const r = verifyQuotes('Remember: "wisdom begins in wonder at all things" (SOC-S01).', CORPUS);
+    const r = verifyQuotes(
+      'Remember: "wisdom begins in wonder at all things" (SOC-S01).',
+      CORPUS,
+    );
     expect(r.unverified).toEqual(['wisdom begins in wonder at all things']);
     expect(r.verified).toEqual([]);
   });
@@ -32,14 +38,30 @@ describe('brains', () => {
 });
 
 describe('shipped brains', () => {
-  const SEATS = ['socrates', 'plato', 'aristotle', 'confucius', 'laotzu', 'kant', 'ibnarabi'] as const;
+  const SEATS = [
+    'socrates',
+    'plato',
+    'aristotle',
+    'confucius',
+    'laotzu',
+    'kant',
+    'ibnarabi',
+  ] as const;
   it.each(SEATS)('%s has a complete brain with source-tagged quotes', async (id) => {
     const { readFileSync, existsSync } = await import('node:fs');
     const dir = `canon/brains/${id}`;
-    for (const f of ['_hot.md', 'frameworks.md', 'books.md', 'voice.md', 'quotes.md', 'sources.md']) {
+    for (const f of [
+      '_hot.md',
+      'frameworks.md',
+      'books.md',
+      'voice.md',
+      'quotes.md',
+      'sources.md',
+    ]) {
       expect(existsSync(`${dir}/${f}`), `${dir}/${f}`).toBe(true);
     }
-    const quotes = readFileSync(`${dir}/quotes.md`, 'utf-8').match(/^- ".+" \([A-Z]{3}-S\d\d/gm) ?? [];
+    const quotes =
+      readFileSync(`${dir}/quotes.md`, 'utf-8').match(/^- ".+" \([A-Z]{3}-S\d\d/gm) ?? [];
     expect(quotes.length).toBeGreaterThanOrEqual(10);
     expect(loadBrain(id)).toContain('brain/quotes.md');
   });
