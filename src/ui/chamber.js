@@ -186,7 +186,11 @@ export function createChamber(root) {
   async function drain() {
     if (speaking) return;
     speaking = true;
-    while (queue.length) await speak(queue.shift());
+    while (queue.length) {
+      const line = queue.shift();
+      if (line.mark) seatEl(line.mark)?.classList.add('dissent');
+      else await speak(line);
+    }
     speaking = false;
     root.querySelector('#stage').classList.remove('live');
     for (const fn of idleWaiters.splice(0)) fn();
@@ -211,7 +215,8 @@ export function createChamber(root) {
     landed(id) { seatEl(id)?.classList.remove('thinking'); },
     failed(id) { const el = seatEl(id); el?.classList.remove('thinking'); el?.classList.add('failed'); },
     say(line) { queue.push(line); drain(); },
-    dissent(id) { seatEl(id)?.classList.add('dissent'); },
+    // Queued, so the dissent is revealed after the synthesis is spoken, not over it.
+    dissent(id) { queue.push({ mark: id }); drain(); },
     skipAhead() { skip = true; },
     /** Resolves once every queued line has been spoken. */
     whenIdle() { return speaking || queue.length ? new Promise((r) => idleWaiters.push(r)) : Promise.resolve(); },

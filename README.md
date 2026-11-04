@@ -74,10 +74,10 @@ The seven seats sit in an arc behind a marble table. The seats drawn for your qu
 The busts are drawn in code, so it works out of the box. To use painted portraits, drop four frames per seat into `assets/portraits/` and they replace the code busts automatically. [`docs/portraits.md`](docs/portraits.md) has the prompt pack.
 
 <p align="center">
-  <img src="assets/chamber-demo.gif" alt="A quorum deliberation streaming live in the council chamber" width="850">
+  <img src="assets/chamber-demo.gif" alt="The seven seats of the council chamber speaking in turn, Ibn ʿArabī last" width="850">
 </p>
 <p align="center">
-  <em>The chamber in motion - recorded in offline demo mode (<code>DRY_RUN=1 DRY_RUN_STREAM_MS=35 pnpm ui</code>), no API key needed.</em>
+  <em>A full council in the chamber, each seat speaking in turn - recorded in offline demo mode (<code>DRY_RUN=1 DRY_RUN_STREAM_MS=35 pnpm ui</code>), no API key needed.</em>
 </p>
 
 A zero-dependency local web UI: put a question to the council and watch the deliberation stream in live - each philosopher's card fills in token by token as their opinion concludes (virtue bars, one-liner, expandable reasoning, which `provider:model` produced it), followed by the answer, synthesis, minority report, and final verdict. Past transcripts are browsable from the same page. Works in `DRY_RUN=1` for an instant offline demo; set `DRY_RUN_STREAM_MS=35` to pace the mock tokens so the demo streams like a live deliberation (that's what the clip above shows).
