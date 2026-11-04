@@ -1,6 +1,6 @@
 {
   "name": "philosopher-council",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "An AI deliberation instrument with visible protocol: seven philosopher seats built from their own books, virtue-scored opinions, a synthesis, and a first-class minority report. Not prompt choreography. Methodology, not metaphysics.",
   "type": "module",
   "private": true,

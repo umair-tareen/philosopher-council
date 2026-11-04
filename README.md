@@ -9,7 +9,7 @@
   <em>Jacques-Louis David, <strong>The Death of Socrates</strong> (1787) - hemlock in reach, finger still raised, argument still running.<br>The founding mood of this project: the questioning does not stop. (Public domain, via Wikimedia Commons.)</em>
 </p>
 
-**A seven-seat philosopher council, each seat built from two of its own books.** Ask it a question - Socrates interrogates it, Kant universalises it, Lao Tzu subtracts from it, and Ibn ʿArabī weaves their verdicts into one reading. Or point it at the AI-research firehose (Reddit / Hacker News / arXiv) and let the council triage what's worth your attention.
+**A seven-seat philosopher council, each seat built from two foundational public-domain books.** Ask it a question - Socrates interrogates it, Kant universalises it, Lao Tzu subtracts from it, and Ibn ʿArabī weaves their verdicts into one reading. Or point it at the AI-research firehose (Reddit / Hacker News / arXiv) and let the council triage what's worth your attention.
 
 **Methodology, not metaphysics.** The philosophers are prompt-engineered lenses, not séance guests. The model is a language model. No production prompt claims the system has a soul, awareness, or being.
 
@@ -25,7 +25,7 @@ pnpm ask --full-council "Should agentic AI systems spend money autonomously?"
 pnpm ask --context "We run a 5-agent trading desk" "Where should a human stay in the loop?"
 ```
 
-Each deliberator answers in character - virtue scores, reasoning, concerns - then the synthesizer speaks last. This is **real, unedited output** from the council's first live full-council run (on the original eleven-seat roster, before v0.3 trimmed it to seven), where it was asked to judge its own premise:
+Each deliberator answers in character - virtue scores, reasoning, concerns - then the synthesizer speaks last. This is **real, unedited output** from the council's first live full-council run (on the original eleven-seat roster, before the council was trimmed to seven), where it was asked to judge its own premise:
 
 ```
 > Question: Is a council of eleven philosophers better than a single
@@ -77,7 +77,7 @@ The busts are drawn in code, so it works out of the box. To use painted portrait
   <img src="assets/chamber-demo.gif" alt="The seven seats of the council chamber speaking in turn, Ibn ʿArabī last" width="850">
 </p>
 <p align="center">
-  <em>A full council in the chamber, each seat speaking in turn - recorded in offline demo mode (<code>DRY_RUN=1 DRY_RUN_STREAM_MS=35 pnpm ui</code>), no API key needed.</em>
+  <em>A full council in the chamber, each seat speaking in turn - recorded in offline demo mode (<code>DRY_RUN=1 DRY_RUN_STREAM_MS=15 pnpm ui</code>), no API key needed.</em>
 </p>
 
 A zero-dependency local web UI: put a question to the council and watch the deliberation stream in live - each philosopher's card fills in token by token as their opinion concludes (virtue bars, one-liner, expandable reasoning, which `provider:model` produced it), followed by the answer, synthesis, minority report, and final verdict. Past transcripts are browsable from the same page. Works in `DRY_RUN=1` for an instant offline demo; set `DRY_RUN_STREAM_MS=35` to pace the mock tokens so the demo streams like a live deliberation (that's what the clip above shows).
@@ -86,7 +86,7 @@ A zero-dependency local web UI: put a question to the council and watch the deli
   <img src="assets/chamber.png" alt="The council chamber after a live full-council deliberation" width="850">
 </p>
 <p align="center">
-  <em>A real full-council run: "Should agentic AI systems be allowed to spend money autonomously?"<br>Verdict: 0.41, ignore - the council voted no, with Lao Tzu dissenting hardest.</em>
+  <em>A real full-council run on the original eleven-seat roster: "Should agentic AI systems be allowed to spend money autonomously?"<br>Verdict: 0.41, ignore - the council voted no, with Lao Tzu dissenting hardest.</em>
 </p>
 
 ## 🔌 Use it inside Claude Code: `/philo-council`
@@ -206,6 +206,8 @@ Now Lao Tzu deliberates on a local 7B (fitting, for the philosopher of doing les
 
 ## 📊 Does it actually work? (eval)
 
+> These results were measured on the original eleven-seat roster, before seat brains existed. They haven't been re-run on the seven-seat council yet.
+
 `pnpm eval` blind-judges three strategies on the same questions: a **single direct answer** (1 call), a **generic Advocate/Critic/Judge debate** (3 calls), and the **philosopher council** (7 calls). Answers are anonymized and shuffled; judges score insight, rigor, blind-spot coverage, and actionability.
 
 **Main result** - N=50 fixed public question set ([evals/questions.json](evals/questions.json)), two blind judges, ranks derived from averaged scores:
@@ -242,7 +244,7 @@ Quorum mode seats one philosopher per branch, selected deterministically from th
 
 ### 📖 Each seat's brain
 
-Each seat reasons from a **brain** distilled from two of its own books, in public-domain translations: `canon/brains/<id>/` holds the hot notes, the frameworks, a dissection of each book (thesis, argument, key terms, what it rejects, how it bears on AI), the seat's voice, and a file of verbatim quotes. Seats cite source ids, and **every quoted passage is checked against that seat's quotes file**. The chamber marks verified quotes in green and anything it can't find in amber, so a seat can't put words in a philosopher's mouth. `BRAINS=0` runs the bare personas for comparison. A brain adds about 5k input tokens per seat call.
+Each seat reasons from a **brain** distilled from two foundational books, in public-domain translations (Socrates wrote nothing, so his are the Plato dialogues that record him): `canon/brains/<id>/` holds the hot notes, the frameworks, a dissection of each book (thesis, argument, key terms, what it rejects, how it bears on AI), the seat's voice, and a file of verbatim quotes. Seats cite source ids, and **every quoted passage is checked against that seat's quotes file**. The chamber marks verified quotes in green and anything it can't find in amber, so a seat can't put words in a philosopher's mouth. `BRAINS=0` runs the bare personas for comparison. A brain adds about 5k input tokens per seat call.
 
 | Seat | Book one | Book two |
 | --- | --- | --- |

@@ -49,10 +49,20 @@ Below is your brain: notes distilled from two of your own books. It is your memo
 - Everything else is your own reasoning in your own voice, unquoted. When you carry an ancient idea into a modern AI question, say it is your application, not the text.
 - Put the source ids you used into "citations".`;
 
+// The synthesizer quotes the other seats' opinions, so the deliberators'
+// "quote only your quotes file" rule would contradict its job.
+const SYNTH_BRAIN_RULES = `## Your brain
+Below is your brain: notes distilled from your own writings. Use it to read the council's verdicts as facets of one judgment.
+- You may quote the deliberators' opinions as given to you.
+- Quote your own texts ONLY from lines that appear word for word in brain/quotes.md, with the source id, e.g. (IBN-S01).
+- Everything else is your own reasoning, unquoted.`;
+
 /** Appends the brain (if any) to a persona's system prompt. */
 export function withBrain(system: string, id: PhilosopherId): string {
   const brain = loadBrain(id);
-  return brain ? `${system}\n\n${BRAIN_RULES}\n\n${brain}` : system;
+  if (!brain) return system;
+  const rules = id === 'ibnarabi' ? SYNTH_BRAIN_RULES : BRAIN_RULES;
+  return `${system}\n\n${rules}\n\n${brain}`;
 }
 
 // ---------- quote verification ----------

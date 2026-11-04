@@ -66,3 +66,10 @@ describe('shipped brains', () => {
     expect(loadBrain(id)).toContain('brain/quotes.md');
   });
 });
+
+describe('synthesizer brain rules', () => {
+  it('lets Ibn ʿArabī quote the deliberators, unlike the seats', () => {
+    expect(withBrain('S', 'ibnarabi')).toContain('You may quote the deliberators');
+    expect(withBrain('S', 'kant')).not.toContain('You may quote the deliberators');
+  });
+});
