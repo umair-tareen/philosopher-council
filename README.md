@@ -242,9 +242,19 @@ Quorum mode seats one philosopher per branch, selected deterministically from th
 
 ### 📖 Each seat's brain
 
-Each seat reasons from a **brain** distilled from two of its own books, in public-domain translations: `canon/brains/<id>/` holds the hot notes, the frameworks, a dissection of each book (thesis, argument, key terms, what it rejects, how it bears on AI), the seat's voice, and a file of verbatim quotes. Seats cite source ids, and **every quoted passage is checked against that seat's quotes file**. The chamber marks verified quotes in green and anything it can't find in amber, so a seat can't put words in a philosopher's mouth. `BRAINS=0` runs the bare personas for comparison.
+Each seat reasons from a **brain** distilled from two of its own books, in public-domain translations: `canon/brains/<id>/` holds the hot notes, the frameworks, a dissection of each book (thesis, argument, key terms, what it rejects, how it bears on AI), the seat's voice, and a file of verbatim quotes. Seats cite source ids, and **every quoted passage is checked against that seat's quotes file**. The chamber marks verified quotes in green and anything it can't find in amber, so a seat can't put words in a philosopher's mouth. `BRAINS=0` runs the bare personas for comparison. A brain adds about 5k input tokens per seat call.
 
-<!-- BRAIN-TABLE -->
+| Seat | Book one | Book two |
+| --- | --- | --- |
+| Socrates | *Apology* (Plato, tr. Jowett) | *Phaedo* (Plato, tr. Jowett) |
+| Plato | *Republic* (tr. Jowett) | *Symposium* (tr. Jowett) |
+| Aristotle | *Nicomachean Ethics* (Everyman, 1911) | *Categories* (tr. Edghill) |
+| Confucius | *Analects* (tr. Legge) | *Doctrine of the Mean* (tr. Legge) |
+| Lao Tzu | *Tao Teh King* (tr. Legge) | *Chuang Tzu* (tr. Giles, 1889) - the second great Taoist classic |
+| Kant | *Fundamental Principles of the Metaphysic of Morals* (tr. Abbott) | *Critique of Pure Reason* (tr. Meiklejohn) |
+| Ibn ʿArabī | *Tarjumán al-Ashwáq* (tr. Nicholson, 1911) | Nicholson's 1921 translations from the *Fuṣūṣ al-Ḥikam* (only his translated passages are quoted) |
+
+Every quote in every brain was copied by script from the downloaded text and re-verified: 140 of 140 match. Translators' introductions and notes are excluded. Each seat's `sources.md` lists URLs and any caveats (OCR texts, an unnamed Everyman translator, and no complete second pre-1931 English work by Ibn ʿArabī).
 
 The brain pattern (a compiled knowledge base per seat, quotes verified against it) and the talking-bust room are inspired by [Roast Room](https://github.com/nateherkai/roast-room) (MIT).
 

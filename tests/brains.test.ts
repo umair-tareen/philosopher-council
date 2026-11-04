@@ -30,3 +30,17 @@ describe('brains', () => {
     expect(withBrain('You are X.', 'nobody' as never)).toBe('You are X.');
   });
 });
+
+describe('shipped brains', () => {
+  const SEATS = ['socrates', 'plato', 'aristotle', 'confucius', 'laotzu', 'kant', 'ibnarabi'] as const;
+  it.each(SEATS)('%s has a complete brain with source-tagged quotes', async (id) => {
+    const { readFileSync, existsSync } = await import('node:fs');
+    const dir = `canon/brains/${id}`;
+    for (const f of ['_hot.md', 'frameworks.md', 'books.md', 'voice.md', 'quotes.md', 'sources.md']) {
+      expect(existsSync(`${dir}/${f}`), `${dir}/${f}`).toBe(true);
+    }
+    const quotes = readFileSync(`${dir}/quotes.md`, 'utf-8').match(/^- ".+" \([A-Z]{3}-S\d\d/gm) ?? [];
+    expect(quotes.length).toBeGreaterThanOrEqual(10);
+    expect(loadBrain(id)).toContain('brain/quotes.md');
+  });
+});
