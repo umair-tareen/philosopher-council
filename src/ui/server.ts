@@ -117,16 +117,25 @@ async function handleStream(res: ServerResponse, url: URL): Promise<void> {
   res.end();
 }
 
-async function listTranscripts(): Promise<Array<{ name: string; file: string }>> {
+async function listTranscripts(): Promise<Array<{ name: string; file: string; replay?: string }>> {
   const dir = path.join(config.dataDir, 'asks');
   if (!existsSync(dir)) return [];
   const files = await readdir(dir);
+  const replayDir = path.join(dir, 'replays');
+  const replays = new Set(existsSync(replayDir) ? await readdir(replayDir) : []);
   return files
     .filter((f) => f.endsWith('.md'))
     .sort()
     .reverse()
-    .map((f) => ({ name: f.replace(/\.md$/, ''), file: f }));
+    .map((f) => {
+      const replay = f.replace(/\.md$/, '.json');
+      return { name: f.replace(/\.md$/, ''), file: f, ...(replays.has(replay) ? { replay } : {}) };
+    });
 }
+
+// Painted portraits live in assets/portraits/<seat>-<frame>.webp (see docs/portraits.md).
+// Resolved from this file so it works from src/ui (tsx) and dist/ui (built).
+const PORTRAIT_DIR = path.resolve(HERE, '..', '..', 'assets', 'portraits');
 
 export async function serveUi(port: number): Promise<import('node:http').Server> {
   const server = createServer(async (req, res) => {
@@ -136,6 +145,45 @@ export async function serveUi(port: number): Promise<import('node:http').Server>
         const html = await readFile(path.join(HERE, 'index.html'), 'utf-8');
         res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
         res.end(html);
+        return;
+      }
+      if (url.pathname === '/chamber.js') {
+        const js = await readFile(path.join(HERE, 'chamber.js'), 'utf-8');
+        res.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8' });
+        res.end(js);
+        return;
+      }
+      if (url.pathname === '/api/portraits') {
+        const frames = ['base', 'mid', 'open', 'blink'];
+        const ids = Object.keys(PHILOSOPHERS).filter((id) =>
+          frames.every((f) => existsSync(path.join(PORTRAIT_DIR, `${id}-${f}.webp`))),
+        );
+        res.writeHead(200, { 'content-type': 'application/json' });
+        res.end(JSON.stringify(ids));
+        return;
+      }
+      const portraitMatch = url.pathname.match(/^\/portraits\/([a-z]+-(?:base|mid|open|blink)\.webp)$/);
+      if (portraitMatch) {
+        const file = path.join(PORTRAIT_DIR, portraitMatch[1] as string);
+        if (!existsSync(file)) {
+          res.writeHead(404);
+          res.end();
+          return;
+        }
+        res.writeHead(200, { 'content-type': 'image/webp', 'cache-control': 'max-age=3600' });
+        res.end(await readFile(file));
+        return;
+      }
+      const replayMatch = url.pathname.match(/^\/api\/replays\/([\w.-]+\.json)$/);
+      if (replayMatch) {
+        const file = path.join(config.dataDir, 'asks', 'replays', replayMatch[1] as string);
+        if (!existsSync(file)) {
+          res.writeHead(404, { 'content-type': 'application/json' });
+          res.end(JSON.stringify({ error: 'not found' }));
+          return;
+        }
+        res.writeHead(200, { 'content-type': 'application/json' });
+        res.end(await readFile(file, 'utf-8'));
         return;
       }
       if (url.pathname === '/api/ask/stream') {
