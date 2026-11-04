@@ -8,3 +8,4 @@ examples
 assets
 *.md
 !canon/*.md
+!canon/brains/**/*.md
