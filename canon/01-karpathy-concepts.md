@@ -20,7 +20,7 @@ A pattern in which multiple model calls - typically with different system
 prompts representing different viewpoints, or different model providers
 entirely - produce independent opinions on a single question, which are
 then aggregated. The aggregation can be a vote, a weighted score, or a
-narrative synthesis. This system uses eleven prompt-defined philosopher
+narrative synthesis. This system uses seven prompt-defined philosopher
 personas. Multi-provider is left as future work.
 
 ## LLM Wiki

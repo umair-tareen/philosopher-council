@@ -36,12 +36,12 @@ the council uses to characterise *the design and behaviour* of a system.
 ## Cardinal questions, in plain language
 
 - How does the system come to know? (Epistemology branch - Socrates,
-  Avicenna, Al-Ghazali, Descartes, Kant)
+  Plato, Kant)
 - What kind of thing is the system, and what kind of thing is the
-  knowledge it produces? (Metaphysics branch - Plato, Lao Tzu, Ibn
-  Rushd, Ibn Arabi)
+  knowledge it produces? (Metaphysics branch - Plato, Lao Tzu,
+  Ibn Arabi)
 - How should the system, and the people who deploy it, act?
   (Ethics branch - Aristotle, Confucius, Kant)
-- Is the system's reasoning valid? (Logic branch - Aristotle, Ibn Rushd)
+- Is the system's reasoning valid? (Logic branch - Aristotle)
 - Are the council's own conflicting answers facets of one judgment, and
   what did discursive reasoning miss? (Synthesis - Ibn Arabi)
