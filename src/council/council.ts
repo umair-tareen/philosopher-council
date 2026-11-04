@@ -12,6 +12,7 @@ import type {
   TrendItem,
   Virtue,
 } from '../types.js';
+import { checkSeatQuotes, withBrain } from './brains.js';
 import { complete, extractJson } from './client.js';
 import { DEBATE_MODES, type DebateModeId } from './modes.js';
 import { aristotle } from './personas/aristotle.js';
@@ -55,7 +56,7 @@ async function callPhilosopher(
     ? `${persona.user(item)}\n\n${modeInstruction}`
     : persona.user(item);
   const { text, model } = await complete({
-    system: persona.system,
+    system: withBrain(persona.system, id),
     user,
     maxTokens: 700,
     model: config.councilModels[id],
@@ -81,6 +82,7 @@ async function callPhilosopher(
     concerns: raw.concerns,
     citations: raw.citations,
     model,
+    quoteCheck: checkSeatQuotes(id, `${raw.oneLiner}\n${raw.reasoning}`),
   };
 }
 
@@ -90,7 +92,7 @@ async function callSynthesizer(
   signal?: AbortSignal,
 ): Promise<IbnArabiSynthesis> {
   const { text } = await complete({
-    system: ibnarabi.system,
+    system: withBrain(ibnarabi.system, 'ibnarabi'),
     user: ibnarabi.user(item, opinions),
     maxTokens: 800,
     model: config.councilModels['ibnarabi'],

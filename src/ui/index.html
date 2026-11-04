@@ -124,6 +124,8 @@
     max-height: 480px; overflow: auto;
   }
   .err { color: var(--red); }
+  .qcheck { font-size: 0.74rem; margin: -0.2rem 0 0.4rem; }
+  .qcheck.ok { color: var(--green); } .qcheck.warn { color: var(--amber); }
 
   /* ---------- the chamber ---------- */
   .stage { position: relative; margin: 0.2rem auto 1.4rem; max-width: 1060px; }
@@ -311,6 +313,16 @@ function appendToken(philosopher, t) {
   live.scrollTop = live.scrollHeight;
 }
 
+// Quotes are checked server-side against the seat's brain/quotes.md.
+function quoteBadge(q) {
+  if (!q) return '';
+  if (q.unverified?.length) {
+    return `<div class="qcheck warn" title="${esc(q.unverified.join(' | '))}">⚠ ${q.unverified.length} quote(s) not found in this seat's sources - treat as paraphrase</div>`;
+  }
+  if (q.verified?.length) return `<div class="qcheck ok">✓ ${q.verified.length} quote(s) verified against the source texts</div>`;
+  return '';
+}
+
 function fillCard(o) {
   const card = $('card-' + o.philosopher);
   if (!card) return;
@@ -321,6 +333,7 @@ function fillCard(o) {
     <h3>${esc(o.displayName)}<span class="badge">${esc(o.branch)}</span></h3>
     <div class="meta">${esc(o.model || '')}</div>
     <div class="oneliner">“${esc(o.oneLiner)}”</div>
+    ${quoteBadge(o.quoteCheck)}
     <div class="reasoning">${esc(o.reasoning)}${o.concerns?.length ? '<br><br>Concerns: ' + esc(o.concerns.join(' · ')) : ''}</div>
     ${virtueBars(o.virtueScores)}
     <span class="toggle">show reasoning</span>`;
