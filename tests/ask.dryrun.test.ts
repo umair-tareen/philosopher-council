@@ -17,7 +17,7 @@ describe('ask dry-run', () => {
     expect(markdown).toContain('The council deliberates');
     expect(markdown).toContain("The council's answer");
     expect(verdict.answer?.length).toBeGreaterThan(50);
-    expect(markdown).toContain('Ibn ʿArabī - synthesis');
+    expect(markdown).toContain('The Chair - synthesis');
     expect(markdown).toContain('Minority report');
     expect(verdict.minority.disagreement).toBeGreaterThanOrEqual(0);
     expect(verdict.minority.disagreement).toBeLessThanOrEqual(1);
@@ -26,13 +26,13 @@ describe('ask dry-run', () => {
     expect(file).toContain('asks');
   });
 
-  it('uses all 6 deliberators with fullCouncil', async () => {
+  it('uses all 7 deliberators with fullCouncil', async () => {
     const { runAsk } = await import('../src/pipeline/ask.js');
     const { verdict } = await runAsk({
       question: 'Should agentic AI systems be allowed to spend money autonomously?',
       fullCouncil: true,
     });
-    expect(verdict.opinions.length).toBe(6);
+    expect(verdict.opinions.length).toBe(7);
   });
 
   it('aborts the deliberation when the signal fires', async () => {

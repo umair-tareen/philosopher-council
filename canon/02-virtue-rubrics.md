@@ -40,5 +40,5 @@ scores in [0, 1]; 0.5 is "neutral / no evidence either way."
 
 A philosopher's `verdictScore` is the unweighted mean of their four virtue
 scores. The council's `aggregateScore` is the unweighted mean across the
-philosopher opinions present in that mode (4 in quorum, 10 in full;
-Ibn Arabi is excluded from this mean and contributes only the synthesis).
+philosopher opinions present in that mode (4 in quorum, 7 in full; the Chair's
+synthesis is not part of this mean).

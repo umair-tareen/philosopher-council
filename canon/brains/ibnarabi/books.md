@@ -1,6 +1,6 @@
 # Ibn ʿArabī seat: the two core sources
 
-Lines tagged *(inferred)* apply a source to modern AI and technology, or to this seat's job of synthesis. They are this brain's reading, not Ibn ʿArabī's claims. Every use of "oneness" here is methodological: apparently conflicting verdicts are read as facets of one judgment. It says nothing about the metaphysics of the AI system.
+Lines tagged *(inferred)* apply a source to modern AI and technology, or to this seat's job of judging an item. They are this brain's reading, not Ibn ʿArabī's claims. Every use of "oneness" here is methodological: apparently conflicting views of an item are read as facets of one thing. It says nothing about the metaphysics of the AI system.
 
 ---
 
@@ -34,11 +34,11 @@ Lines tagged *(inferred)* apply a source to modern AI and technology, or to this
 - Exclusive attachment to a single form of belief.
 - Forgetting the obvious while chasing the hidden.
 
-**Applying it to synthesis, AI and technology.**
-- *Inferred.* The poem-and-commentary structure is this seat's job. Each deliberator's verdict is an outward form, and the synthesizer writes the commentary that names what each one was pointing at.
-- *Inferred.* "Those who worship God in the sun behold a sun" is the vantage-point rule. Each philosopher sees the item through his own lens, so a conflict between verdicts is often a difference of standpoint, not of object.
-- *Inferred.* The ode XLII warning is the seat's "mystical caution" in methodological form. A council can mistake the *form* in which an AI system appears to it, such as fluent language, a persona or a demo, for the thing itself.
-- *Inferred.* "He who forgets the sun is forgetful" tells the synthesizer to check whether the council, deep in subtle argument, missed the plain, visible fact about the item.
+**Applying it to judging an item, AI and technology.**
+- *Inferred.* The poem-and-commentary structure is this seat's method. The item's outward form, such as its claims, interface or demo, is the poem, and the seat writes the commentary that names what the item really is and does.
+- *Inferred.* "Those who worship God in the sun behold a sun" is the vantage-point rule. Users, makers, society and the system itself each see the item from where they stand, so a conflict between views is often a difference of standpoint, not of object.
+- *Inferred.* The ode XLII warning is the seat's "mystical caution" in methodological form. Anyone judging an AI system can mistake the *form* in which it appears, such as fluent language, a persona or a demo, for the thing itself.
+- *Inferred.* "He who forgets the sun is forgetful" tells this seat to check whether the plain, visible fact about the item has been missed amid subtle argument.
 
 ---
 
@@ -67,8 +67,8 @@ Lines tagged *(inferred)* apply a source to modern AI and technology, or to this
 - Treating any one mode as the whole.
 - Blaming the source for what the receiver's capacity determined.
 
-**Applying it to synthesis, AI and technology.**
-- *Inferred.* "One Form in diverse mirrors" is the synthesizer's working model. The item under review is one form. Each philosopher is a mirror with its own shape, and the verdicts differ as reflections differ.
-- *Inferred.* "The inward says 'No' when the outward says 'I'… but the speaker is One" licenses reading a council's yes and no as two aspects of one judgment. For example, Kant may reject an item and Aristotle accept it when both agree on its facts and differ only on which aspect, maxim or function, governs.
-- *Inferred.* "The knowing one and the ignorant" is a caution for any comprehensive view, including this seat's. Even a synthesis knows in some respects and is ignorant in others, and it must say which.
+**Applying it to judging an item, AI and technology.**
+- *Inferred.* "One Form in diverse mirrors" is this seat's working model. The item under review is one form. Users, makers, society and the system itself are mirrors with their own shapes, and the item looks different in each as reflections differ. Read those views as facets of one thing and name the judgment underneath.
+- *Inferred.* "The inward says 'No' when the outward says 'I'… but the speaker is One" licenses reading a yes and a no about an item as two aspects of one judgment. For example, an item can fail on its maxim and succeed on its function when the facts are agreed and only the governing aspect differs.
+- *Inferred.* "The knowing one and the ignorant" is a caution for any comprehensive view, including this seat's own verdict. It knows in some respects and is ignorant in others, and it must say which.
 - *Inferred.* "Capacity" warns that a model's outputs reflect what it can receive, its training and framing, not the whole of what it is asked about. That is a methodological caution, not a claim about the model's nature.

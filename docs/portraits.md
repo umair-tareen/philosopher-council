@@ -13,7 +13,7 @@ Seat ids: `socrates`, `plato`, `aristotle`, `confucius`, `laotzu`, `kant`, `ibna
 
 ## Format
 
-- **Size:** 1000 × 1200 px (5:6), transparent background, exported as `.webp`.
+- **Size:** square 1024 × 1024 works well (Roast Room's portraits are square); 1000 × 1200 is fine too. Transparent or plain white background, exported as `.webp`.
 - **Framing:** head and shoulders, centred, facing the viewer, with the chin at about 55% of the height and shoulders running off the bottom edge. Each seat sits behind the table, so the bottom fifth of the image will be hidden.
 - **Same style for all seven:** use one image model, one style line and one lighting setup.
 
@@ -25,7 +25,9 @@ Seat ids: `socrates`, `plato`, `aristotle`, `confucius`, `laotzu`, `kant`, `ibna
 
 ## Style line (use it in every prompt)
 
-> Stylised 3D character bust, soft clay-and-paint render, gentle caricature with warm expressive eyes, dignified not comic, soft key light from upper left, subtle rim light, transparent background, head-and-shoulders, facing the viewer, plain backdrop-free cutout.
+> High-quality 3D animated-film character render, glossy and soft like a modern animated feature, slightly stylised proportions with large warm expressive eyes and detailed skin, hair and fabric, dignified not comic, soft studio key light from upper left with subtle rim light, head-and-shoulders, centred, facing the viewer, plain white background.
+
+This is the same look as Roast Room's advisors. Any image tool that can edit an existing image works (ChatGPT's image editor, Gemini, Midjourney's editor, Ideogram).
 
 ## Base prompts
 

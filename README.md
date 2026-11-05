@@ -9,7 +9,7 @@
   <em>Jacques-Louis David, <strong>The Death of Socrates</strong> (1787) - hemlock in reach, finger still raised, argument still running.<br>The founding mood of this project: the questioning does not stop. (Public domain, via Wikimedia Commons.)</em>
 </p>
 
-**A seven-seat philosopher council, each seat built from two foundational public-domain books.** Ask it a question - Socrates interrogates it, Kant universalises it, Lao Tzu subtracts from it, and Ibn ʿArabī weaves their verdicts into one reading. Or point it at the AI-research firehose (Reddit / Hacker News / arXiv) and let the council triage what's worth your attention.
+**A seven-seat philosopher council, each seat built from two foundational public-domain books.** Ask it a question - Socrates interrogates it, Kant universalises it, Lao Tzu subtracts from it, Ibn ʿArabī looks for the one form in its many mirrors, and a neutral Chair sums up. Or point it at the AI-research firehose (Reddit / Hacker News / arXiv) and let the council triage what's worth your attention.
 
 **Methodology, not metaphysics.** The philosophers are prompt-engineered lenses, not séance guests. The model is a language model. No production prompt claims the system has a soul, awareness, or being.
 
@@ -25,7 +25,7 @@ pnpm ask --full-council "Should agentic AI systems spend money autonomously?"
 pnpm ask --context "We run a 5-agent trading desk" "Where should a human stay in the loop?"
 ```
 
-Each deliberator answers in character - virtue scores, reasoning, concerns - then the synthesizer speaks last. This is **real, unedited output** from the council's first live full-council run (on the original eleven-seat roster, before the council was trimmed to seven), where it was asked to judge its own premise:
+Each deliberator answers in character - virtue scores, reasoning, concerns - then the synthesizer speaks last (Ibn ʿArabī on that roster; a neutral Chair now). This is **real, unedited output** from the council's first live full-council run (on the original eleven-seat roster, before the council was trimmed to seven), where it was asked to judge its own premise:
 
 ```
 > Question: Is a council of eleven philosophers better than a single
@@ -69,12 +69,12 @@ For questions about events newer than the models' training data, the **clerk** c
 pnpm ui          # -> http://localhost:4173
 ```
 
-The seven seats sit in an arc behind a marble table. The seats drawn for your question light up while the rest dim. As each opinion lands, that philosopher **speaks it**: the bust lights, the mouth moves, and the verdict types out on the table. Ibn ʿArabī closes with the synthesis, and the dissenter is marked once the minority report is in. Every run is saved, so any past council can be **replayed in the chamber** from the transcript library.
+The seven seats sit in an arc behind a marble table. The seats drawn for your question light up while the rest dim. As each opinion lands, that philosopher **speaks it**: the bust lights, the mouth moves, and the verdict types out on the table. The Chair, who has no seat, closes with the synthesis from the table, and the dissenter is marked once the minority report is in. Every run is saved, so any past council can be **replayed in the chamber** from the transcript library.
 
 The busts are drawn in code, so it works out of the box. To use painted portraits, drop four frames per seat into `assets/portraits/` and they replace the code busts automatically. [`docs/portraits.md`](docs/portraits.md) has the prompt pack.
 
 <p align="center">
-  <img src="assets/chamber-demo.gif" alt="The seven seats of the council chamber speaking in turn, Ibn ʿArabī last" width="850">
+  <img src="assets/chamber-demo.gif" alt="The seven seats of the council chamber speaking in turn" width="850">
 </p>
 <p align="center">
   <em>A full council in the chamber, each seat speaking in turn - recorded in offline demo mode (<code>DRY_RUN=1 DRY_RUN_STREAM_MS=15 pnpm ui</code>), no API key needed.</em>
@@ -129,7 +129,7 @@ The premise has academic legs - and, as of 2026, academic teeth. On the legs: [D
 |---|---|---|
 | Multi-agent discussion "erases up to 72% of issue-critical facts" and final stances "remain anchored in base-model priors" - agents *agree more while knowing less* | [*The Deliberative Illusion*](https://arxiv.org/abs/2606.03032) (Wan et al.) | Seats deliberate **independently** - no seat ever sees another's output, so there is no discussion loop to shed facts or homogenize stances |
 | The same authors "call for evaluations that measure which facts, uncertainties, and legitimate disagreements survive interaction" | same paper | That artifact is this repo's centerpiece: the **minority report** (disagreement metrics, contested virtues, the dissenter verbatim) plus full per-seat transcripts - and every deliberation now reports **fact survival** (which seat concerns are lexically traceable into the synthesis/answer) and **dissent engagement**, mechanically, at zero extra LLM cost |
-| Nine frontier judges across seven model families ≈ **two effective votes** - errors correlate, and the best single judge matches or outperforms the whole panel | [*Nine Judges, Two Effective Votes*](https://arxiv.org/abs/2605.29800) (Kohli) | Seat count is a roster, not an accuracy claim: the default bench is a quorum of four deliberators + synthesizer, not all seven - and our own eval publishes the thin margin instead of hiding it (below) |
+| Nine frontier judges across seven model families ≈ **two effective votes** - errors correlate, and the best single judge matches or outperforms the whole panel | [*Nine Judges, Two Effective Votes*](https://arxiv.org/abs/2605.29800) (Kohli) | Seat count is a roster, not an accuracy claim: the default bench is a quorum of four deliberators + the Chair, not all seven - and our own eval publishes the thin margin instead of hiding it (below) |
 | Council **procedure** decides the outcome: only 4 of 7 governance structures beat the best single model at all, and the best gained **+9.2pp** - with small open models | [llm-council-governance](https://github.com/andybhall/llm-council-governance) | Debate formats are explicit, named, and swappable (deliberation / socratic / oxford / delphi), and per-seat providers let the bench run on small local models - where ensemble gains are largest |
 
 Read that last column top to bottom and you have this project's design rationale in one place. What the literature still leaves open - *which* perspectives to seat and *how* to keep disagreement legible - is exactly where 2,500 years of documented methodology comes in.
@@ -193,7 +193,7 @@ DEFAULT_MODEL=anthropic:claude-sonnet-4-5
 COUNCIL_MODELS=laotzu=ollama:llama3.1,kant=openai:gpt-4o,socrates=gemini:gemini-2.0-flash,ralph=anthropic:claude-haiku-4-5-20251001
 ```
 
-Now Lao Tzu deliberates on a local 7B (fitting, for the philosopher of doing less), Kant runs on GPT-4o, Socrates questions via Gemini, and the self-critique loop uses a cheap fast model. Seat ids are the philosopher ids plus `ibnarabi` (synthesizer) and `ralph` (critic). Each opinion records which `provider:model` produced it.
+Now Lao Tzu deliberates on a local 7B (fitting, for the philosopher of doing less), Kant runs on GPT-4o, Socrates questions via Gemini, and the self-critique loop uses a cheap fast model. Seat ids are the philosopher ids plus `chair` (synthesis) and `ralph` (critic). Each opinion records which `provider:model` produced it.
 
 | Spec prefix  | Endpoint                                  | Key required        |
 | ------------ | ----------------------------------------- | ------------------- |
@@ -232,13 +232,13 @@ The council beats a single direct answer head-to-head 31-18, and generic debate 
 
 | Branch         | Quorum candidates                                              |
 | -------------- | -------------------------------------------------------------- |
-| Epistemology   | Socrates, Plato, Kant                                          |
-| Metaphysics    | Plato, Lao Tzu                                                 |
+| Epistemology   | Socrates, Plato, Kant, Ibn ʿArabī                              |
+| Metaphysics    | Plato, Lao Tzu, Ibn ʿArabī                                     |
 | Ethics         | Socrates, Aristotle, Confucius, Lao Tzu, Kant                  |
 | Logic          | Aristotle                                                      |
-| **Synthesis**  | **Ibn ʿArabī** - fixed seat, speaks last, weaves the verdicts  |
+| **Synthesis**  | **The Chair** - not a philosopher, holds no seat, sums up last |
 
-Quorum mode seats one philosopher per branch, selected deterministically from the item id - the same question always convenes the same bench. Full-council mode seats all six deliberators. Ibn ʿArabī always closes.
+Quorum mode seats one philosopher per branch, selected deterministically from the item id - the same question always convenes the same bench. Full-council mode seats all seven. The Chair always closes: it reads the verdicts and writes the synthesis in plain English, so no philosopher's school gets the last word (the neutral-chair idea comes from Roast Room).
 
 **Why seven?** v0.2 had eleven seats, and four of them shared the epistemology lane, so quorums kept drawing from one crowded pool. Avicenna, Descartes, Ibn Rushd and Al-Ghazālī stepped down; each of the remaining seats owns a lens no other seat covers.
 
@@ -274,7 +274,7 @@ fetch ──> filter ────┘                                            
 - **ask** (`src/pipeline/ask.ts`) - wraps your question as the item under deliberation
 - **fetch** (`src/fetchers/`) - Reddit `new.json`, HN Algolia, arXiv RSS (`cs.AI`, `cs.LG`); dedupe via `data/.seen.json`
 - **filter** (`src/filter/`) - keyword regex set + recency/upvote heuristic
-- **council** (`src/council/`) - one Claude call per seat, JSON-only opinions; Ibn ʿArabī synthesises
+- **council** (`src/council/`) - one Claude call per seat, JSON-only opinions; a neutral Chair synthesises
 - **ralph** (`src/council/ralph.ts`) - self-critique loop, max 2 iterations, early-stops at `stopConfidence ≥ 0.6`
 - **digest** (`src/pipeline/digest.ts`) - daily Markdown digest grouped by `amplify` / `track` / `ignore`
 

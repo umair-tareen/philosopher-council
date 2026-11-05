@@ -53,18 +53,19 @@ export const PHILOSOPHERS: Record<PhilosopherId, PhilosopherMeta> = {
   ibnarabi: {
     id: 'ibnarabi',
     displayName: 'Ibn ʿArabī',
-    primaryBranch: 'synthesis',
-    secondaryBranch: 'metaphysics',
+    primaryBranch: 'metaphysics',
+    secondaryBranch: 'epistemology',
     tradition: 'Andalusian / Sufi',
   },
 };
 
 export const BRANCH_INDEX: Record<Branch, PhilosopherId[]> = {
-  epistemology: ['socrates', 'plato', 'kant'],
-  metaphysics: ['plato', 'laotzu'],
+  epistemology: ['socrates', 'plato', 'kant', 'ibnarabi'],
+  metaphysics: ['plato', 'laotzu', 'ibnarabi'],
   ethics: ['socrates', 'aristotle', 'confucius', 'laotzu', 'kant'],
   logic: ['aristotle'],
-  synthesis: ['ibnarabi'],
+  // The synthesis is written by the Chair, who holds no seat.
+  synthesis: [],
 };
 
 export const ALL_DELIBERATORS: PhilosopherId[] = [
@@ -74,4 +75,5 @@ export const ALL_DELIBERATORS: PhilosopherId[] = [
   'confucius',
   'laotzu',
   'kant',
+  'ibnarabi',
 ];

@@ -7,7 +7,7 @@ description: Convene a seven-seat philosopher LLM council on a question, decisio
 
 Put the user's question to the philosopher council and present the deliberation:
 each seat evaluates through its own documented methodology with virtue scores
-(Wisdom, Courage, Justice, Temperance), Ibn ʿArabī synthesizes, and the
+(Wisdom, Courage, Justice, Temperance), a neutral Chair synthesizes, and the
 strongest dissent survives as a minority report. The value is legible
 disagreement, not a single oracle answer.
 
@@ -21,7 +21,7 @@ disagreement, not a single oracle answer.
 2. Call `deliberate` with:
    - `question` (required) - phrase it as a single deliberable question
    - `context` - background the bench should know
-   - `fullCouncil: true` - all six deliberators instead of the quorum of four
+   - `fullCouncil: true` - all seven deliberators instead of the quorum of four
      (use only when the user asks for the full bench; it is ~2.5x the cost)
    - `mode` - `socratic` (fuzzy terms need examining), `oxford` (binary
      proposition), `delphi` (forecast), else omit for open deliberation

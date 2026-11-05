@@ -185,7 +185,7 @@ export function renderAnswer(
     lines.push('');
   }
 
-  lines.push(`## Ibn ʿArabī - synthesis (${v.synthesis.unifiedScore.toFixed(2)})`);
+  lines.push(`## The Chair - synthesis (${v.synthesis.unifiedScore.toFixed(2)})`);
   lines.push('');
   lines.push(`**Unifying reading.** ${v.synthesis.unifyingReading}`);
   lines.push('');

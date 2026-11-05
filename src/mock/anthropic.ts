@@ -47,6 +47,15 @@ const PROFILES: PersonaProfile[] = [
     concerns: ['Name "autonomous" used loosely', 'Stakeholder consent implicit'],
   },
   {
+    name: 'Ibn ʿArabī',
+    match: /You are Ibn ʿArabī/,
+    oneLiner: 'One form in many mirrors; each viewer sees a true part.',
+    reasoning:
+      'Its makers see a tool, its users see a convenience, and those it affects see a risk. Each reflection is true in its respect. Read together they say the idea is sound only where its purpose stays visible to all three. The plain fact the argument forgets is who carries the cost when it errs.',
+    scores: { wisdom: 0.6, courage: 0.55, justice: 0.6, temperance: 0.6 },
+    concerns: ['Purpose unclear to those it affects', 'Cost of error unassigned'],
+  },
+  {
     name: 'Lao Tzu',
     match: /You are Lao Tzu/,
     oneLiner: 'Adds where subtracting would have served better.',
@@ -131,7 +140,7 @@ export function mockComplete(call: CouncilCall): string {
     });
   }
 
-  if (/You are Ibn ʿArabī/.test(call.system) || /unifyingReading/.test(call.system)) {
+  if (/You are the Chair/.test(call.system) || /unifyingReading/.test(call.system)) {
     return JSON.stringify({
       unifyingReading:
         'The deliberators appear to disagree on novelty versus restraint, but each is pointing at the same underlying judgment: the idea is interesting precisely because it removes some complexity from a noisy practice, and the disagreement is over how far that subtraction can be pushed before it becomes a different idea entirely.',

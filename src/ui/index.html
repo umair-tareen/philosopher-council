@@ -148,7 +148,6 @@
     display: inline-block; margin-top: -0.4rem; position: relative; font-size: 0.78rem; padding: 0.18rem 0.6rem;
     border-radius: 6px; background: #10131a; border: 1px solid var(--border); color: var(--text); white-space: nowrap;
   }
-  .seat.synth-seat .plate { border-color: var(--gold); color: var(--gold2); }
   .stage.live .seat { filter: brightness(.55) saturate(.7); }
   .stage.live .seat.speaking { filter: drop-shadow(0 0 18px rgba(230,195,92,.35)); z-index: 3; }
   .seat.speaking .bust { animation: talk 1.4s ease-in-out infinite; }
@@ -208,7 +207,7 @@
     <button id="go">Convene</button>
   </div>
   <div class="options">
-    <label id="fulllabel"><input type="checkbox" id="full"> Full council (all six deliberators)</label>
+    <label id="fulllabel"><input type="checkbox" id="full"> Full council (all seven philosophers)</label>
     <label>Format:
       <select id="mode">
         <option value="deliberation">Deliberation</option>
@@ -241,10 +240,10 @@
   </div>
 
   <div class="synth" id="synth">
-    <h2>Ibn ʿArabī - Synthesis <span class="score" id="synthscore"></span></h2>
+    <h2>The Chair - Synthesis <span class="score" id="synthscore"></span></h2>
     <p><b>Unifying reading.</b> <span id="s1"></span></p>
     <p><b>Hidden continuity.</b> <span id="s2"></span></p>
-    <p><b>Caution.</b> <span id="s3"></span></p>
+    <p><b>Blind spot.</b> <span id="s3"></span></p>
   </div>
 
   <div class="final" id="final"></div>
@@ -484,7 +483,7 @@ function wire(source) {
     $('s2').textContent = s.hiddenContinuity;
     $('s3').textContent = s.mysticalCaution;
     $('synthscore').textContent = s.unifiedScore.toFixed(2);
-    chamber?.say({ id: 'ibnarabi', who: 'Ibn ʿArabī · synthesis', text: firstSentences(s.unifyingReading, 2), meta: 'unified score ' + s.unifiedScore.toFixed(2) });
+    chamber?.say({ id: 'chair', who: 'The Chair · synthesis', text: firstSentences(s.unifyingReading, 2), meta: 'unified score ' + s.unifiedScore.toFixed(2) });
     $('synth').style.display = 'block';
     setStatus('Synthesis delivered. Composing the answer…');
   });

@@ -16,6 +16,7 @@ import { checkSeatQuotes, withBrain } from './brains.js';
 import { complete, extractJson } from './client.js';
 import { DEBATE_MODES, type DebateModeId } from './modes.js';
 import { aristotle } from './personas/aristotle.js';
+import { chair } from './personas/chair.js';
 import { confucius } from './personas/confucius.js';
 import { ibnarabi } from './personas/ibnarabi.js';
 import { kant } from './personas/kant.js';
@@ -33,17 +34,18 @@ type PersonaModule = {
   user: (item: TrendItem) => string;
 };
 
-const PERSONAS: Record<Exclude<PhilosopherId, 'ibnarabi'>, PersonaModule> = {
+const PERSONAS: Record<PhilosopherId, PersonaModule> = {
   socrates,
   plato,
   aristotle,
   confucius,
   laotzu,
   kant,
+  ibnarabi,
 };
 
 async function callPhilosopher(
-  id: Exclude<PhilosopherId, 'ibnarabi'>,
+  id: PhilosopherId,
   branch: Branch,
   item: TrendItem,
   onToken?: (token: string) => void,
@@ -92,10 +94,10 @@ async function callSynthesizer(
   signal?: AbortSignal,
 ): Promise<IbnArabiSynthesis> {
   const { text } = await complete({
-    system: withBrain(ibnarabi.system, 'ibnarabi'),
-    user: ibnarabi.user(item, opinions),
+    system: chair.system,
+    user: chair.user(item, opinions),
     maxTokens: 800,
-    model: config.councilModels['ibnarabi'],
+    model: config.councilModels['chair'],
     signal,
   });
   return rawSynthesisSchema.parse(extractJson<unknown>(text));
@@ -226,7 +228,7 @@ export async function runCouncil(
       }))
     : mode === 'full'
       ? ALL_DELIBERATORS.map((id) => ({
-          id: id as Exclude<PhilosopherId, 'ibnarabi'>,
+          id,
           branch: PHILOSOPHERS[id].primaryBranch,
         }))
       : selectQuorum(item.id);
@@ -356,7 +358,7 @@ export async function runCouncil(
 
 function buildConsensus(opinions: PhilosopherOpinion[], synthesis: IbnArabiSynthesis): string {
   const lines = opinions.map((o) => `- ${o.displayName}: ${o.oneLiner}`).join('\n');
-  return `${lines}\n\nSynthesis (Ibn ʿArabī): ${synthesis.unifyingReading}`;
+  return `${lines}\n\nSynthesis (the Chair): ${synthesis.unifyingReading}`;
 }
 
 function recommend(score: number): Recommendation {

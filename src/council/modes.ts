@@ -8,7 +8,7 @@ export interface DebateMode {
   title: string;
   description: string;
   /** Fixed bench for this mode (quorum selection is skipped). */
-  seats?: Array<Exclude<PhilosopherId, 'ibnarabi'>>;
+  seats?: PhilosopherId[];
   /** Extra instruction appended to each deliberator's prompt; receives seat index. */
   instruction?: (seatIndex: number) => string;
 }

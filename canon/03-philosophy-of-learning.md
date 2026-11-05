@@ -44,4 +44,5 @@ the council uses to characterise *the design and behaviour* of a system.
   (Ethics branch - Aristotle, Confucius, Kant)
 - Is the system's reasoning valid? (Logic branch - Aristotle)
 - Are the council's own conflicting answers facets of one judgment, and
-  what did discursive reasoning miss? (Synthesis - Ibn Arabi)
+  what did discursive reasoning miss? (Synthesis - the Chair, a
+  neutral summariser with no seat)

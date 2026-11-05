@@ -9,7 +9,7 @@ export const SEATS = [
   { id: 'socrates', name: 'Socrates', lens: 'questions every term' },
   { id: 'plato', name: 'Plato', lens: 'looks past the shadow to the Form' },
   { id: 'confucius', name: 'Confucius', lens: 'asks who owes what to whom' },
-  { id: 'ibnarabi', name: 'Ibn ʿArabī', lens: 'weaves the verdicts into one', synth: true },
+  { id: 'ibnarabi', name: 'Ibn ʿArabī', lens: 'sees one form in many mirrors' },
   { id: 'laotzu', name: 'Lao Tzu', lens: 'subtracts until it flows' },
   { id: 'aristotle', name: 'Aristotle', lens: 'checks the syllogism and the mean' },
   { id: 'kant', name: 'Kant', lens: 'tests whether it could be universal law' },
@@ -106,7 +106,7 @@ export function createChamber(root) {
   root.innerHTML = `
     <div class="stage" id="stage">
       <div class="arc">${SEATS.map((s, i) => `
-        <div class="seat${s.synth ? ' synth-seat' : ''}" data-id="${s.id}" style="--i:${i}">
+        <div class="seat" data-id="${s.id}" style="--i:${i}">
           <div class="bust" data-shape="base">${bustSvg(s.id)}</div>
           <div class="think"><i></i><i></i><i></i></div>
           <div class="plate">${s.name}</div>
@@ -115,7 +115,7 @@ export function createChamber(root) {
       <div class="table">
         <div class="caption" id="caption">
           <div class="cap-who" id="capwho">The chamber is open</div>
-          <div class="cap-text" id="captext">Put a question to the council. Each seat deliberates alone, then speaks in turn. Ibn ʿArabī speaks last.</div>
+          <div class="cap-text" id="captext">Put a question to the council. Each seat deliberates alone, then speaks in turn. The Chair sums up.</div>
           <div class="cap-meta" id="capmeta"></div>
         </div>
       </div>
@@ -207,7 +207,6 @@ export function createChamber(root) {
     seat(ids) {
       for (const s of SEATS) {
         const el = seatEl(s.id);
-        if (s.synth) continue;
         el.classList.toggle('absent', !ids.includes(s.id));
         el.classList.toggle('thinking', ids.includes(s.id));
       }

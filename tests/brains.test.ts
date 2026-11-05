@@ -67,9 +67,9 @@ describe('shipped brains', () => {
   });
 });
 
-describe('synthesizer brain rules', () => {
-  it('lets Ibn ʿArabī quote the deliberators, unlike the seats', () => {
-    expect(withBrain('S', 'ibnarabi')).toContain('You may quote the deliberators');
-    expect(withBrain('S', 'kant')).not.toContain('You may quote the deliberators');
+describe('seat brain rules', () => {
+  it('gives Ibn ʿArabī the same quote rules as every other seat', () => {
+    expect(withBrain('S', 'ibnarabi')).toContain('Quote ONLY lines that appear word for word');
+    expect(withBrain('S', 'kant')).toContain('Quote ONLY lines that appear word for word');
   });
 });
