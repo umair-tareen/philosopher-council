@@ -52,6 +52,7 @@ describe('shipped brains', () => {
     const dir = `canon/brains/${id}`;
     for (const f of [
       '_hot.md',
+      'worldview.md',
       'frameworks.md',
       'books.md',
       'voice.md',

@@ -5,7 +5,7 @@ import { config } from '../config.js';
 import type { PhilosopherId, QuoteCheck } from '../types.js';
 
 // Each seat's "brain" is a folder of markdown distilled from two public-domain
-// books: canon/brains/<id>/{_hot,frameworks,books,voice,quotes,sources}.md.
+// books: canon/brains/<id>/{_hot,worldview,frameworks,books,voice,quotes,sources}.md.
 // The pattern (a compiled brain per seat, verbatim quotes checked against it)
 // follows Roast Room (github.com/nateherkai/roast-room, MIT).
 
@@ -16,6 +16,7 @@ const BRAINS_DIR = path.resolve(HERE, '..', '..', 'canon', 'brains');
 /** Loaded into the prompt in this order; sources.md is for humans and stays out. */
 const PROMPT_FILES = [
   '_hot.md',
+  'worldview.md',
   'frameworks.md',
   'books.md',
   'voice.md',

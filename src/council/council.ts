@@ -60,7 +60,7 @@ async function callPhilosopher(
   const { text, model } = await complete({
     system: withBrain(persona.system, id),
     user,
-    maxTokens: 700,
+    maxTokens: 1200,
     model: config.councilModels[id],
     onToken,
     signal,
