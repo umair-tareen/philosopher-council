@@ -9,7 +9,7 @@
   <em>Jacques-Louis David, <strong>The Death of Socrates</strong> (1787) - hemlock in reach, finger still raised, argument still running.<br>The founding mood of this project: the questioning does not stop. (Public domain, via Wikimedia Commons.)</em>
 </p>
 
-**An eleven-philosopher LLM council.** Ask it a question - Socrates interrogates it, Kant universalises it, Lao Tzu subtracts from it, and Ibn ʿArabī weaves their verdicts into one reading. Or point it at the AI-research firehose (Reddit / Hacker News / arXiv) and let the council triage what's worth your attention.
+**A seven-seat philosopher council, each seat built from two foundational public-domain books.** Ask it a question - Socrates interrogates it, Kant universalises it, Lao Tzu subtracts from it, Ibn ʿArabī looks for the one form in its many mirrors, and a neutral Chair sums up. Or point it at the AI-research firehose (Reddit / Hacker News / arXiv) and let the council triage what's worth your attention.
 
 **Methodology, not metaphysics.** The philosophers are prompt-engineered lenses, not séance guests. The model is a language model. No production prompt claims the system has a soul, awareness, or being.
 
@@ -25,7 +25,7 @@ pnpm ask --full-council "Should agentic AI systems spend money autonomously?"
 pnpm ask --context "We run a 5-agent trading desk" "Where should a human stay in the loop?"
 ```
 
-Each deliberator answers in character - virtue scores, reasoning, concerns - then the synthesizer speaks last. This is **real, unedited output** from the council's first live full-council run, where it was asked to judge its own premise:
+Each deliberator answers in character - virtue scores, reasoning, concerns - then the synthesizer speaks last (Ibn ʿArabī on that roster; a neutral Chair now). This is **real, unedited output** from the council's first live full-council run (on the original eleven-seat roster, before the council was trimmed to seven), where it was asked to judge its own premise:
 
 ```
 > Question: Is a council of eleven philosophers better than a single
@@ -69,11 +69,15 @@ For questions about events newer than the models' training data, the **clerk** c
 pnpm ui          # -> http://localhost:4173
 ```
 
+The seven seats sit in an arc behind a marble table. The seats drawn for your question light up while the rest dim. As each opinion lands, that philosopher **speaks it**: the bust lights, the mouth moves, and the verdict types out on the table. The Chair, who has no seat, closes with the synthesis from the table, and the dissenter is marked once the minority report is in. Every run is saved, so any past council can be **replayed in the chamber** from the transcript library.
+
+The busts are drawn in code, so it works out of the box. To use painted portraits, drop four frames per seat into `assets/portraits/` and they replace the code busts automatically. [`docs/portraits.md`](docs/portraits.md) has the prompt pack.
+
 <p align="center">
-  <img src="assets/chamber-demo.gif" alt="A quorum deliberation streaming live in the council chamber" width="850">
+  <img src="assets/chamber-demo.gif" alt="The seven seats of the council chamber speaking in turn" width="850">
 </p>
 <p align="center">
-  <em>The chamber in motion - recorded in offline demo mode (<code>DRY_RUN=1 DRY_RUN_STREAM_MS=35 pnpm ui</code>), no API key needed.</em>
+  <em>A full council in the chamber, each seat speaking in turn - recorded in offline demo mode (<code>DRY_RUN=1 DRY_RUN_STREAM_MS=15 pnpm ui</code>), no API key needed.</em>
 </p>
 
 A zero-dependency local web UI: put a question to the council and watch the deliberation stream in live - each philosopher's card fills in token by token as their opinion concludes (virtue bars, one-liner, expandable reasoning, which `provider:model` produced it), followed by the answer, synthesis, minority report, and final verdict. Past transcripts are browsable from the same page. Works in `DRY_RUN=1` for an instant offline demo; set `DRY_RUN_STREAM_MS=35` to pace the mock tokens so the demo streams like a live deliberation (that's what the clip above shows).
@@ -82,7 +86,7 @@ A zero-dependency local web UI: put a question to the council and watch the deli
   <img src="assets/chamber.png" alt="The council chamber after a live full-council deliberation" width="850">
 </p>
 <p align="center">
-  <em>A real full-council run: "Should agentic AI systems be allowed to spend money autonomously?"<br>Verdict: 0.41, ignore - the council voted no, with Lao Tzu dissenting hardest.</em>
+  <em>A real full-council run on the original eleven-seat roster: "Should agentic AI systems be allowed to spend money autonomously?"<br>Verdict: 0.41, ignore - the council voted no, with Lao Tzu dissenting hardest.</em>
 </p>
 
 ## 🔌 Use it inside Claude Code: `/philo-council`
@@ -125,7 +129,7 @@ The premise has academic legs - and, as of 2026, academic teeth. On the legs: [D
 |---|---|---|
 | Multi-agent discussion "erases up to 72% of issue-critical facts" and final stances "remain anchored in base-model priors" - agents *agree more while knowing less* | [*The Deliberative Illusion*](https://arxiv.org/abs/2606.03032) (Wan et al.) | Seats deliberate **independently** - no seat ever sees another's output, so there is no discussion loop to shed facts or homogenize stances |
 | The same authors "call for evaluations that measure which facts, uncertainties, and legitimate disagreements survive interaction" | same paper | That artifact is this repo's centerpiece: the **minority report** (disagreement metrics, contested virtues, the dissenter verbatim) plus full per-seat transcripts - and every deliberation now reports **fact survival** (which seat concerns are lexically traceable into the synthesis/answer) and **dissent engagement**, mechanically, at zero extra LLM cost |
-| Nine frontier judges across seven model families ≈ **two effective votes** - errors correlate, and the best single judge matches or outperforms the whole panel | [*Nine Judges, Two Effective Votes*](https://arxiv.org/abs/2605.29800) (Kohli) | Seat count is a roster, not an accuracy claim: the default bench is a quorum of four deliberators + synthesizer, not all eleven - and our own eval publishes the thin margin instead of hiding it (below) |
+| Nine frontier judges across seven model families ≈ **two effective votes** - errors correlate, and the best single judge matches or outperforms the whole panel | [*Nine Judges, Two Effective Votes*](https://arxiv.org/abs/2605.29800) (Kohli) | Seat count is a roster, not an accuracy claim: the default bench is a quorum of four deliberators + the Chair, not all seven - and our own eval publishes the thin margin instead of hiding it (below) |
 | Council **procedure** decides the outcome: only 4 of 7 governance structures beat the best single model at all, and the best gained **+9.2pp** - with small open models | [llm-council-governance](https://github.com/andybhall/llm-council-governance) | Debate formats are explicit, named, and swappable (deliberation / socratic / oxford / delphi), and per-seat providers let the bench run on small local models - where ensemble gains are largest |
 
 Read that last column top to bottom and you have this project's design rationale in one place. What the literature still leaves open - *which* perspectives to seat and *how* to keep disagreement legible - is exactly where 2,500 years of documented methodology comes in.
@@ -134,7 +138,7 @@ Read that last column top to bottom and you have this project's design rationale
 
 | | philosopher-council | [llm-council](https://github.com/karpathy/llm-council) (Karpathy) | [quorum-cli](https://github.com/Detrol/quorum-cli) | [llm-consortium](https://github.com/irthomasthomas/llm-consortium) |
 |---|---|---|---|---|
-| Perspectives | 11 named philosophers with distinct epistemologies | N generic models | generic debaters per method | N generic models |
+| Perspectives | 7 named philosophers, each built from two of their own books | N generic models | generic debaters per method | N generic models |
 | Scoring | virtue rubrics (human-legible) | anonymous peer ranking | none | confidence metrics |
 | Disagreement | **first-class minority report** | chairman decides ([criticized](https://github.com/karpathy/llm-council/issues/3)) | per-method | semantic clustering |
 | Proof it works | blind-judged eval, published incl. the run it lost | none | none | none |
@@ -173,7 +177,7 @@ docker run --env-file .env philosopher-council pnpm ask "your question"
 ```bash
 cp .env.example .env                # add ANTHROPIC_API_KEY=sk-ant-...
 pnpm ask "your question"            # 5 Claude calls (quorum) per question
-pnpm ask --full-council "..."       # 11 calls - every philosopher speaks
+pnpm ask --full-council "..."       # 7 calls - every philosopher speaks
 pnpm trends:run                     # triage today's AI-research trends
 ```
 
@@ -186,10 +190,10 @@ Every seat can run on a different provider. Model specs are `provider:model`, co
 ```bash
 # .env
 DEFAULT_MODEL=anthropic:claude-sonnet-4-5
-COUNCIL_MODELS=laotzu=ollama:llama3.1,kant=openai:gpt-4o,descartes=gemini:gemini-2.0-flash,ralph=anthropic:claude-haiku-4-5-20251001
+COUNCIL_MODELS=laotzu=ollama:llama3.1,kant=openai:gpt-4o,socrates=gemini:gemini-2.0-flash,ralph=anthropic:claude-haiku-4-5-20251001
 ```
 
-Now Lao Tzu deliberates on a local 7B (fitting, for the philosopher of doing less), Kant runs on GPT-4o, Descartes doubts via Gemini, and the self-critique loop uses a cheap fast model. Seat ids are the philosopher ids plus `ibnarabi` (synthesizer) and `ralph` (critic). Each opinion records which `provider:model` produced it.
+Now Lao Tzu deliberates on a local 7B (fitting, for the philosopher of doing less), Kant runs on GPT-4o, Socrates questions via Gemini, and the self-critique loop uses a cheap fast model. Seat ids are the philosopher ids plus `chair` (synthesis) and `ralph` (critic). Each opinion records which `provider:model` produced it.
 
 | Spec prefix  | Endpoint                                  | Key required        |
 | ------------ | ----------------------------------------- | ------------------- |
@@ -201,6 +205,8 @@ Now Lao Tzu deliberates on a local 7B (fitting, for the philosopher of doing les
 **Running it for free:** `DEFAULT_MODEL=ollama:llama3.1` puts every seat on a local model (no key, no cost), `OPENAI_BASE_URL=https://openrouter.ai/api/v1` opens OpenRouter's free models, and Gemini's free tier covers frontier-quality deliberation within rate limits. `DRY_RUN=1` demos the full UX offline with mock responses.
 
 ## 📊 Does it actually work? (eval)
+
+> These results were measured on the original eleven-seat roster, before seat brains existed. They haven't been re-run on the seven-seat council yet.
 
 `pnpm eval` blind-judges three strategies on the same questions: a **single direct answer** (1 call), a **generic Advocate/Critic/Judge debate** (3 calls), and the **philosopher council** (7 calls). Answers are anonymized and shuffled; judges score insight, rigor, blind-spot coverage, and actionability.
 
@@ -222,17 +228,37 @@ The council beats a single direct answer head-to-head 31-18, and generic debate 
 
 **The field measures the same thing.** [*Nine Judges, Two Effective Votes*](https://arxiv.org/abs/2605.29800) reports the identical shape at frontier-panel scale: a nine-judge, seven-family panel whose errors correlate so strongly it carries about two independent votes' worth of information, with the best single judge matching or outperforming the ensemble across all conditions (on MNLI the panel edges the best judge **72.0% to 71.8%** - and on the paper's other two datasets the panel loses to it outright). Our 0.728-vs-0.717 was never a failed attempt at a better ensemble - it is an independent local measurement, on our own harness, of the same general property of correlated LLM committees. The margin is not the product. The **legible deliberation** is: which lenses were applied, where they disagreed, what the dissent said, and what evidence would change the verdict.
 
-## 🏛️ The eleven philosophers
+## 🏛️ The seven seats
 
 | Branch         | Quorum candidates                                              |
 | -------------- | -------------------------------------------------------------- |
-| Epistemology   | Socrates, Avicenna, Al-Ghazālī, Descartes, Kant                |
-| Metaphysics    | Plato, Lao Tzu, Avicenna, Ibn Rushd, Descartes                 |
-| Ethics         | Socrates, Aristotle, Confucius, Lao Tzu, Al-Ghazālī, Kant      |
-| Logic          | Aristotle, Ibn Rushd                                           |
-| **Synthesis**  | **Ibn ʿArabī** - fixed seat, speaks last, weaves the verdicts  |
+| Epistemology   | Socrates, Plato, Kant, Ibn ʿArabī                              |
+| Metaphysics    | Plato, Lao Tzu, Ibn ʿArabī                                     |
+| Ethics         | Socrates, Aristotle, Confucius, Lao Tzu, Kant                  |
+| Logic          | Aristotle                                                      |
+| **Synthesis**  | **The Chair** - not a philosopher, holds no seat, sums up last |
 
-Quorum mode seats one philosopher per branch, selected deterministically from the item id - the same question always convenes the same bench. Full-council mode seats all ten deliberators. Ibn ʿArabī always closes.
+Quorum mode seats one philosopher per branch, selected deterministically from the item id - the same question always convenes the same bench. Full-council mode seats all seven. The Chair always closes: it reads the verdicts and writes the synthesis in plain English, so no philosopher's school gets the last word (the neutral-chair idea comes from Roast Room).
+
+**Why seven?** v0.2 had eleven seats, and four of them shared the epistemology lane, so quorums kept drawing from one crowded pool. Avicenna, Descartes, Ibn Rushd and Al-Ghazālī stepped down; each of the remaining seats owns a lens no other seat covers.
+
+### 📖 Each seat's brain
+
+Each seat reasons from a **brain** distilled from two foundational books, in public-domain translations (Socrates wrote nothing, so his are the Plato dialogues that record him): `canon/brains/<id>/` holds the hot notes, a first-person **worldview** (how that philosopher saw everything: what is real, the divine, human nature, knowing, the good life, society, death, their ranked values, temperament, and where they were wrong), the frameworks, a dissection of each book (thesis, argument, key terms, what it rejects, how it bears on AI), the seat's voice, and a file of verbatim quotes. Seats cite source ids, and **every quoted passage is checked against that seat's quotes file**. The chamber marks verified quotes in green and anything it can't find in amber, so a seat can't put words in a philosopher's mouth. `BRAINS=0` runs the bare personas for comparison. Each seat speaks in character, in the first person, from that worldview, and still gives its virtue scores. A brain adds about 6.5k input tokens per seat call.
+
+| Seat | Book one | Book two |
+| --- | --- | --- |
+| Socrates | *Apology* (Plato, tr. Jowett) | *Phaedo* (Plato, tr. Jowett) |
+| Plato | *Republic* (tr. Jowett) | *Symposium* (tr. Jowett) |
+| Aristotle | *Nicomachean Ethics* (Everyman, 1911) | *Categories* (tr. Edghill) |
+| Confucius | *Analects* (tr. Legge) | *Doctrine of the Mean* (tr. Legge) |
+| Lao Tzu | *Tao Teh King* (tr. Legge) | *Chuang Tzu* (tr. Giles, 1889) - the second great Taoist classic |
+| Kant | *Fundamental Principles of the Metaphysic of Morals* (tr. Abbott) | *Critique of Pure Reason* (tr. Meiklejohn) |
+| Ibn ʿArabī | *Tarjumán al-Ashwáq* (tr. Nicholson, 1911) | Nicholson's 1921 translations from the *Fuṣūṣ al-Ḥikam* (only his translated passages are quoted) |
+
+Every quote in every brain was copied by script from the downloaded text and re-verified: 140 of 140 match. Translators' introductions and notes are excluded. Each seat's `sources.md` lists URLs and any caveats (OCR texts, an unnamed Everyman translator, and no complete second pre-1931 English work by Ibn ʿArabī).
+
+The brain pattern (a compiled knowledge base per seat, quotes verified against it) and the talking-bust room are inspired by [Roast Room](https://github.com/nateherkai/roast-room) (MIT).
 
 Every opinion is scored against the **four cardinal virtues** - Wisdom, Courage, Justice, Temperance ∈ [0, 1] - using the rubrics in [`canon/02-virtue-rubrics.md`](canon/02-virtue-rubrics.md), making verdicts from very different methodologies commensurable.
 
@@ -248,7 +274,7 @@ fetch ──> filter ────┘                                            
 - **ask** (`src/pipeline/ask.ts`) - wraps your question as the item under deliberation
 - **fetch** (`src/fetchers/`) - Reddit `new.json`, HN Algolia, arXiv RSS (`cs.AI`, `cs.LG`); dedupe via `data/.seen.json`
 - **filter** (`src/filter/`) - keyword regex set + recency/upvote heuristic
-- **council** (`src/council/`) - one Claude call per seat, JSON-only opinions; Ibn ʿArabī synthesises
+- **council** (`src/council/`) - one Claude call per seat, JSON-only opinions; a neutral Chair synthesises
 - **ralph** (`src/council/ralph.ts`) - self-critique loop, max 2 iterations, early-stops at `stopConfidence ≥ 0.6`
 - **digest** (`src/pipeline/digest.ts`) - daily Markdown digest grouped by `amplify` / `track` / `ignore`
 
@@ -256,9 +282,10 @@ fetch ──> filter ────┘                                            
 
 ```
 canon/            seed texts the council must cite (LLM Wiki pattern)
+  brains/<id>/    per-seat brain distilled from two public-domain books
 data/             generated artifacts (gitignored)
 src/
-  council/        registry, quorum, client, ralph, 11 personas
+  council/        registry, quorum, client, ralph, brains, 7 personas
   fetchers/       reddit, hn, arxiv
   filter/         keyword + heuristic scoring
   pipeline/       ask / fetch / analyze / digest / run

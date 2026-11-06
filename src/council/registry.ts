@@ -43,34 +43,6 @@ export const PHILOSOPHERS: Record<PhilosopherId, PhilosopherMeta> = {
     secondaryBranch: 'ethics',
     tradition: 'Chinese / Taoist',
   },
-  avicenna: {
-    id: 'avicenna',
-    displayName: 'Ibn Sīnā (Avicenna)',
-    primaryBranch: 'epistemology',
-    secondaryBranch: 'metaphysics',
-    tradition: 'Persian / Islamic',
-  },
-  alghazali: {
-    id: 'alghazali',
-    displayName: 'Al-Ghazālī',
-    primaryBranch: 'epistemology',
-    secondaryBranch: 'ethics',
-    tradition: 'Persian / Islamic',
-  },
-  ibnrushd: {
-    id: 'ibnrushd',
-    displayName: 'Ibn Rushd (Averroes)',
-    primaryBranch: 'logic',
-    secondaryBranch: 'metaphysics',
-    tradition: 'Andalusian / Islamic',
-  },
-  descartes: {
-    id: 'descartes',
-    displayName: 'René Descartes',
-    primaryBranch: 'epistemology',
-    secondaryBranch: 'metaphysics',
-    tradition: 'Modern European',
-  },
   kant: {
     id: 'kant',
     displayName: 'Immanuel Kant',
@@ -81,18 +53,19 @@ export const PHILOSOPHERS: Record<PhilosopherId, PhilosopherMeta> = {
   ibnarabi: {
     id: 'ibnarabi',
     displayName: 'Ibn ʿArabī',
-    primaryBranch: 'synthesis',
-    secondaryBranch: 'metaphysics',
+    primaryBranch: 'metaphysics',
+    secondaryBranch: 'epistemology',
     tradition: 'Andalusian / Sufi',
   },
 };
 
 export const BRANCH_INDEX: Record<Branch, PhilosopherId[]> = {
-  epistemology: ['socrates', 'avicenna', 'alghazali', 'descartes', 'kant'],
-  metaphysics: ['plato', 'laotzu', 'avicenna', 'ibnrushd', 'descartes'],
-  ethics: ['socrates', 'aristotle', 'confucius', 'laotzu', 'alghazali', 'kant'],
-  logic: ['aristotle', 'ibnrushd'],
-  synthesis: ['ibnarabi'],
+  epistemology: ['socrates', 'plato', 'kant', 'ibnarabi'],
+  metaphysics: ['plato', 'laotzu', 'ibnarabi'],
+  ethics: ['socrates', 'aristotle', 'confucius', 'laotzu', 'kant'],
+  logic: ['aristotle'],
+  // The synthesis is written by the Chair, who holds no seat.
+  synthesis: [],
 };
 
 export const ALL_DELIBERATORS: PhilosopherId[] = [
@@ -101,9 +74,6 @@ export const ALL_DELIBERATORS: PhilosopherId[] = [
   'aristotle',
   'confucius',
   'laotzu',
-  'avicenna',
-  'alghazali',
-  'ibnrushd',
-  'descartes',
   'kant',
+  'ibnarabi',
 ];

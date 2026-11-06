@@ -47,6 +47,15 @@ const PROFILES: PersonaProfile[] = [
     concerns: ['Name "autonomous" used loosely', 'Stakeholder consent implicit'],
   },
   {
+    name: 'Ibn ʿArabī',
+    match: /You are Ibn ʿArabī/,
+    oneLiner: 'One form in many mirrors; each viewer sees a true part.',
+    reasoning:
+      'Its makers see a tool, its users see a convenience, and those it affects see a risk. Each reflection is true in its respect. Read together they say the idea is sound only where its purpose stays visible to all three. The plain fact the argument forgets is who carries the cost when it errs.',
+    scores: { wisdom: 0.6, courage: 0.55, justice: 0.6, temperance: 0.6 },
+    concerns: ['Purpose unclear to those it affects', 'Cost of error unassigned'],
+  },
+  {
     name: 'Lao Tzu',
     match: /You are Lao Tzu/,
     oneLiner: 'Adds where subtracting would have served better.',
@@ -54,42 +63,6 @@ const PROFILES: PersonaProfile[] = [
       "Wu wei would have removed the scaffolding rather than added a critic on top of it. The proposal grows; it does not flow. The same gain may be available with less by trusting the model's defaults.",
     scores: { wisdom: 0.55, courage: 0.6, justice: 0.55, temperance: 0.75 },
     concerns: ['Adds complexity', 'Achievable by subtraction'],
-  },
-  {
-    name: 'Ibn Sīnā',
-    match: /You are Ibn Sīnā/,
-    oneLiner: 'Floating-man test fails: no kernel of self without the inputs.',
-    reasoning:
-      'Stripped of every context and corpus the proposed system retains nothing that could be called self-knowing. The essence/accident distinction reveals that the proposal\'s "self" is wholly accidental to its context window.',
-    scores: { wisdom: 0.5, courage: 0.5, justice: 0.55, temperance: 0.6 },
-    concerns: ['"Self" reduces to context', 'Essence not identified'],
-  },
-  {
-    name: 'Al-Ghazālī',
-    match: /You are Al-Ghazālī/,
-    oneLiner: 'Reason walks confidently past its own limit.',
-    reasoning:
-      'Where the discursive argument runs out the proposal smooths over with rhetoric. Practical experience and observed failure modes are dismissed as outside scope; they are not. Confidence is inflated where humility is owed.',
-    scores: { wisdom: 0.5, courage: 0.45, justice: 0.55, temperance: 0.7 },
-    concerns: ['Confidence inflation', 'Ignores practical failure modes'],
-  },
-  {
-    name: 'Ibn Rushd',
-    match: /You are Ibn Rushd/,
-    oneLiner: 'Demonstration partial; evidence outweighs theory here.',
-    reasoning:
-      'A proper *burhān* would require independent replication, which is not yet present. The empirical evidence is suggestive but does not cohere with the strongest theoretical framing the authors offer; prefer the evidence.',
-    scores: { wisdom: 0.6, courage: 0.55, justice: 0.6, temperance: 0.6 },
-    concerns: ['No independent replication', 'Theory/evidence mismatch'],
-  },
-  {
-    name: 'Descartes',
-    match: /You are René Descartes/,
-    oneLiner: 'Cogito of the proposal survives; periphery does not.',
-    reasoning:
-      "Methodic doubt strips away the proposal's rhetorical envelope and leaves a small, defensible kernel: that iterated critique can sometimes correct overclaims. The wider claims do not survive the same scrutiny.",
-    scores: { wisdom: 0.6, courage: 0.5, justice: 0.55, temperance: 0.6 },
-    concerns: ['Wider claims unsupported', 'Kernel narrower than advertised'],
   },
   {
     name: 'Kant',
@@ -167,7 +140,7 @@ export function mockComplete(call: CouncilCall): string {
     });
   }
 
-  if (/You are Ibn ʿArabī/.test(call.system) || /unifyingReading/.test(call.system)) {
+  if (/You are the Chair/.test(call.system) || /unifyingReading/.test(call.system)) {
     return JSON.stringify({
       unifyingReading:
         'The deliberators appear to disagree on novelty versus restraint, but each is pointing at the same underlying judgment: the idea is interesting precisely because it removes some complexity from a noisy practice, and the disagreement is over how far that subtraction can be pushed before it becomes a different idea entirely.',

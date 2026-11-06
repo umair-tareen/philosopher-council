@@ -98,6 +98,12 @@ export async function runAsk(opts: AskOptions): Promise<AskResult> {
   // mid-write can't leave a truncated transcript that load-time JSON.parse
   // would silently drop.
   await writeFileAtomic(file, markdown);
+  // The full verdict, so the chamber can replay this council later. Kept in a
+  // subfolder: the precedent store treats every top-level asks/*.json as case law.
+  await writeFileAtomic(
+    path.join(dir, 'replays', path.basename(file).replace(/\.md$/, '.json')),
+    JSON.stringify({ question: opts.question, verdict }, null, 2),
+  );
   // Only sound verdicts become case law - a degraded run (no opinions, or a
   // failed synthesis) must not be retrievable as precedent for later questions.
   if (verdict.opinions.length > 0) {
@@ -179,7 +185,7 @@ export function renderAnswer(
     lines.push('');
   }
 
-  lines.push(`## Ibn ʿArabī - synthesis (${v.synthesis.unifiedScore.toFixed(2)})`);
+  lines.push(`## The Chair - synthesis (${v.synthesis.unifiedScore.toFixed(2)})`);
   lines.push('');
   lines.push(`**Unifying reading.** ${v.synthesis.unifyingReading}`);
   lines.push('');

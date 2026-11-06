@@ -124,6 +124,59 @@
     max-height: 480px; overflow: auto;
   }
   .err { color: var(--red); }
+  .qcheck { font-size: 0.74rem; margin: -0.2rem 0 0.4rem; }
+  .qcheck.ok { color: var(--green); } .qcheck.warn { color: var(--amber); }
+
+  /* ---------- the chamber ---------- */
+  .stage { position: relative; margin: 0.2rem auto 1.4rem; max-width: 1060px; }
+  .arc { display: grid; grid-template-columns: repeat(7, 1fr); align-items: end; gap: 0.2rem; padding: 0 1%; position: relative; z-index: 2; }
+  .seat { position: relative; text-align: center; transition: filter .35s, opacity .35s, transform .35s; }
+  .seat:nth-child(1), .seat:nth-child(7) { transform: translateY(46px); }
+  .seat:nth-child(2), .seat:nth-child(6) { transform: translateY(18px); }
+  .seat:nth-child(3), .seat:nth-child(5) { transform: translateY(4px); }
+  .seat .bust { position: relative; width: 100%; aspect-ratio: 200 / 240; transform-origin: 50% 90%; animation: breathe 5.5s ease-in-out infinite; animation-delay: calc(var(--i) * -0.7s); }
+  .seat .bust svg { width: 100%; height: 100%; display: block; }
+  .seat .bust .mouth, .seat .bust .shut-eyes { display: none; }
+  .seat .bust[data-shape="base"] .m-base, .seat .bust[data-shape="blink"] .m-base,
+  .seat .bust[data-shape="mid"] .m-mid, .seat .bust[data-shape="open"] .m-open { display: inline; }
+  .seat .bust[data-shape="blink"] .open-eyes { display: none; }
+  .seat .bust[data-shape="blink"] .shut-eyes { display: inline; }
+  .seat .bust.painted img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; }
+  .seat .bust.painted[data-shape="base"] img.base, .seat .bust.painted[data-shape="mid"] img.mid,
+  .seat .bust.painted[data-shape="open"] img.open, .seat .bust.painted[data-shape="blink"] img.blink { opacity: 1; }
+  .seat .plate {
+    display: inline-block; margin-top: -0.4rem; position: relative; font-size: 0.78rem; padding: 0.18rem 0.6rem;
+    border-radius: 6px; background: #10131a; border: 1px solid var(--border); color: var(--text); white-space: nowrap;
+  }
+  .stage.live .seat { filter: brightness(.55) saturate(.7); }
+  .stage.live .seat.speaking { filter: drop-shadow(0 0 18px rgba(230,195,92,.35)); z-index: 3; }
+  .seat.speaking .bust { animation: talk 1.4s ease-in-out infinite; }
+  .seat.speaking .plate { border-color: var(--gold2); }
+  .seat.absent { opacity: .28; filter: grayscale(1) brightness(.6) !important; }
+  .seat.failed .plate { border-color: var(--red); color: var(--red); }
+  .seat.dissent .plate { border-color: var(--amber); color: var(--amber); }
+  .seat.dissent .plate::after { content: ' · dissent'; font-size: 0.68rem; }
+  .seat .think { display: none; position: absolute; top: 4%; left: 50%; transform: translateX(-50%); gap: 4px; }
+  .seat.thinking .think { display: flex; }
+  .seat .think i { width: 6px; height: 6px; border-radius: 50%; background: var(--gold2); animation: dot 1.2s infinite; }
+  .seat .think i:nth-child(2) { animation-delay: .2s; } .seat .think i:nth-child(3) { animation-delay: .4s; }
+  @keyframes dot { 0%, 80%, 100% { opacity: .2; } 40% { opacity: 1; } }
+  @keyframes breathe { 50% { transform: translateY(-2px) scale(1.006); } }
+  @keyframes talk { 25% { transform: rotate(-1.2deg); } 75% { transform: rotate(1.2deg); } }
+  .table {
+    position: relative; z-index: 1; margin-top: -2.2rem; padding: 3rem 12% 1.6rem; text-align: center;
+    border-radius: 50% 50% 18px 18px / 46px 46px 18px 18px;
+    background: linear-gradient(180deg, #e9e3d6 0%, #cfc6b4 7%, #1d222d 8%, #161a22 100%);
+    border-top: 1px solid #f4efe4;
+  }
+  .caption { min-height: 6.4rem; }
+  .cap-who { color: var(--gold2); letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.8rem; }
+  .cap-text { font-size: 1.12rem; line-height: 1.5; margin-top: 0.45rem; font-style: italic; }
+  .cap-meta { color: var(--muted); font-size: 0.78rem; margin-top: 0.5rem; }
+  .library a.replay { display: inline; color: var(--gold2); margin-left: 0.6rem; font-size: 0.8rem; }
+  @media (prefers-reduced-motion: reduce) {
+    .seat .bust, .seat.speaking .bust, .seat .think i { animation: none; }
+  }
 
   @media (max-width: 640px) {
     header h1 { font-size: 1.4rem; }
@@ -131,6 +184,12 @@
     .askbar button { padding: 0.8rem; }
     .options { gap: 0.7rem; font-size: 0.85rem; }
     .grid { grid-template-columns: 1fr; }
+    .seat .plate { font-size: 0.56rem; padding: 0.1rem 0.25rem; }
+    .seat:nth-child(1), .seat:nth-child(7) { transform: translateY(22px); }
+    .seat:nth-child(2), .seat:nth-child(6) { transform: translateY(9px); }
+    .seat.dissent .plate::after { content: ""; }
+    .table { padding: 2.2rem 4% 1.2rem; margin-top: -1.2rem; }
+    .cap-text { font-size: 0.98rem; }
   }
 </style>
 </head>
@@ -138,16 +197,17 @@
 <header>
   <h1>PHILOSOPHER COUNCIL</h1>
   <div class="cols">⚱ ⚱ ⚱ ⚱ ⚱</div>
-  <p>Eleven lenses. Four virtues. One judgment. Methodology, not metaphysics.</p>
+  <p>Seven lenses. Four virtues. One judgment. Methodology, not metaphysics.</p>
 </header>
 
 <div class="wrap">
+  <div id="chamber"></div>
   <div class="askbar">
     <input id="q" type="text" placeholder="Put a question to the council…" value="">
     <button id="go">Convene</button>
   </div>
   <div class="options">
-    <label id="fulllabel"><input type="checkbox" id="full"> Full council (all ten deliberators)</label>
+    <label id="fulllabel"><input type="checkbox" id="full"> Full council (all seven philosophers)</label>
     <label>Format:
       <select id="mode">
         <option value="deliberation">Deliberation</option>
@@ -180,10 +240,10 @@
   </div>
 
   <div class="synth" id="synth">
-    <h2>Ibn ʿArabī - Synthesis <span class="score" id="synthscore"></span></h2>
+    <h2>The Chair - Synthesis <span class="score" id="synthscore"></span></h2>
     <p><b>Unifying reading.</b> <span id="s1"></span></p>
     <p><b>Hidden continuity.</b> <span id="s2"></span></p>
-    <p><b>Caution.</b> <span id="s3"></span></p>
+    <p><b>Blind spot.</b> <span id="s3"></span></p>
   </div>
 
   <div class="final" id="final"></div>
@@ -252,6 +312,16 @@ function appendToken(philosopher, t) {
   live.scrollTop = live.scrollHeight;
 }
 
+// Quotes are checked server-side against the seat's brain/quotes.md.
+function quoteBadge(q) {
+  if (!q) return '';
+  if (q.unverified?.length) {
+    return `<div class="qcheck warn" title="${esc(q.unverified.join(' | '))}">⚠ ${q.unverified.length} quote(s) not found in this seat's sources - treat as paraphrase</div>`;
+  }
+  if (q.verified?.length) return `<div class="qcheck ok">✓ ${q.verified.length} quote(s) verified against the source texts</div>`;
+  return '';
+}
+
 function fillCard(o) {
   const card = $('card-' + o.philosopher);
   if (!card) return;
@@ -262,6 +332,7 @@ function fillCard(o) {
     <h3>${esc(o.displayName)}<span class="badge">${esc(o.branch)}</span></h3>
     <div class="meta">${esc(o.model || '')}</div>
     <div class="oneliner">“${esc(o.oneLiner)}”</div>
+    ${quoteBadge(o.quoteCheck)}
     <div class="reasoning">${esc(o.reasoning)}${o.concerns?.length ? '<br><br>Concerns: ' + esc(o.concerns.join(' · ')) : ''}</div>
     ${virtueBars(o.virtueScores)}
     <span class="toggle">show reasoning</span>`;
@@ -342,25 +413,30 @@ function convene() {
   const q = $('q').value.trim();
   if (!q) return;
   if (source) source.close();
-  opinions = []; seatCount = 0; lastFile = null;
+  replaying = false;
   $('go').disabled = true;
-  $('grid').innerHTML = '';
-  $('synth').style.display = 'none';
-  $('answer').style.display = 'none';
-  $('answertext').textContent = '';
-  $('minority').style.display = 'none';
-  $('spread').style.display = 'none';
-  $('final').style.display = 'none';
-  $('modeinfo').textContent = '';
-  $('briefing').style.display = 'none';
-  $('briefing').innerHTML = '';
-  setStatus('The council convenes…');
+  resetView('The council convenes…');
 
   const url = '/api/ask/stream?q=' + encodeURIComponent(q)
     + ($('full').checked ? '&full=1' : '')
     + '&mode=' + encodeURIComponent($('mode').value);
   source = new EventSource(url);
+  wire(source);
+}
 
+function resetView(headline) {
+  opinions = []; seatCount = 0; lastFile = null;
+  $('grid').innerHTML = '';
+  for (const id of ['synth', 'answer', 'minority', 'spread', 'final', 'briefing']) $(id).style.display = 'none';
+  $('answertext').textContent = '';
+  $('briefing').innerHTML = '';
+  $('modeinfo').textContent = '';
+  chamber?.reset();
+  setStatus(headline);
+}
+
+// Live runs (EventSource) and replays (a local EventTarget) drive the same handlers.
+function wire(source) {
   source.addEventListener('mode', (e) => {
     const m = JSON.parse(e.data);
     if (m.advisorReason) $('modeinfo').textContent = `advisor chose ${m.mode}: ${m.advisorReason}`;
@@ -380,6 +456,7 @@ function convene() {
   source.addEventListener('seats', (e) => {
     const { seats } = JSON.parse(e.data);
     seatCount = seats.length;
+    chamber?.seat(seats.map((s) => s.id));
     $('grid').innerHTML = seats.map(seatCard).join('');
     setStatus('Deliberating in parallel - opinions land as each concludes.', 0, seatCount);
   });
@@ -391,11 +468,14 @@ function convene() {
     const o = JSON.parse(e.data);
     opinions.push(o);
     fillCard(o);
+    chamber?.landed(o.philosopher);
+    chamber?.say({ id: o.philosopher, who: o.displayName + ' · ' + o.branch, text: o.oneLiner, meta: 'verdict ' + o.verdictScore.toFixed(2) });
     setStatus('Deliberating in parallel - opinions land as each concludes.', opinions.length, seatCount);
   });
   source.addEventListener('seatfailed', (e) => {
     const { philosopher } = JSON.parse(e.data);
     failCard(philosopher);
+    chamber?.failed(philosopher);
   });
   source.addEventListener('synthesis', (e) => {
     const s = JSON.parse(e.data);
@@ -403,6 +483,7 @@ function convene() {
     $('s2').textContent = s.hiddenContinuity;
     $('s3').textContent = s.mysticalCaution;
     $('synthscore').textContent = s.unifiedScore.toFixed(2);
+    chamber?.say({ id: 'chair', who: 'The Chair · synthesis', text: firstSentences(s.unifyingReading, 2), meta: 'unified score ' + s.unifiedScore.toFixed(2) });
     $('synth').style.display = 'block';
     setStatus('Synthesis delivered. Composing the answer…');
   });
@@ -425,6 +506,7 @@ function convene() {
       }
       if (v.minority.dissenter) {
         const d = v.minority.dissenter;
+        chamber?.dissent(d.philosopher);
         html += `<b>${esc(d.displayName)}</b> dissented (${esc(d.verdictScore.toFixed(2))}, ${d.delta > 0 ? '+' : ''}${esc(d.delta.toFixed(2))} vs synthesis): <i>“${esc(d.oneLiner)}”</i>`;
       }
       if (!html) html = 'The council was broadly aligned on this one.';
@@ -444,8 +526,9 @@ function convene() {
       `</div>`;
     $('final').style.display = 'block';
     setStatus('');
-    $('answer').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    loadLibrary();
+    // Let the chamber finish speaking before pulling the reader down to the answer.
+    if (!replaying) (chamber ? chamber.whenIdle() : Promise.resolve()).then(() => $('answer').scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    if (!replaying) loadLibrary();
   });
   source.addEventListener('error', (e) => {
     if (e.data) {
@@ -454,9 +537,42 @@ function convene() {
       sweepPending();
     }
   });
-  source.addEventListener('done', () => { sweepPending(); source.close(); $('go').disabled = false; });
-  source.onerror = () => { sweepPending(); source.close(); $('go').disabled = false; };
+  source.addEventListener('done', () => { sweepPending(); source.close?.(); $('go').disabled = false; replaying = false; });
+  source.onerror = () => { sweepPending(); source.close?.(); $('go').disabled = false; };
 }
+
+function firstSentences(text, n) {
+  const parts = String(text || '').match(/[^.!?]+[.!?]+/g) || [String(text || '')];
+  return parts.slice(0, n).join('').trim();
+}
+
+// Replay a saved deliberation through the chamber, paced like a live run.
+let replaying = false;
+async function replay(file) {
+  const res = await fetch('/api/replays/' + encodeURIComponent(file));
+  if (!res.ok) { setStatus('No replay saved for this transcript.'); return; }
+  const { question, verdict: v } = await res.json();
+  if (source) source.close();
+  replaying = true;
+  $('q').value = question;
+  resetView('Replaying a past council…');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const t = new EventTarget();
+  wire(t);
+  const emit = (name, data) => t.dispatchEvent(new MessageEvent(name, { data: JSON.stringify(data) }));
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const reg = { socrates: 'Classical Greek', plato: 'Classical Greek', aristotle: 'Classical Greek', confucius: 'Chinese', laotzu: 'Chinese / Taoist', kant: 'Modern European' };
+  emit('seats', { seats: v.opinions.map((o) => ({ id: o.philosopher, branch: o.branch, displayName: o.displayName, tradition: reg[o.philosopher] || '' })) });
+  for (const o of v.opinions) { await wait(900); emit('opinion', o); }
+  await wait(1200);
+  emit('synthesis', v.synthesis);
+  if (v.answer) emit('answer', { answer: v.answer });
+  emit('verdict', { finalScore: v.finalScore, finalRecommendation: v.finalRecommendation, ralph: v.ralph, minority: v.minority, mode: v.mode, debateMode: v.debateMode, model: v.model, file: file.replace(/.json$/, '.md') });
+  emit('done', {});
+}
+
+let chamber = null;
+import('/chamber.js').then((m) => { chamber = m.createChamber($('chamber')); }).catch(() => {});
 
 async function fetchTranscript(file) {
   const res = await fetch('/api/transcripts/' + encodeURIComponent(file));
@@ -487,9 +603,10 @@ async function loadLibrary() {
   const res = await fetch('/api/transcripts');
   const items = await res.json();
   $('list').innerHTML = items.length
-    ? items.map(t => `<a href="#" data-f="${esc(t.file)}">${esc(t.name)}</a>`).join('')
+    ? items.map(t => `<div><a href="#" style="display:inline" data-f="${esc(t.file)}">${esc(t.name)}</a>${t.replay ? `<a href="#" class="replay" data-r="${esc(t.replay)}">▶ replay in chamber</a>` : ''}</div>`).join('')
     : '<span style="color:var(--muted)">No transcripts yet. Convene the council above.</span>';
-  $('list').querySelectorAll('a').forEach(a => a.onclick = async (ev) => {
+  $('list').querySelectorAll('a.replay').forEach(a => a.onclick = (ev) => { ev.preventDefault(); replay(a.dataset.r); });
+  $('list').querySelectorAll('a[data-f]').forEach(a => a.onclick = async (ev) => {
     ev.preventDefault();
     const md = await fetchTranscript(a.dataset.f);
     $('transcript').textContent = md;

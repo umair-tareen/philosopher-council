@@ -1,7 +1,7 @@
 # Stoic Primer
 
 A condensed reference for the council's cross-cutting virtue rubric. Stoicism is
-not the *content* of the council's reasoning - the eleven philosophers each
+not the *content* of the council's reasoning - the seven philosophers each
 reason from their own tradition. Stoicism is the *scoring frame*: every
 opinion is rated against four virtues so that disparate voices produce
 commensurable output.

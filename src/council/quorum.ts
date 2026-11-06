@@ -4,7 +4,7 @@ import { BRANCH_INDEX } from './registry.js';
 const DELIBERATIVE_BRANCHES: Branch[] = ['logic', 'metaphysics', 'epistemology', 'ethics'];
 
 export interface QuorumSeat {
-  id: Exclude<PhilosopherId, 'ibnarabi'>;
+  id: PhilosopherId;
   branch: Branch;
 }
 
@@ -17,8 +17,8 @@ export function selectQuorum(seed: string): QuorumSeat[] {
     if (pool.length === 0) continue;
     const idx = Math.floor(rand() * pool.length);
     const choice = pool[idx];
-    if (!choice || choice === 'ibnarabi') continue;
-    seats.push({ id: choice as Exclude<PhilosopherId, 'ibnarabi'>, branch });
+    if (!choice) continue;
+    seats.push({ id: choice, branch });
     used.add(choice);
   }
   return seats;

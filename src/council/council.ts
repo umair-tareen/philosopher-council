@@ -12,15 +12,13 @@ import type {
   TrendItem,
   Virtue,
 } from '../types.js';
+import { checkSeatQuotes, withBrain } from './brains.js';
 import { complete, extractJson } from './client.js';
 import { DEBATE_MODES, type DebateModeId } from './modes.js';
-import { alghazali } from './personas/alghazali.js';
 import { aristotle } from './personas/aristotle.js';
-import { avicenna } from './personas/avicenna.js';
+import { chair } from './personas/chair.js';
 import { confucius } from './personas/confucius.js';
-import { descartes } from './personas/descartes.js';
 import { ibnarabi } from './personas/ibnarabi.js';
-import { ibnrushd } from './personas/ibnrushd.js';
 import { kant } from './personas/kant.js';
 import { laotzu } from './personas/laotzu.js';
 import { plato } from './personas/plato.js';
@@ -36,21 +34,18 @@ type PersonaModule = {
   user: (item: TrendItem) => string;
 };
 
-const PERSONAS: Record<Exclude<PhilosopherId, 'ibnarabi'>, PersonaModule> = {
+const PERSONAS: Record<PhilosopherId, PersonaModule> = {
   socrates,
   plato,
   aristotle,
   confucius,
   laotzu,
-  avicenna,
-  alghazali,
-  ibnrushd,
-  descartes,
   kant,
+  ibnarabi,
 };
 
 async function callPhilosopher(
-  id: Exclude<PhilosopherId, 'ibnarabi'>,
+  id: PhilosopherId,
   branch: Branch,
   item: TrendItem,
   onToken?: (token: string) => void,
@@ -63,9 +58,9 @@ async function callPhilosopher(
     ? `${persona.user(item)}\n\n${modeInstruction}`
     : persona.user(item);
   const { text, model } = await complete({
-    system: persona.system,
+    system: withBrain(persona.system, id),
     user,
-    maxTokens: 700,
+    maxTokens: 1200,
     model: config.councilModels[id],
     onToken,
     signal,
@@ -89,6 +84,7 @@ async function callPhilosopher(
     concerns: raw.concerns,
     citations: raw.citations,
     model,
+    quoteCheck: checkSeatQuotes(id, `${raw.oneLiner}\n${raw.reasoning}`),
   };
 }
 
@@ -98,10 +94,10 @@ async function callSynthesizer(
   signal?: AbortSignal,
 ): Promise<IbnArabiSynthesis> {
   const { text } = await complete({
-    system: ibnarabi.system,
-    user: ibnarabi.user(item, opinions),
+    system: chair.system,
+    user: chair.user(item, opinions),
     maxTokens: 800,
-    model: config.councilModels['ibnarabi'],
+    model: config.councilModels['chair'],
     signal,
   });
   return rawSynthesisSchema.parse(extractJson<unknown>(text));
@@ -232,7 +228,7 @@ export async function runCouncil(
       }))
     : mode === 'full'
       ? ALL_DELIBERATORS.map((id) => ({
-          id: id as Exclude<PhilosopherId, 'ibnarabi'>,
+          id,
           branch: PHILOSOPHERS[id].primaryBranch,
         }))
       : selectQuorum(item.id);
@@ -362,7 +358,7 @@ export async function runCouncil(
 
 function buildConsensus(opinions: PhilosopherOpinion[], synthesis: IbnArabiSynthesis): string {
   const lines = opinions.map((o) => `- ${o.displayName}: ${o.oneLiner}`).join('\n');
-  return `${lines}\n\nSynthesis (Ibn ʿArabī): ${synthesis.unifyingReading}`;
+  return `${lines}\n\nSynthesis (the Chair): ${synthesis.unifyingReading}`;
 }
 
 function recommend(score: number): Recommendation {

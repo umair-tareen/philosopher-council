@@ -24,7 +24,7 @@ export function renderDeliberation(verdict: CouncilVerdict, file: string): strin
       (o) => `- ${o.displayName} (${o.branch}) ${o.verdictScore.toFixed(2)}: ${o.oneLiner}`,
     ),
     '',
-    `**Synthesis (Ibn ʿArabī, ${verdict.synthesis.unifiedScore.toFixed(2)}):** ${verdict.synthesis.unifyingReading}`,
+    `**Synthesis (the Chair, ${verdict.synthesis.unifiedScore.toFixed(2)}):** ${verdict.synthesis.unifyingReading}`,
   );
   const d = verdict.minority?.dissenter;
   if (d) {
@@ -59,7 +59,7 @@ export function buildServer(): McpServer {
     {
       title: 'Convene the philosopher council',
       description:
-        'Put a question to an eleven-philosopher LLM council. Each seat (Socrates, Kant, Lao Tzu, ...) evaluates it through its own documented methodology with virtue scores; Ibn ʿArabī synthesizes; dissent survives as a first-class minority report. Use for decisions, plans, or claims that deserve multi-perspective scrutiny - not for factual lookups. Costs one LLM call per seat.',
+        'Put a question to a seven-seat philosopher LLM council. Each seat (Socrates, Kant, Lao Tzu, ...) evaluates it through its own documented methodology with virtue scores; a neutral Chair synthesizes; dissent survives as a first-class minority report. Use for decisions, plans, or claims that deserve multi-perspective scrutiny - not for factual lookups. Costs one LLM call per seat.',
       inputSchema: {
         question: z
           .string()
@@ -75,7 +75,7 @@ export function buildServer(): McpServer {
           .boolean()
           .optional()
           .describe(
-            'Seat all ten deliberators instead of the default quorum of four (10+ LLM calls)',
+            'Seat all six deliberators instead of the default quorum of four (7+ LLM calls)',
           ),
         mode: z
           .enum(MODE_IDS)

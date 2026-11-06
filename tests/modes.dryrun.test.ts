@@ -30,7 +30,7 @@ describe('debate modes', () => {
     const verdict = await runCouncil(item('mode-2'), 'quorum', {}, 'oxford');
     expect(verdict.debateMode).toBe('oxford');
     expect(verdict.opinions.map((o) => o.philosopher).sort()).toEqual(
-      ['alghazali', 'aristotle', 'kant', 'laotzu'].sort(),
+      ['aristotle', 'kant', 'laotzu', 'socrates'].sort(),
     );
   });
 

@@ -12,10 +12,6 @@ export type PhilosopherId =
   | 'aristotle'
   | 'confucius'
   | 'laotzu'
-  | 'avicenna'
-  | 'alghazali'
-  | 'ibnrushd'
-  | 'descartes'
   | 'kant'
   | 'ibnarabi';
 
@@ -39,6 +35,12 @@ export interface TrendItem {
   novelty?: number;
 }
 
+/** Result of checking a seat's double-quoted passages against its brain/quotes.md. */
+export interface QuoteCheck {
+  verified: string[];
+  unverified: string[];
+}
+
 export interface PhilosopherOpinion {
   philosopher: PhilosopherId;
   displayName: string;
@@ -51,6 +53,8 @@ export interface PhilosopherOpinion {
   citations: string[];
   /** The "provider:model" that produced this opinion. */
   model?: string;
+  /** Quote verification against the seat's brain; absent when the seat has no quotes file. */
+  quoteCheck?: QuoteCheck;
 }
 
 export interface IbnArabiSynthesis {

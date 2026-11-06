@@ -38,7 +38,7 @@ describe('council dry-run', () => {
     expect(verdict.preservation?.total).toBeGreaterThan(0);
   });
 
-  it('produces 10 opinions in full-council mode', async () => {
+  it('produces 7 opinions in full-council mode', async () => {
     const { runCouncil } = await import('../src/council/council.js');
     const item = {
       id: 'test-2',
@@ -51,7 +51,7 @@ describe('council dry-run', () => {
       tags: ['karpathy'],
     };
     const verdict = await runCouncil(item, 'full');
-    expect(verdict.opinions.length).toBe(10);
+    expect(verdict.opinions.length).toBe(7);
     expect(verdict.synthesis).toBeTruthy();
   });
 });

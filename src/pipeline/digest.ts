@@ -174,7 +174,7 @@ function renderEntry(item: TrendItem, v: CouncilVerdict): string {
     `  - Tags: ${tags}${item.novelty !== undefined ? ` · novelty ${item.novelty.toFixed(2)}` : ''}`,
     `  - Council (${v.mode}):`,
     opinions,
-    `  - Synthesis (Ibn ʿArabī, ${v.synthesis.unifiedScore.toFixed(2)}): ${v.synthesis.unifyingReading}`,
+    `  - Synthesis (the Chair, ${v.synthesis.unifiedScore.toFixed(2)}): ${v.synthesis.unifyingReading}`,
     v.minority?.dissenter
       ? `  - Dissent (disagreement ${v.minority.disagreement.toFixed(2)}): ${v.minority.dissenter.displayName} - ${v.minority.dissenter.oneLiner}`
       : `  - Dissent: none recorded`,
